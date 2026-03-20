@@ -19,47 +19,63 @@ use tower_http::cors::{Any, CorsLayer};
 use tower_http::services::{ServeDir, ServeFile};
 
 fn get_db_path() -> PathBuf {
-    // The seed database (read-only template) lives in src-tauri/resources/.
-    // We MUST NOT use it directly because SQLite WAL creates -shm/-wal files
-    // next to it, which triggers Tauri's file watcher and causes an infinite
-    // rebuild loop in dev mode.
+    // Portable mode: the app runs from a directory that contains everything.
+    // The database lives next to the executable in a data/ folder.
     //
-    // Strategy: copy the seed to a working directory and use that copy for
-    // all operations.
+    // Layout (production):
+    //   /opt/blesong/blesong           (binary)
+    //   /opt/blesong/resources/data.sqlite  (seed, read-only)
+    //   /opt/blesong/data/data.sqlite       (working copy, created at first run)
+    //
+    // In dev mode the CWD is src-tauri/, so:
+    //   src-tauri/resources/data.sqlite     (seed)
+    //   data/data.sqlite                    (working copy, outside src-tauri/)
 
     let cwd = std::env::current_dir().unwrap_or_default();
     let exe_dir = std::env::current_exe()
         .ok()
         .and_then(|p| p.parent().map(|d| d.to_path_buf()))
-        .unwrap_or_default();
+        .unwrap_or_else(|| cwd.clone());
 
-    // ── Working copy location ──
-    // In production use ~/.local/share/blesong/; in dev use ../data/
-    let work_dir = dirs::data_dir()
-        .map(|d| d.join("blesong"))
-        .unwrap_or_else(|| cwd.join("../data"));
+    // ── Working copy: next to binary in data/ ──
+    let work_dir = exe_dir.join("data");
     let work_db = work_dir.join("data.sqlite");
 
-    // If working copy already exists, just use it
+    // Dev fallback: ../data/ relative to src-tauri/
+    let dev_work_dir = cwd.join("../data");
+    let dev_work_db = dev_work_dir.join("data.sqlite");
+
+    // If working copy already exists, use it
     if work_db.exists() {
         return work_db;
+    }
+    if dev_work_db.exists() {
+        return dev_work_db;
     }
 
     // ── Seed locations (checked in order) ──
     let seed_candidates: Vec<PathBuf> = vec![
+        exe_dir.join("resources/data.sqlite"),                          // portable: next to binary
         cwd.join("resources/data.sqlite"),                              // dev (cwd = src-tauri)
-        exe_dir.join("../lib/blesong/resources/data.sqlite"),           // linux .deb prod
-        exe_dir.join("../Resources/resources/data.sqlite"),             // macOS prod bundle
-        exe_dir.join("resources/data.sqlite"),                          // fallback next to binary
+        exe_dir.join("../Resources/resources/data.sqlite"),             // macOS bundle
     ];
 
-    // Copy the seed to the working directory
+    // Try to copy seed to work_dir (next to binary)
     for seed in &seed_candidates {
         if seed.exists() {
-            std::fs::create_dir_all(&work_dir).ok();
-            if std::fs::copy(seed, &work_db).is_ok() {
-                println!("Copied seed database to {:?}", work_db);
-                return work_db;
+            // Try next to binary first
+            if std::fs::create_dir_all(&work_dir).is_ok() {
+                if std::fs::copy(seed, &work_db).is_ok() {
+                    println!("Copied seed database to {:?}", work_db);
+                    return work_db;
+                }
+            }
+            // Fallback for dev mode (../data/)
+            if std::fs::create_dir_all(&dev_work_dir).is_ok() {
+                if std::fs::copy(seed, &dev_work_db).is_ok() {
+                    println!("Copied seed database to {:?}", dev_work_db);
+                    return dev_work_db;
+                }
             }
         }
     }

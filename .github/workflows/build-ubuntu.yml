@@ -1,8 +1,5 @@
 name: Build Ubuntu
 
-# Se ejecuta cuando:
-# 1. Creas un tag como v1.0.0 (git tag v1.0.0 && git push --tags)
-# 2. Manualmente desde GitHub (boton "Run workflow")
 on:
   push:
     tags: ['v*']
@@ -51,14 +48,19 @@ jobs:
         run: cargo tauri build
         working-directory: src-tauri
 
-      - name: Upload .deb package
-        uses: actions/upload-artifact@v4
-        with:
-          name: blesong-ubuntu-deb
-          path: src-tauri/target/release/bundle/deb/*.deb
+      - name: Create portable package
+        run: |
+          mkdir -p blesong-portable
+          cp src-tauri/target/release/blesong blesong-portable/
+          cp -r src-tauri/resources blesong-portable/
+          if [ -d "blesong-angular/dist/blesong/browser" ]; then
+            mkdir -p blesong-portable/www
+            cp -r blesong-angular/dist/blesong/browser/* blesong-portable/www/
+          fi
+          tar -czf blesong-portable-linux-amd64.tar.gz blesong-portable/
 
-      - name: Upload AppImage
+      - name: Upload portable package
         uses: actions/upload-artifact@v4
         with:
-          name: blesong-ubuntu-appimage
-          path: src-tauri/target/release/bundle/appimage/*.AppImage
+          name: blesong-portable-linux
+          path: blesong-portable-linux-amd64.tar.gz
