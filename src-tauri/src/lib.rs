@@ -92,17 +92,16 @@ fn get_db_path() -> PathBuf {
 /// In production Linux: alongside the binary in www/browser.
 fn get_frontend_dist_path() -> Option<PathBuf> {
     let cwd = std::env::current_dir().unwrap_or_default();
+    let exe_dir = std::env::current_exe()
+        .ok()
+        .and_then(|p| p.parent().map(|d| d.to_path_buf()))
+        .unwrap_or_else(|| cwd.clone());
     let candidates: Vec<PathBuf> = vec![
+        exe_dir.join("www"),                                            // portable linux (next to binary)
+        exe_dir.join("www/browser"),                                    // portable linux alt
         cwd.join("blesong-angular/dist/blesong/browser"),               // dev (cwd = workspace root)
         cwd.join("../blesong-angular/dist/blesong/browser"),            // dev (cwd = src-tauri)
-        std::env::current_exe()
-            .ok()
-            .map(|p| p.parent().unwrap().join("../Resources/www/browser"))
-            .unwrap_or_default(),                                       // macOS prod bundle
-        std::env::current_exe()
-            .ok()
-            .map(|p| p.parent().unwrap().join("www/browser"))
-            .unwrap_or_default(),                                       // linux prod
+        exe_dir.join("../Resources/www/browser"),                       // macOS prod bundle
     ];
     for c in &candidates {
         if c.join("index.html").exists() {
