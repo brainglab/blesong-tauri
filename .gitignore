@@ -1,0 +1,19 @@
+# Rust build artifacts
+src-tauri/target/
+
+# Working database (copied from seed at runtime)
+data/
+
+# Angular
+blesong-angular/node_modules/
+blesong-angular/dist/
+blesong-angular/.angular/
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo

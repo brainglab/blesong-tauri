@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/miguelangelbravo/.cargo/registry/src/**)",
+      "Bash(ls -la /Users/miguelangelbravo/Documents/Blesong/blesong-tauri/src-tauri/resources/data.sqlite* /Users/miguelangelbravo/Documents/Blesong/blesong-tauri/data/data.sqlite*)",
+      "Bash(grep -r \"overflow\\\\|scroll\\\\|height\\\\|max-height\" /Users/miguelangelbravo/Documents/Blesong/blesong-tauri/blesong-angular/src/app/components/home/h-presenter-obs --include=*.ts --include=*.html --include=*.css --include=*.scss)",
+      "Bash(git init:*)"
+    ]
+  }
+}
