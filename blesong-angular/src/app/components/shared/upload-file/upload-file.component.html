@@ -1,0 +1,6 @@
+<form [formGroup]="mForm" enctype="multipart/form-data">
+  <div class="custom-file" style="min-width: 80px;">
+    <input type="file" (change)="upload($event)" [accept]="mAccept" class="d-none" [id]="mField" lang="es">
+    <label class="btn btn-sm btn-outline-primary rounded-pill" [for]="mField"><i class="fa-solid fa-cloud-arrow-up me-2"></i>Subir</label>
+  </div>
+</form>

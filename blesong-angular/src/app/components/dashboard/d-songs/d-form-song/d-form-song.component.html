@@ -1,0 +1,68 @@
+<div class="text-muted mb-4">(*) Campos obligatorios</div>
+<form autocomplete="off" [formGroup]="mForm" (ngSubmit)="save()" #f="ngForm">
+
+  <!-- fields -->
+  <div class="mb-3">
+    <label class="form-label" for="song_name">Nombre <span class="text-danger" *ngIf="this.mForm.controls['song_name'].hasValidator(mValidators.required)">*</span></label>
+    <input class="form-control" autocomplete="off" id="song_name" type="text" #song_name formControlName="song_name" [(ngModel)]="mSong.song_name" [class.is-invalid]="mSongNameValid" placeholder="Nombre...">
+    <small *ngIf="mSongNameValid" class="text-danger">
+      <div *ngIf="this.mForm.get('song_name').errors.required">No puede estar vacío</div>
+      <div *ngIf="this.mForm.get('song_name').errors.minlength">Debe tener al menos 1 caractéres</div>
+      <div *ngIf="this.mForm.get('song_name').errors.maxlength">Debe tener como máximo 255 caractéres</div>
+      <div *ngIf="this.mForm.get('song_name').errors.pattern">Campo no válido</div>
+    </small>
+  </div>
+
+
+  <div class="mb-3">
+    <label class="form-label" for="autor_idx">Autor <span class="text-danger" *ngIf="this.mForm.controls['autor_idx'].hasValidator(mValidators.required)">*</span></label>
+    <div class="input-group">
+      <input class="form-control" autocomplete="off" id="autor_idx" type="text" #autor_idx formControlName="autor_idx" [(ngModel)]="mOptionText['autor_idx']" [class.is-invalid]="mAutorIdxValid" placeholder="Autor..." readonly>
+      <button class="btn btn-sm btn-light" type="button" (click)="showModalOption('Seleccione Autor', mOptionsAutorIdx, 'autor_idx' , true)"><i class="fa-solid fa-circle-xmark"></i></button>
+      <button class="btn btn-sm btn-primary" type="button" (click)="showModalOption('Seleccione Autor', mOptionsAutorIdx, 'autor_idx' )"><i class="fa-solid fa-circle-chevron-down"></i></button>
+    </div>
+    <small *ngIf="mAutorIdxValid" class="text-danger">
+      <div *ngIf="this.mForm.get('autor_idx').errors.required">No puede estar vacío</div>
+      <div *ngIf="this.mForm.get('autor_idx').errors.minlength">Debe tener al menos 1 caractéres</div>
+      <div *ngIf="this.mForm.get('autor_idx').errors.maxlength">Debe tener como máximo 255 caractéres</div>
+      <div *ngIf="this.mForm.get('autor_idx').errors.pattern">Campo no válido</div>
+    </small>
+  </div>
+
+
+  <div class="mb-3">
+    <label class="form-label" for="song_year">Año <span class="text-danger" *ngIf="this.mForm.controls['song_year'].hasValidator(mValidators.required)">*</span></label>
+    <input class="form-control" autocomplete="off" id="song_year" type="text" #song_year formControlName="song_year" [(ngModel)]="mSong.song_year" [class.is-invalid]="mSongYearValid" placeholder="Año...">
+    <small *ngIf="mSongYearValid" class="text-danger">
+      <div *ngIf="this.mForm.get('song_year').errors.required">No puede estar vacío</div>
+      <div *ngIf="this.mForm.get('song_year').errors.minlength">Debe tener al menos 1 caractéres</div>
+      <div *ngIf="this.mForm.get('song_year').errors.maxlength">Debe tener como máximo 255 caractéres</div>
+      <div *ngIf="this.mForm.get('song_year').errors.pattern">Campo no válido</div>
+    </small>
+  </div>
+
+
+  <div class="mb-3">
+    <label class="form-label" for="song_content">Contenido <span class="text-danger" *ngIf="this.mForm.controls['song_content'].hasValidator(mValidators.required)">*</span></label>
+    <textarea class="form-control" autocomplete="off" id="song_content" type="text" #song_content formControlName="song_content" [(ngModel)]="mSong.song_content" [class.is-invalid]="mSongContentValid" placeholder="Contenido..." rows="15" style="min-height: 300px;"></textarea>
+    <small *ngIf="mSongContentValid" class="text-danger">
+      <div *ngIf="this.mForm.get('song_content').errors.required">No puede estar vacío</div>
+      <div *ngIf="this.mForm.get('song_content').errors.minlength">Debe tener al menos 1 caractéres</div>
+      <div *ngIf="this.mForm.get('song_content').errors.maxlength">Debe tener como máximo 5000 caractéres</div>
+      <div *ngIf="this.mForm.get('song_content').errors.pattern">Campo no válido</div>
+    </small>
+    <div class="text-end text-muted">
+      <small>{{ mSong.song_content?.length || 0 }}/5000 caracteres</small>
+    </div>
+  </div>
+
+
+
+
+  <div class="d-flex justify-content-end">
+    <button class="btn btn-secondary rounded-pill m-1" type="button" backButton>Cancelar</button>
+    <button class="btn btn-primary rounded-pill m-1" type="submit">Guardar</button>
+  </div>
+
+
+</form>

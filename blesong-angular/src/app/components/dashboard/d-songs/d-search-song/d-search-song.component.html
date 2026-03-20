@@ -1,0 +1,118 @@
+<form autocomplete="off" [formGroup]="mForm" (ngSubmit)="search()" #f="ngForm">
+
+  <!-- fields -->
+  <div class="card-header">
+    <div class="row">
+      <div class="col-md-3 mb-3">
+        <label class="form-label" for="song_name">Nombre <span class="text-danger" *ngIf="this.mForm.controls['song_name'].hasValidator(mValidators.required)">*</span></label>
+        <input class="form-control" autocomplete="off" id="song_name" type="text" #song_name formControlName="song_name" [(ngModel)]="mSong.song_name" [class.is-invalid]="mSongNameValid" placeholder="Nombre...">
+        <small *ngIf="mSongNameValid" class="text-danger">
+          <div *ngIf="this.mForm.get('song_name').errors.required">No puede estar vacío</div>
+          <div *ngIf="this.mForm.get('song_name').errors.minlength">Debe tener al menos 1 caractéres</div>
+          <div *ngIf="this.mForm.get('song_name').errors.maxlength">Debe tener como máximo 255 caractéres</div>
+          <div *ngIf="this.mForm.get('song_name').errors.pattern">Campo no válido</div>
+        </small>
+      </div>
+
+
+      <div class="col-md-3 mb-3">
+        <label class="form-label" for="autor_idx">Autor <span class="text-danger" *ngIf="this.mForm.controls['autor_idx'].hasValidator(mValidators.required)">*</span></label>
+        <div class="input-group">
+          <input class="form-control" autocomplete="off" id="autor_idx" type="text" #autor_idx formControlName="autor_idx" [(ngModel)]="mOptionText['autor_idx']" [class.is-invalid]="mAutorIdxValid" placeholder="Autor..." readonly>
+          <button class="btn btn-sm btn-light" type="button" (click)="showModalOption('Seleccione Autor', mOptionsAutorIdx, 'autor_idx' , true)"><i class="fa-solid fa-circle-xmark"></i></button>
+          <button class="btn btn-sm btn-primary" type="button" (click)="showModalOption('Seleccione Autor', mOptionsAutorIdx, 'autor_idx' )"><i class="fa-solid fa-circle-chevron-down"></i></button>
+        </div>
+        <small *ngIf="mAutorIdxValid" class="text-danger">
+          <div *ngIf="this.mForm.get('autor_idx').errors.required">No puede estar vacío</div>
+          <div *ngIf="this.mForm.get('autor_idx').errors.minlength">Debe tener al menos 1 caractéres</div>
+          <div *ngIf="this.mForm.get('autor_idx').errors.maxlength">Debe tener como máximo 255 caractéres</div>
+          <div *ngIf="this.mForm.get('autor_idx').errors.pattern">Campo no válido</div>
+        </small>
+      </div>
+
+
+      <div class="col-md-3 mb-3">
+        <label class="form-label" for="song_year">Año <span class="text-danger" *ngIf="this.mForm.controls['song_year'].hasValidator(mValidators.required)">*</span></label>
+        <input class="form-control" autocomplete="off" id="song_year" type="text" #song_year formControlName="song_year" [(ngModel)]="mSong.song_year" [class.is-invalid]="mSongYearValid" placeholder="Año...">
+        <small *ngIf="mSongYearValid" class="text-danger">
+          <div *ngIf="this.mForm.get('song_year').errors.required">No puede estar vacío</div>
+          <div *ngIf="this.mForm.get('song_year').errors.minlength">Debe tener al menos 1 caractéres</div>
+          <div *ngIf="this.mForm.get('song_year').errors.maxlength">Debe tener como máximo 255 caractéres</div>
+          <div *ngIf="this.mForm.get('song_year').errors.pattern">Campo no válido</div>
+        </small>
+      </div>
+
+
+      <div class="col-md-3 mb-3">
+        <label class="form-label" for="song_content">Contenido <span class="text-danger" *ngIf="this.mForm.controls['song_content'].hasValidator(mValidators.required)">*</span></label>
+        <input class="form-control" autocomplete="off" id="song_content" type="text" #song_content formControlName="song_content" [(ngModel)]="mSong.song_content" [class.is-invalid]="mSongContentValid" placeholder="Contenido...">
+        <small *ngIf="mSongContentValid" class="text-danger">
+          <div *ngIf="this.mForm.get('song_content').errors.required">No puede estar vacío</div>
+          <div *ngIf="this.mForm.get('song_content').errors.minlength">Debe tener al menos 1 caractéres</div>
+          <div *ngIf="this.mForm.get('song_content').errors.maxlength">Debe tener como máximo 255 caractéres</div>
+          <div *ngIf="this.mForm.get('song_content').errors.pattern">Campo no válido</div>
+        </small>
+      </div>
+
+
+
+    </div>
+  </div>
+
+  <!-- order -->
+  <div class="card-header">
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <label class="form-label" for="order_field">Ordenar por <span class="text-danger" *ngIf="this.mForm.controls['order_field'].hasValidator(mValidators.required)">*</span></label>
+        <div class="input-group">
+          <input class="form-control" autocomplete="off" id="order_field" type="text" #order_field formControlName="order_field" [(ngModel)]="mOptionOrderText['order_field']" [class.is-invalid]="mOrderFieldValid" placeholder="Ordenar por..." readonly>
+          <button class="btn btn-sm btn-light" type="button" (click)="showModalOptionOrder('Seleccione campo', mOptionOrderField, 'order_field', true)"><i class="fa-solid fa-circle-xmark"></i></button>
+          <button class="btn btn-sm btn-primary" type="button" (click)="showModalOptionOrder('Seleccione campo', mOptionOrderField, 'order_field')"><i class="fa-solid fa-circle-chevron-down"></i></button>
+        </div>
+        <small *ngIf="mOrderFieldValid" class="text-danger">
+          <div *ngIf="this.mForm.get('order_field').errors.required">No puede estar vacío</div>
+          <div *ngIf="this.mForm.get('order_field').errors.minlength">Debe tener al menos 1 caractéres</div>
+          <div *ngIf="this.mForm.get('order_field').errors.maxlength">Debe tener como máximo 255 caractéres</div>
+          <div *ngIf="this.mForm.get('order_field').errors.pattern">Campo no válido</div>
+        </small>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label" for="order_direction">Dirección <span class="text-danger" *ngIf="this.mForm.controls['order_direction'].hasValidator(mValidators.required)">*</span></label>
+        <div class="input-group">
+          <input class="form-control" autocomplete="off" id="order_direction" type="text" #order_direction formControlName="order_direction" [(ngModel)]="mOptionOrderText['order_direction']" [class.is-invalid]="mOrderDirectionValid" placeholder="Dirección..." readonly>
+          <button class="btn btn-sm btn-light" type="button" (click)="showModalOptionOrder('Seleccione dirección', mOptionOrderDirection, 'order_direction', true)"><i class="fa-solid fa-circle-xmark"></i></button>
+          <button class="btn btn-sm btn-primary" type="button" (click)="showModalOptionOrder('Seleccione dirección', mOptionOrderDirection, 'order_direction')"><i class="fa-solid fa-circle-chevron-down"></i></button>
+        </div>
+        <small *ngIf="mOrderDirectionValid" class="text-danger">
+          <div *ngIf="this.mForm.get('order_direction').errors.required">No puede estar vacío</div>
+          <div *ngIf="this.mForm.get('order_direction').errors.minlength">Debe tener al menos 1 caractéres</div>
+          <div *ngIf="this.mForm.get('order_direction').errors.maxlength">Debe tener como máximo 255 caractéres</div>
+          <div *ngIf="this.mForm.get('order_direction').errors.pattern">Campo no válido</div>
+        </small>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label" for="order_count">Mostrar <span class="text-danger" *ngIf="this.mForm.controls['order_count'].hasValidator(mValidators.required)">*</span></label>
+        <div class="input-group">
+          <input class="form-control" autocomplete="off" id="order_count" type="text" #order_count formControlName="order_count" [(ngModel)]="mOptionOrderText['order_count']" [class.is-invalid]="mOrderCountValid" placeholder="Registros..." readonly>
+          <button class="btn btn-sm btn-light" type="button" (click)="showModalOptionOrder('Seleccione registros', mOptionOrderCount, 'order_count', true)"><i class="fa-solid fa-circle-xmark"></i></button>
+          <button class="btn btn-sm btn-primary" type="button" (click)="showModalOptionOrder('Seleccione registros', mOptionOrderCount, 'order_count')"><i class="fa-solid fa-circle-chevron-down"></i></button>
+        </div>
+        <small *ngIf="mOrderCountValid" class="text-danger">
+          <div *ngIf="this.mForm.get('order_count').errors.required">No puede estar vacío</div>
+          <div *ngIf="this.mForm.get('order_count').errors.minlength">Debe tener al menos 1 caractéres</div>
+          <div *ngIf="this.mForm.get('order_count').errors.maxlength">Debe tener como máximo 255 caractéres</div>
+          <div *ngIf="this.mForm.get('order_count').errors.pattern">Campo no válido</div>
+        </small>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 d-flex justify-content-end">
+        <button class="btn btn-sm btn-light m-1" type="button" (click)="clear()"><i class="fa-solid fa-delete-left me-1" style="font-size: 15px;"></i>Limpiar</button>
+        <button class="btn btn-sm btn-secondary m-1" type="submit"><i class="fa-solid fa-magnifying-glass me-1" style="font-size: 15px;"></i>Buscar</button>
+      </div>
+    </div>
+  </div>
+
+</form>

@@ -1,0 +1,34 @@
+<div class="modal fade" [ngClass]="mShow ? 'show animate__animated animate__fadeInDown animate__faster' : 'animate__animated animate__fadeOutUp'" tabindex="-1" id="kt_modal_1" style="display: block;" aria-modal="true" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <i [class]="'fa-solid fa-circle-check fa-2x text-custom-' + mClassType" *ngIf="mClassType == 'success'"></i>
+        <i [class]="'fa-solid fa-circle-info fa-2x text-custom-' + mClassType" *ngIf="mClassType == 'info'"></i>
+        <i [class]="'fa-solid fa-circle-exclamation fa-2x text-custom-' + mClassType" *ngIf="mClassType == 'warning'"></i>
+        <i [class]="'fa-solid fa-triangle-exclamation fa-2x text-custom-' + mClassType" *ngIf="mClassType == 'danger'"></i>
+        <i [class]="'fa-solid fa-circle-question fa-2x text-custom-' + mClassType" *ngIf="mClassType == 'info'"></i>
+        <h3 class="modal-title w-100 d-flex justify-content-center ps-4">{{ mTitle }}</h3>
+        <!--begin::Close-->
+        <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" (click)="close(false)">
+          <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
+          <span class="svg-icon svg-icon-2x">
+            <span class="fa-solid fa-xmark fa-xl"></span>
+          </span>
+          <!--end::Svg Icon-->
+        </div>
+        <!--end::Close-->
+      </div>
+      <div class="modal-body">
+        <p class="fs-4 d-flex justify-content-center">{{ mText }}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="close(false)">No</button>
+        <button type="button" class="btn btn-primary" (click)="close(true)">Si</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- background modal -->
+<div class="modal-background {{mShow ? 'd-block animate__animated animate__fadeIn animate__faster' : 'animate__animated animate__fadeOut'}}">
+</div>

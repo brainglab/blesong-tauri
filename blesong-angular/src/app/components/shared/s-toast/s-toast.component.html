@@ -1,0 +1,9 @@
+<div (click)="close()" [class]="'alert alert-' + mClassType" [ngClass]="mShow ? 'animate__animated animate__tada' : 'animate__animated animate__zoomOut'" role="alert">
+
+  <i [class]="'fa-solid fa-circle-check me-2'" style="font-size: 20px;" *ngIf="mClassType == 'success'"></i>
+  <i [class]="'fa-solid fa-circle-info me-2'" style="font-size: 20px;" *ngIf="mClassType == 'info'"></i>
+  <i [class]="'fa-solid fa-circle-exclamation me-2'" style="font-size: 20px;" *ngIf="mClassType == 'warning'"></i>
+  <i [class]="'fa-solid fa-triangle-exclamation me-2'" style="font-size: 20px;" *ngIf="mClassType == 'danger'"></i>
+
+  {{ mText }}
+</div>

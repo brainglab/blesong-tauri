@@ -1,0 +1,17 @@
+<!-- background 1: Todo el contenido se muestra en esta capa -->
+<div class="background-1 vertical-center animate__animated animate__fadeIn">
+
+  <!-- letras -->
+  <div class="p-4 vertical-center w-100 text-center animate__animated animate__fadeIn">
+
+    <!-- letra de las canciones -->
+    <div
+         #animatedText
+         class="blesong_font_family_bebas_neue animated-text"
+         [style]="'font-size: ' + mTemplate.template_body_fontsize + 'px !important; color:#ffffff !important;'"
+         [innerHtml]="mRealtime.song_array[mRealtime.song_slide_selected] | encapsulationHtml"></div>
+
+  </div>
+
+
+</div>

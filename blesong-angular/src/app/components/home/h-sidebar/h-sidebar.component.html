@@ -1,0 +1,35 @@
+<nav class="navbar-vertical navbar">
+  <div class="vh-100" data-simplebar>
+    <!-- Brand logo -->
+    <a class="m-4" href="/dashboard">
+      <img class="mt-4" src="assets/images/logo.png" alt="" style="height:auto;width:180px!important;" />
+    </a>
+
+    <!-- Navbar nav -->
+    <ul class="navbar-nav flex-column" [id]="'sideNavbar'">
+      <div *ngFor="let mHeaderMenu of mCustomMenu; index as mCustomMenuIndex">
+        <!-- title header -->
+        <li class="nav-item" *ngIf="mHeaderMenu.show == 'true'">
+          <div class="navbar-heading mt-2">{{ mHeaderMenu.title }}</div>
+        </li>
+        <!-- menu -->
+        <div *ngIf="mHeaderMenu.show == 'true'">
+          <li class="nav-item" *ngFor="let mMenu of mHeaderMenu.menu; index as mMenuIndex">
+            <div *ngIf="mMenu.show == 'true'">
+              <a class="nav-link" [ngClass]="mMenu.active ? '' : 'collapsed'" href="javascript:void();" data-bs-toggle="collapse" [attr.data-bs-target]="'#nav-' + mCustomMenuIndex + '-' + mMenuIndex" [attr.aria-expanded]="mMenu.active ? true : false" [attr.aria-controls]="'nav-' + mCustomMenuIndex + '-' + mMenuIndex">
+                <i [class]="'fa-solid fa-fw me-3 ' + mMenu.icon" style="font-size: 20px;"></i> {{ mMenu.title }}
+              </a>
+              <div [id]="'nav-' + mCustomMenuIndex + '-' + mMenuIndex" [ngClass]="mMenu.active ? 'collapse show' : 'collapse'" [attr.data-bs-parent]="'#sideNavbar'">
+                <ul class="nav flex-column">
+                  <li class="nav-item" *ngFor="let mSubmenu of mMenu.submenu; index as mSubmenuIndex">
+                    <a *ngIf="mSubmenu.show == 'true'" class="nav-link" [ngClass]="mSubmenu.controller == mController ? 'active' : ''" [routerLink]="mSubmenu.route">{{ mSubmenu.title }}</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </li>
+        </div>
+      </div>
+    </ul>
+  </div>
+</nav>

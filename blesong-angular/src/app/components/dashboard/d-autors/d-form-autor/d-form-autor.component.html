@@ -1,0 +1,25 @@
+<div class="text-muted mb-4">(*) Campos obligatorios</div>
+<form autocomplete="off" [formGroup]="mForm" (ngSubmit)="save()" #f="ngForm">
+
+  <!-- fields -->
+  <div class="mb-3">
+  <label class="form-label" for="autor_name">Nombre <span class="text-danger" *ngIf="this.mForm.controls['autor_name'].hasValidator(mValidators.required)">*</span></label>
+  <input class="form-control" autocomplete="off" id="autor_name" type="text" #autor_name formControlName="autor_name" [(ngModel)]="mAutor.autor_name" [class.is-invalid]="mAutorNameValid" placeholder="Nombre...">
+  <small *ngIf="mAutorNameValid" class="text-danger">
+    <div *ngIf="this.mForm.get('autor_name').errors.required">No puede estar vacío</div>
+    <div *ngIf="this.mForm.get('autor_name').errors.minlength">Debe tener al menos 1 caractéres</div>
+    <div *ngIf="this.mForm.get('autor_name').errors.maxlength">Debe tener como máximo 255 caractéres</div>
+    <div *ngIf="this.mForm.get('autor_name').errors.pattern">Campo no válido</div>
+  </small>
+</div>
+
+
+
+
+  <div class="d-flex justify-content-end">
+    <button class="btn btn-secondary rounded-pill m-1" type="button" backButton>Cancelar</button>
+    <button class="btn btn-primary rounded-pill m-1" type="submit">Guardar</button>
+  </div>
+
+
+</form>

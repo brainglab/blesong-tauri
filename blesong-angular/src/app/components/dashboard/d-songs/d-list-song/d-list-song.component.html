@@ -1,0 +1,150 @@
+<div id="db-wrapper">
+
+  <app-d-sidebar mController="songs"></app-d-sidebar>
+
+  <div id="page-content">
+    <div class="header">
+
+      <app-d-navbar></app-d-navbar>
+
+    </div>
+    <div class="container-fluid bg-gray-100 p-4 animate__animated animate__fadeIn animate__faster">
+
+      <!-- title -->
+      <div class="row ">
+        <div class="col-lg-12 col-md-12 col-12">
+          <!-- Page header -->
+          <div class="border-bottom pb-3 mb-3 d-lg-flex justify-content-between align-items-center">
+            <div class="mb-2 mb-lg-0">
+              <h1 class="mb-0 h2 fw-bold">Listado de Canciones</h1>
+            </div>
+            <!-- button -->
+            <div>
+              <button class="btn btn-outline-secondary rounded-pill me-2" type="button" (click)="exportToExcel()" *ngIf="mSongs.length > 0">
+                <i class="fa-solid fa-cloud-arrow-up me-2" style="font-size: 15px;"></i>Exportar
+              </button>
+              <button class="btn btn-primary rounded-pill" type="button" [routerLink]="['/songs/new']">
+                <span class="fa-solid fa-circle-plus me-2"></span>Nuevo
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="row ">
+        <div class="col-lg-12 col-md-12 col-12">
+          <div class="card card-small shadow mb-4">
+            <div class="card-header">
+              <h3 class="card-title align-items-center">Búsqueda avanzada</h3>
+            </div>
+            <div class="card-body pt-3 pb-1">
+              <app-d-search-song (mSongResponse)="search($event)"></app-d-search-song>
+            </div>
+            <div class="table-responsive" *ngIf="mSongs.length > 0">
+              <table class="table table-hover mb-0">
+                <thead class="table-light">
+                  <tr class="fw-bold fs-6 text-gray border-bottom-2 border-gray-200">
+                    <th class="align-middle">
+                      Nombre
+                      <i class="fa-solid fa-circle-chevron-up text-primary ms-1" style="font-size: 15px;" *ngIf="mOrder.order_field == 'song_name' && mOrder.order_direction == 'ASC'"></i>
+                      <i class="fa-solid fa-circle-chevron-down text-primary ms-1" style="font-size: 15px;" *ngIf="mOrder.order_field == 'song_name' && mOrder.order_direction == 'DESC'"></i>
+                    </th>
+
+                    <th class="align-middle">
+                      Contenido
+                      <i class="fa-solid fa-circle-chevron-up text-primary ms-1" style="font-size: 15px;" *ngIf="mOrder.order_field == 'song_content' && mOrder.order_direction == 'ASC'"></i>
+                      <i class="fa-solid fa-circle-chevron-down text-primary ms-1" style="font-size: 15px;" *ngIf="mOrder.order_field == 'song_content' && mOrder.order_direction == 'DESC'"></i>
+                    </th>
+
+
+
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let mSong of mSongs">
+                    <td class="align-middle">
+                      <div class="text-dark">{{ mSong.song_name }}</div>
+                      <div class="small text-muted">{{ mSong.autor.autor_name }}</div>
+                      <div class="small text-muted">{{ mSong.song_year }}</div>
+                    </td>
+                    <td class="align-middle">{{ mSong.song_content.length > 200 ? mSong.song_content.substring(0,200) + '...' : mSong.song_content }}</td>
+
+
+                    <td class="align-middle">
+                      <div class="d-flex justify-content-end">
+                        <div class="btn-group" role="group" aria-label="Basic example">
+                          <a class="btn btn-sm btn-ico btn-light" href="javascript:void(0);" (click)="show(mSong.idx)"><i class="fa-solid fa-eye" style="font-size: 15px;"></i></a>
+                          <a class="btn btn-sm btn-ico btn-light" href="javascript:void(0);" (click)="edit(mSong.idx)"><i class="fa-solid fa-pencil" style="font-size: 15px;"></i></a>
+                          <a class="btn btn-sm btn-ico btn-light" href="javascript:void(0);" (click)="delete(mSong.idx, mSong.song_name, mSong.song_image_url)"><i class="fa-solid fa-trash-can" style="font-size: 15px;"></i></a>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="card-body" *ngIf="mSongs.length <= 0">
+              <div class="mt-10 mb-5 d-flex justify-content-center text-muted">
+                <h4 class="text-muted">No hay registros para mostrar</h4>
+              </div>
+              <div class="mb-10 d-flex justify-content-center text-muted">
+                <i class="fa-solid fa-ghost text-light" style="font-size: 200px;"></i>
+              </div>
+            </div>
+            <div class="card-footer">
+
+              <div class="row" *ngIf="mSongs.length > 0">
+                <div class="col-3 d-flex justify-content-start">
+                  <div class="badge badge-pill badge-light text-primary badge-marketing mb-3">
+                    Mostrando del {{ mFromRegisters }} al {{ mToRegisters }} de {{ mTotalRegisters }} total
+                  </div>
+                </div>
+                <div class="col-9 d-flex justify-content-end">
+                  <nav>
+                    <ul class="pagination mb-0">
+                      <li class="page-item">
+                        <a href="javascript:;" (click)="changePage(0)" class="btn btn-sm btn-primary mx-1" [ngClass]="(mPage) <= 0 ? 'disabled' : ''">
+                          <i class="fa-solid fa-circle-chevron-left" style="font-size: 15px;"></i>
+                        </a>
+                      </li>
+                      <li class="page-item">
+                        <a href="javascript:;" (click)="changePage(mPage - 1)" class="btn btn-sm btn-primary mx-1" [ngClass]="(mPage) <= 0 ? 'disabled' : ''">
+                          <i class="fa-solid fa-circle-chevron-left" style="font-size: 15px;"></i>
+                        </a>
+                      </li>
+                      <li class="page-item disabled">
+                        <div class="dropdown dropup-center dropup">
+                          <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Página {{ mPage + 1 }} de {{ mTotalPages }}
+                          </button>
+                          <div class="dropdown-menu scrollable-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" href="javascript:;" (click)="changePage(item.idx)" [ngClass]="item.idx == mPage ? 'active' : ''" *ngFor="let item of mPages">{{ item.name }}</a>
+                          </div>
+                        </div>
+                      </li>
+                      <li class="page-item">
+                        <a href="javascript:;" (click)="changePage(mPage + 1)" class="btn btn-sm btn-primary mx-1" [ngClass]="mPage >= mTotalPages - 1 ? 'disabled' : ''">
+                          <i class="fa-solid fa-circle-chevron-right" style="font-size: 15px;"></i>
+                        </a>
+                      </li>
+                      <li class="page-item">
+                        <a href="javascript:;" (click)="changePage(mTotalPages - 1)" class="btn btn-sm btn-primary mx-1" [ngClass]="mPage >= mTotalPages - 1 ? 'disabled' : ''">
+                          <i class="fa-solid fa-circle-chevron-right" style="font-size: 15px;"></i>
+                        </a>
+                      </li>
+                    </ul>
+                  </nav>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

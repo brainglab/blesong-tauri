@@ -1,0 +1,50 @@
+<div class="modal fade" [ngClass]="mShow ? 'show animate__animated animate__fadeIn animate__faster' : 'animate__animated animate__fadeOut animate__faster'" id="staticBackdrop" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel"
+     aria-hidden="true" style="display: block;">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
+    <div class="modal-content rounded-3">
+      <div class="modal-header">
+        <h5 class="modal-title text-muted">Carga masiva Autores</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="close(true)"></button>
+      </div>
+      <div class="modal-body text-center pt-5 pl-3 pr-3" #list>
+        <h3>Selecciona un archivo "Excel" para cargar</h3>
+
+        <input type="file" (change)="upload($event)" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" class="d-none" id="input" lang="es">
+        <label class="btn btn-secondary rounded-pill m-3" for="input"><i class="fa-solid fa-cloud-arrow-down me-2" style="font-size: 15px;"></i> Carga masiva</label>
+
+        <p class="text-muted small">El archivo "Excel" debe contener las siguientes columnas:</p>
+        <p>Nombre.</p>
+        <p>En caso de tener más columnas, el archivo no se procesará.</p>
+
+        <table class="table table-hover mt-4">
+          <thead class="bg-light border-bottom border-bottom-primary">
+            <tr>
+              <th scope="font-weight-bolder text-left small">#</th>
+              <th scope="font-weight-bolder text-left small">Log</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of messages">
+              <td class="text-left small" [innerHTML]="item.index"></td>
+              <td class="text-left small">
+                <i class="ti mr-2" [ngClass]="item.state == 1 ? ' ti-check text-success' : ' ti-x text-danger'" style="font-size: 15px;"></i> {{ item.message }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+      <div class="rounded-0">
+        <div class="progress-bar bg-primary text-light" role="progressbar" [style.width]="mPercent + '%'" [attr.aria-valuenow]="mPercent" aria-valuemin="0" aria-valuemax="100">{{ mPercent }}%</div>
+      </div>
+      <div class="modal-footer">
+        <div>
+          <button type="button" class="btn btn-outline-primary" data-dismiss="modal" (click)="close(true)">Atrás</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- background modal -->
+<div class="modal-background {{mShow ? 'd-block animate__animated animate__fadeIn animate__faster' : 'animate__animated animate__fadeOut animate__faster'}}"></div>

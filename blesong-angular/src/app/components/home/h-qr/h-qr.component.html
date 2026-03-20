@@ -1,0 +1,36 @@
+<!-- Card con el logo principal -->
+<div class="card mb-3">
+  <div class="card-body text-center">
+    <img src="assets/images/logo.png" alt="Logo de la aplicación" class="img-fluid" style="max-height: 80px;">
+  </div>
+</div>
+
+
+<!-- Card con link para copiar URL -->
+<div class="card mb-3">
+  <div class="card-body">
+    <p class="text-muted mb-2">Puedes copiar el enlace directamente:</p>
+    <div class="input-group">
+      <input type="text" class="form-control" [value]="mCurrentUrl" readonly>
+      <button class="btn btn-primary" (click)="mCopyToClipboard()">
+        <i class="bi bi-clipboard"></i> Copiar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Contenedor del QR con estilos -->
+<div class="card p-4 text-center">
+  <h3 class="mb-4">O escanea el código QR</h3>
+  <div class="d-flex justify-content-center">
+    <qrcode
+            [qrdata]="mCurrentUrl"
+            [allowEmptyString]="true"
+            [width]="256"
+            [errorCorrectionLevel]="'M'">
+    </qrcode>
+  </div>
+  <div class="mt-4 text-dark">
+    Escanea el código QR para ver el menú desde tu dispositivo móvil
+  </div>
+</div>

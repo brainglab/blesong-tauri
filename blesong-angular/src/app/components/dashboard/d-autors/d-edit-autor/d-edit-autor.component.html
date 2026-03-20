@@ -1,0 +1,84 @@
+<div id="db-wrapper">
+
+  <app-d-sidebar mController="autors"></app-d-sidebar>
+
+  <div id="page-content">
+    <div class="header">
+
+      <app-d-navbar></app-d-navbar>
+
+    </div>
+    <div class="container-fluid bg-gray-100 p-4 animate__animated animate__fadeIn animate__faster">
+
+      <!-- title -->
+      <div class="row ">
+        <div class="col-lg-12 col-md-12 col-12">
+          <!-- Page header -->
+          <div class="border-bottom pb-3 mb-3 d-lg-flex justify-content-between align-items-center">
+            <div class="mb-2 mb-lg-0">
+              <h1 class="mb-0 h2 fw-bold">Editar Autor</h1>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="row justify-content-center">
+
+        <!-- image upload -->
+        <!--  <div class="col-md-3">
+
+          <div class="card shadow">
+            <div class="card-header">
+              <h3 class="card-title">Imágen</h3>
+            </div>
+            <div class="card-body text-center">
+              <span class="avatar avatar-xxl ">
+                <img class="rounded-circle border border-4 border-light shadow" src="{{ mImageUrl }}" onerror="if (this.src != 'error.jpg') this.src='assets/images/image_not_found.jpg';" width="300" height="300" alt="">
+              </span>
+              <div class="container">
+                <div class="row">
+                  <div class="col-6 p-0">
+                    <button class="btn btn-sm btn-outline-secondary rounded-pill" type="button" (click)="deleteFile('autor_url_logo')">Eliminar</button>
+                  </div>
+                  <div class="col-6 p-0">
+                    <app-upload-file (mUpload)="uploadFile($event)" [mField]="'autor_url_logo'"></app-upload-file>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-12">
+                    <div *ngIf="uploadProgress > 0">
+                      <div class="progress mt-1">
+                        <div class="progress-bar" role="progressbar" [style.width]="uploadProgress + '%'" [attr.aria-valuenow]="uploadProgress" aria-valuemin="0" aria-valuemax="100"></div>
+                      </div>
+                      <div class="text-center text-primary small m-0 p-0">{{ uploadProgress }}%</div>
+                      <div class="text-center mt-1">
+                        <div class="spinner-border text-primary" role="status"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div> -->
+
+
+
+        <div class="col-md-6">
+          <div class="card shadow">
+            <div class="card-body">
+
+              <!-- form -->
+              <app-d-form-autor (mAutorResponse)="save($event)" [mAutor]="mAutor"></app-d-form-autor>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+</div>

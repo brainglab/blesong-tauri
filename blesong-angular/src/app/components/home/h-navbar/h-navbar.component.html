@@ -1,0 +1,83 @@
+<!-- navbar login -->
+<nav class="navbar-default navbar navbar-expand-lg" style="min-height: 60px;">
+  <div class="container-fluid pe-5">
+    <!-- Logo para pantallas pequeñas -->
+    <div class="d-lg-none">
+      <img src="assets/images/logo.png" alt="Logo" height="30">
+    </div>
+
+    <!-- button para activar offcanvas -->
+    <button class="btn btn-icon btn-primary ms-auto d-lg-none" type="button"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#mSideMenu"
+            aria-controls="mSideMenu">
+      <i class="fe fe-menu"></i>
+    </button>
+
+    <!-- Enlaces para pantallas grandes -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <div class="mx-auto d-none d-lg-flex">
+        <a class="nav-link px-3 m-1" routerLink="/presenter/obs-letters">
+          <i class="fa-solid fa-list me-2"></i>OBS Letras
+        </a>
+        <a class="nav-link px-3 m-1" routerLink="/presenter/slide">
+          <i class="fa-solid fa-display me-2"></i>Presentación
+        </a>
+        <a class="nav-link px-3 m-1" routerLink="/presenter/qr-dashboard">
+          <i class="fa-solid fa-qrcode me-2"></i>QR
+        </a>
+        <a class="nav-link px-3 m-1" routerLink="/presenter/letter">
+          <i class="fa-solid fa-file-lines me-2"></i>Letra coro
+        </a>
+      </div>
+    </div>
+
+    <!-- Offcanvas menu para pantallas pequeñas -->
+    <div class="offcanvas offcanvas-end d-lg-none" tabindex="-1" id="mSideMenu" aria-labelledby="mSideMenuLabel">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="mSideMenuLabel">Menú</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <div class="d-flex flex-column">
+          <div class="card mb-2">
+            <a class="card-body d-flex justify-content-between align-items-center text-decoration-none text-dark" routerLink="/presenter/obs-letters">
+              <div class="d-flex align-items-center">
+                <i class="fa-solid fa-list fa-lg text-secondary me-3"></i>
+                <span>OBS Letras</span>
+              </div>
+              <i class="fa-solid fa-chevron-right text-secondary"></i>
+            </a>
+          </div>
+          <div class="card mb-2">
+            <a class="card-body d-flex justify-content-between align-items-center text-decoration-none text-dark" routerLink="/presenter/slide">
+              <div class="d-flex align-items-center">
+                <i class="fa-solid fa-display fa-lg text-secondary me-3"></i>
+                <span>Presentación</span>
+              </div>
+              <i class="fa-solid fa-chevron-right text-secondary"></i>
+            </a>
+          </div>
+          <div class="card mb-2">
+            <a class="card-body d-flex justify-content-between align-items-center text-decoration-none text-dark" routerLink="/presenter/qr-dashboard">
+              <div class="d-flex align-items-center">
+                <i class="fa-solid fa-qrcode fa-lg text-secondary me-3"></i>
+                <span>QR</span>
+              </div>
+              <i class="fa-solid fa-chevron-right text-secondary"></i>
+            </a>
+          </div>
+          <div class="card mb-2">
+            <a class="card-body d-flex justify-content-between align-items-center text-decoration-none text-dark" routerLink="/presenter/letter">
+              <div class="d-flex align-items-center">
+                <i class="fa-solid fa-file-lines fa-lg text-secondary me-3"></i>
+                <span>Letra coro</span>
+              </div>
+              <i class="fa-solid fa-chevron-right text-secondary"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>

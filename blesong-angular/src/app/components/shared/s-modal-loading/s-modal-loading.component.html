@@ -1,0 +1,18 @@
+<div class="modal fade modal-custom" [ngClass]="mShow ? 'show animate__animated animate__fadeIn animate__faster' : 'animate__animated animate__fadeOut animate__faster'" tabindex="-1" id="kt_modal_1" style="display: block;" aria-modal="true" role="dialog">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body d-flex justify-content-center align-items-center">
+
+        <div class="d-flex flex-column align-items-center">
+          <span class="loader"></span>
+          <p class="fs-4 pt-4">Cargando...</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- background modal -->
+<div class="modal-background-loading {{mShow ? 'd-block animate__animated animate__fadeIn animate__faster' : 'animate__animated animate__fadeOut animate__faster'}}">
+</div>

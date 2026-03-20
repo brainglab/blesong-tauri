@@ -1,0 +1,85 @@
+<!-- Contenedor principal para el menú -->
+<nav class="navbar fixed-top bg-body-tertiary bg-light">
+  <div class="container-fluid d-flex justify-content-between">
+    <!-- Logo alineado a la izquierda -->
+    <div class="d-flex align-items-center p-3">
+      <a routerLink="/presenter/qr-menu">
+        <img src="assets/images/logo.png" alt="Logo principal" height="30">
+      </a>
+    </div>
+    <!-- Link al dashboard alineado a la derecha -->
+    <div class="d-flex align-items-center p-3">
+      <button routerLink="/" class="btn btn-light d-flex align-items-center">
+        <i class="fa-solid fa-gauge-high fa-lg text-secondary"></i>
+        <span class="ms-2">Inicio</span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Contenido -->
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-12">
+      <!-- Logo principal de la aplicación -->
+      <div class="text-center mb-4">
+        <img src="assets/images/logo.png" alt="Logo de la aplicación" class="img-fluid animate__animated animate__fadeIn" style="max-width: 200px;">
+      </div>
+    </div>
+    <div class="col-12">
+      <h1 class="mb-0 h2 fw-bold mb-3">Menú</h1>
+    </div>
+    <!-- Lista de tarjetas de navegación -->
+    <div class="col-12">
+      <!-- Tarjeta para OBS Menu -->
+      <div class="card card-custom mb-3 animate__animated animate__fadeIn" routerLink="/presenter/obs-letters" role="button">
+        <div class="card-body d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center">
+            <i class="fa-solid fa-list fa-lg text-secondary me-3"></i>
+            <h5 class="mb-0">OBS Letras</h5>
+          </div>
+          <i class="fa-solid fa-chevron-right text-dark"></i>
+        </div>
+      </div>
+
+      <!-- Tarjeta para Presentación -->
+      <div class="card card-custom mb-3 animate__animated animate__fadeIn" routerLink="/presenter/slide" role="button">
+        <div class="card-body d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center">
+            <i class="fa-solid fa-display fa-lg text-secondary me-3"></i>
+            <h5 class="mb-0">Presentación</h5>
+          </div>
+          <i class="fa-solid fa-chevron-right text-dark"></i>
+        </div>
+      </div>
+
+      <!-- Tarjeta para Letra coro -->
+      <div class="card card-custom mb-3 animate__animated animate__fadeIn" routerLink="/presenter/letter" role="button">
+        <div class="card-body d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center">
+            <i class="fa-solid fa-file-lines fa-lg text-secondary me-3"></i>
+            <h5 class="mb-0">Letra coro</h5>
+          </div>
+          <i class="fa-solid fa-chevron-right text-dark"></i>
+        </div>
+      </div>
+
+      <!-- Tarjeta para QR -->
+      <div class="card card-custom mb-3 animate__animated animate__fadeIn" routerLink="/presenter/qr-menu-page" role="button">
+        <div class="card-body d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center">
+            <i class="fa-solid fa-qrcode fa-lg text-secondary me-3"></i>
+            <h5 class="mb-0">QR</h5>
+          </div>
+          <i class="fa-solid fa-chevron-right text-dark"></i>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<div class="text-center m-4">
+  <p class="text-muted mb-0">© <span class="text-dark fw-bold">Blesong</span> - Todos los derechos reservados a <a href="https://brainglab.com" target="_blank" class="text-secondary">Brainglab</a>, consultora en servicios informáticos.</p>
+</div>
