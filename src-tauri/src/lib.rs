@@ -24,34 +24,36 @@ fn get_db_path() -> PathBuf {
     // next to it, which triggers Tauri's file watcher and causes an infinite
     // rebuild loop in dev mode.
     //
-    // Strategy: copy the seed to a working directory outside src-tauri/ and
-    // use that copy for all operations.
+    // Strategy: copy the seed to a working directory and use that copy for
+    // all operations.
 
     let cwd = std::env::current_dir().unwrap_or_default();
+    let exe_dir = std::env::current_exe()
+        .ok()
+        .and_then(|p| p.parent().map(|d| d.to_path_buf()))
+        .unwrap_or_default();
 
-    // ── Working copy location (outside src-tauri/) ──
-    let work_dir = cwd.join("../data");
+    // ── Working copy location ──
+    // In production use ~/.local/share/blesong/; in dev use ../data/
+    let work_dir = dirs::data_dir()
+        .map(|d| d.join("blesong"))
+        .unwrap_or_else(|| cwd.join("../data"));
     let work_db = work_dir.join("data.sqlite");
-
-    // ── Seed locations (checked in order) ──
-    let seed_candidates: Vec<PathBuf> = vec![
-        cwd.join("resources/data.sqlite"),                              // dev
-        std::env::current_exe()
-            .ok()
-            .and_then(|p| p.parent().map(|d| d.join("../Resources/resources/data.sqlite")))
-            .unwrap_or_default(),                                       // macOS prod
-        std::env::current_exe()
-            .ok()
-            .and_then(|p| p.parent().map(|d| d.join("resources/data.sqlite")))
-            .unwrap_or_default(),                                       // linux prod
-    ];
 
     // If working copy already exists, just use it
     if work_db.exists() {
         return work_db;
     }
 
-    // Otherwise, copy the seed
+    // ── Seed locations (checked in order) ──
+    let seed_candidates: Vec<PathBuf> = vec![
+        cwd.join("resources/data.sqlite"),                              // dev (cwd = src-tauri)
+        exe_dir.join("../lib/blesong/resources/data.sqlite"),           // linux .deb prod
+        exe_dir.join("../Resources/resources/data.sqlite"),             // macOS prod bundle
+        exe_dir.join("resources/data.sqlite"),                          // fallback next to binary
+    ];
+
+    // Copy the seed to the working directory
     for seed in &seed_candidates {
         if seed.exists() {
             std::fs::create_dir_all(&work_dir).ok();
@@ -62,9 +64,6 @@ fn get_db_path() -> PathBuf {
         }
     }
 
-    // Never fall back to using the seed in resources/ – that creates WAL files
-    // which trigger Tauri's file watcher and cause an infinite rebuild loop.
-    // Instead, panic early so the developer knows the seed is missing.
     panic!(
         "Could not find or copy seed database. Checked candidates: {:?}",
         seed_candidates
