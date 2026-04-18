@@ -6,7 +6,8 @@ mod routes_server;
 mod routes_song;
 
 use axum::{
-    routing::post,
+    response::IntoResponse,
+    routing::{get, post},
     Router,
 };
 use db::Database;
@@ -16,7 +17,7 @@ use std::net::SocketAddr;
 use std::path::PathBuf;
 use std::sync::Arc;
 use tower_http::cors::{Any, CorsLayer};
-use tower_http::services::{ServeDir, ServeFile};
+use tower_http::services::ServeDir;
 
 fn get_db_path() -> PathBuf {
     // Portable mode: the app runs from a directory that contains everything.
@@ -163,10 +164,16 @@ fn start_http_server(db: Arc<Database>, server_config: Arc<ServerConfig>) {
 
             // Serve the Angular SPA for external devices (QR code access)
             if let Some(dist) = get_frontend_dist_path() {
-                let index = dist.join("index.html");
-                let serve_dir = ServeDir::new(&dist)
-                    .not_found_service(ServeFile::new(&index));
-                app = app.fallback_service(serve_dir);
+                let index_path = dist.join("index.html");
+                let serve_dir = ServeDir::new(&dist);
+                // For SPA: serve static files first, fall back to index.html with 200
+                let spa_fallback = get(move || async move {
+                    match tokio::fs::read(&index_path).await {
+                        Ok(body) => axum::response::Html(body).into_response(),
+                        Err(_) => axum::http::StatusCode::NOT_FOUND.into_response(),
+                    }
+                });
+                app = app.fallback_service(serve_dir.not_found_service(spa_fallback));
             }
 
             let app = app.layer(cors);
