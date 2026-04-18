@@ -5,8 +5,8 @@
   "identifier": "com.blesong.app",
   "build": {
     "frontendDist": "../blesong-angular/dist/blesong/browser",
-    "beforeBuildCommand": "cd blesong-angular && npm run prod",
-    "beforeDevCommand": "cd blesong-angular && npx ng serve --port 4200",
+    "beforeBuildCommand": "cd ../blesong-angular && npm run prod",
+    "beforeDevCommand": "cd ../blesong-angular && npx ng serve --port 4200",
     "devUrl": "http://localhost:4200"
   },
   "app": {

@@ -2,6 +2,7 @@ name: Build Ubuntu
 
 on:
   push:
+    branches: [main]
     tags: ['v*']
   workflow_dispatch:
 
@@ -19,18 +20,26 @@ jobs:
       - name: Install Ubuntu dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            build-essential \
+            curl \
+            wget \
+            file \
+            libxdo-dev \
+            libssl-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: npm
+          cache-dependency-path: blesong-angular/package-lock.json
 
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
-
-      - name: Install Tauri CLI
-        run: cargo install tauri-cli
 
       - name: Cache Rust dependencies
         uses: actions/cache@v4
@@ -38,29 +47,66 @@ jobs:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
+            ~/.cargo/bin
             src-tauri/target
           key: linux-cargo-${{ hashFiles('src-tauri/Cargo.lock') }}
 
+      - name: Install Tauri CLI
+        run: |
+          if ! command -v cargo-tauri >/dev/null 2>&1; then
+            cargo install tauri-cli --version "^2.0" --locked
+          fi
+
       - name: Install Angular dependencies
-        run: cd blesong-angular && npm ci
+        run: npm ci
+        working-directory: blesong-angular
+
+      - name: Build Angular (production)
+        run: npm run prod
+        working-directory: blesong-angular
 
       - name: Build Tauri for Ubuntu
         run: cargo tauri build
         working-directory: src-tauri
 
+      - name: Verify binary was produced
+        run: |
+          set -euo pipefail
+          BIN=src-tauri/target/release/blesong
+          if [ ! -f "$BIN" ]; then
+            echo "ERROR: Tauri binary not found at $BIN"
+            echo "Listing target/release:"
+            ls -la src-tauri/target/release || true
+            exit 1
+          fi
+          file "$BIN"
+          ls -la "$BIN"
+
       - name: Create portable package
         run: |
+          set -euo pipefail
           mkdir -p blesong-portable
           cp src-tauri/target/release/blesong blesong-portable/
+          chmod +x blesong-portable/blesong
           cp -r src-tauri/resources blesong-portable/
-          if [ -d "blesong-angular/dist/blesong/browser" ]; then
-            mkdir -p blesong-portable/www
-            cp -r blesong-angular/dist/blesong/browser/* blesong-portable/www/
-          fi
+          mkdir -p blesong-portable/www
+          cp -r blesong-angular/dist/blesong/browser/* blesong-portable/www/
           tar -czf blesong-portable-linux-amd64.tar.gz blesong-portable/
+          ls -lh blesong-portable-linux-amd64.tar.gz
 
       - name: Upload portable package
         uses: actions/upload-artifact@v4
         with:
           name: blesong-portable-linux
           path: blesong-portable-linux-amd64.tar.gz
+          if-no-files-found: error
+
+      - name: Upload Linux bundles (deb / AppImage / rpm)
+        uses: actions/upload-artifact@v4
+        with:
+          name: blesong-linux-bundles
+          path: |
+            src-tauri/target/release/bundle/deb/*.deb
+            src-tauri/target/release/bundle/appimage/*.AppImage
+            src-tauri/target/release/bundle/rpm/*.rpm
+          if-no-files-found: warn
