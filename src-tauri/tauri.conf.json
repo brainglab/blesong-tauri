@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/nicegui/tauri/v2/tooling/cli/schema.json",
   "productName": "Blesong",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "identifier": "com.blesong.app",
   "build": {
     "frontendDist": "../blesong-angular/dist/blesong/browser",

@@ -13,6 +13,9 @@ jobs:
   build-linux:
     runs-on: ubuntu-22.04
 
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -82,26 +85,51 @@ jobs:
           file "$BIN"
           ls -la "$BIN"
 
+      - name: Resolve release version
+        id: version
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
+            VERSION="${GITHUB_REF#refs/tags/v}"
+          else
+            VERSION=$(sed -n 's/.*"version": *"\([^"]*\)".*/\1/p' src-tauri/tauri.conf.json | head -1)
+            VERSION="${VERSION}+$(git rev-parse --short HEAD)"
+          fi
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Resolved version: ${VERSION}"
+
       - name: Create portable package
         run: |
           set -euo pipefail
-          mkdir -p blesong-portable
-          cp src-tauri/target/release/blesong blesong-portable/
-          chmod +x blesong-portable/blesong
-          cp -r src-tauri/resources blesong-portable/
-          mkdir -p blesong-portable/www
-          cp -r blesong-angular/dist/blesong/browser/* blesong-portable/www/
-          tar -czf blesong-portable-linux-amd64.tar.gz blesong-portable/
-          ls -lh blesong-portable-linux-amd64.tar.gz
+          VERSION="${{ steps.version.outputs.version }}"
+          PKG="blesong-${VERSION}-linux-amd64"
+          mkdir -p "$PKG"
+          cp src-tauri/target/release/blesong "$PKG/"
+          chmod +x "$PKG/blesong"
+          cp -r src-tauri/resources "$PKG/"
+          mkdir -p "$PKG/www"
+          cp -r blesong-angular/dist/blesong/browser/* "$PKG/www/"
+          tar -czf "${PKG}.tar.gz" "$PKG/"
+          echo "PORTABLE_TARBALL=${PKG}.tar.gz" >> "$GITHUB_ENV"
+          ls -lh "${PKG}.tar.gz"
 
-      - name: Upload portable package
+      - name: Collect release assets
+        run: |
+          set -euo pipefail
+          mkdir -p release-assets
+          cp "$PORTABLE_TARBALL" release-assets/
+          find src-tauri/target/release/bundle/deb -name '*.deb' -exec cp {} release-assets/ \; 2>/dev/null || true
+          find src-tauri/target/release/bundle/appimage -name '*.AppImage' -exec cp {} release-assets/ \; 2>/dev/null || true
+          find src-tauri/target/release/bundle/rpm -name '*.rpm' -exec cp {} release-assets/ \; 2>/dev/null || true
+          ls -lh release-assets/
+
+      - name: Upload portable package (artifact)
         uses: actions/upload-artifact@v4
         with:
           name: blesong-portable-linux
-          path: blesong-portable-linux-amd64.tar.gz
+          path: ${{ env.PORTABLE_TARBALL }}
           if-no-files-found: error
 
-      - name: Upload Linux bundles (deb / AppImage / rpm)
+      - name: Upload Linux bundles (artifact)
         uses: actions/upload-artifact@v4
         with:
           name: blesong-linux-bundles
@@ -110,3 +138,13 @@ jobs:
             src-tauri/target/release/bundle/appimage/*.AppImage
             src-tauri/target/release/bundle/rpm/*.rpm
           if-no-files-found: warn
+
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Blesong ${{ steps.version.outputs.version }}
+          generate_release_notes: true
+          files: release-assets/*
+          fail_on_unmatched_files: true
