@@ -11,15 +11,18 @@ const distDir = resolve(angularDir, 'dist/blesong/browser');
 const destParent = resolve(repoRoot, 'src-tauri/www');
 const destDir = resolve(destParent, 'browser');
 
-const npmCmd = process.platform === 'win32' ? 'npm.cmd' : 'npm';
-
 console.log('[prebuild-tauri] Building Angular (production) in', angularDir);
-const result = spawnSync(npmCmd, ['run', 'prod'], {
+const result = spawnSync('npm', ['run', 'prod'], {
   cwd: angularDir,
   stdio: 'inherit',
+  shell: true,
 });
+if (result.error) {
+  console.error('[prebuild-tauri] Failed to spawn npm:', result.error);
+  process.exit(1);
+}
 if (result.status !== 0) {
-  console.error('[prebuild-tauri] Angular build failed.');
+  console.error(`[prebuild-tauri] Angular build exited with status ${result.status}.`);
   process.exit(result.status ?? 1);
 }
 
