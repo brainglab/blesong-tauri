@@ -1,0 +1,134 @@
+name: Build Windows
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    permissions:
+      contents: write
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: blesong-angular/package-lock.json
+
+      - name: Install Rust stable (x86_64-pc-windows-msvc)
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+
+      - name: Cache Rust dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ~/.cargo/bin
+            src-tauri/target
+          key: windows-cargo-${{ hashFiles('src-tauri/Cargo.lock') }}
+
+      - name: Install Tauri CLI
+        run: |
+          if ! command -v cargo-tauri >/dev/null 2>&1; then
+            cargo install tauri-cli --version "^2.0" --locked
+          fi
+
+      - name: Install Angular dependencies
+        run: npm ci
+        working-directory: blesong-angular
+
+      - name: Build Tauri for Windows x64
+        run: cargo tauri build --target x86_64-pc-windows-msvc
+        working-directory: src-tauri
+
+      - name: Verify binary was produced
+        run: |
+          set -euo pipefail
+          BIN="src-tauri/target/x86_64-pc-windows-msvc/release/blesong.exe"
+          if [ ! -f "$BIN" ]; then
+            echo "ERROR: Tauri binary not found at $BIN"
+            echo "Listing target/release:"
+            ls -la src-tauri/target/x86_64-pc-windows-msvc/release || true
+            exit 1
+          fi
+          ls -la "$BIN"
+
+      - name: Resolve release version
+        id: version
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
+            VERSION="${GITHUB_REF#refs/tags/v}"
+          else
+            VERSION=$(sed -n 's/.*"version": *"\([^"]*\)".*/\1/p' src-tauri/tauri.conf.json | head -1)
+            VERSION="${VERSION}+$(git rev-parse --short HEAD)"
+          fi
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Resolved version: ${VERSION}"
+
+      - name: Create portable package
+        run: |
+          set -euo pipefail
+          VERSION="${{ steps.version.outputs.version }}"
+          PKG="blesong-${VERSION}-windows-x64"
+          mkdir -p "$PKG"
+          cp src-tauri/target/x86_64-pc-windows-msvc/release/blesong.exe "$PKG/"
+          cp -r src-tauri/resources "$PKG/"
+          mkdir -p "$PKG/www"
+          cp -r blesong-angular/dist/blesong/browser/* "$PKG/www/"
+          7z a -tzip "${PKG}.zip" "$PKG/" >/dev/null
+          echo "PORTABLE_ZIP=${PKG}.zip" >> "$GITHUB_ENV"
+          ls -lh "${PKG}.zip"
+
+      - name: Collect release assets
+        run: |
+          set -euo pipefail
+          mkdir -p release-assets
+          cp "$PORTABLE_ZIP" release-assets/
+          find src-tauri/target/x86_64-pc-windows-msvc/release/bundle/msi -name '*.msi' -exec cp {} release-assets/ \; 2>/dev/null || true
+          find src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis -name '*.exe' -exec cp {} release-assets/ \; 2>/dev/null || true
+          ls -lh release-assets/
+
+      - name: Upload portable package (artifact)
+        uses: actions/upload-artifact@v4
+        with:
+          name: blesong-portable-windows-x64
+          path: ${{ env.PORTABLE_ZIP }}
+          if-no-files-found: error
+
+      - name: Upload Windows installers (artifact)
+        uses: actions/upload-artifact@v4
+        with:
+          name: blesong-windows-installers
+          path: |
+            src-tauri/target/x86_64-pc-windows-msvc/release/bundle/msi/*.msi
+            src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/*.exe
+          if-no-files-found: warn
+
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Blesong ${{ steps.version.outputs.version }}
+          generate_release_notes: true
+          files: release-assets/*
+          fail_on_unmatched_files: true
