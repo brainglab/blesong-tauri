@@ -17,20 +17,67 @@ use std::net::SocketAddr;
 use std::path::PathBuf;
 use std::sync::Arc;
 use tower_http::cors::{Any, CorsLayer};
-use tower_http::services::ServeDir;
+
+fn mime_for_path(path: &std::path::Path) -> &'static str {
+    match path.extension().and_then(|e| e.to_str()).unwrap_or("").to_ascii_lowercase().as_str() {
+        "html" | "htm" => "text/html; charset=utf-8",
+        "js" | "mjs" => "text/javascript; charset=utf-8",
+        "css" => "text/css; charset=utf-8",
+        "json" => "application/json; charset=utf-8",
+        "svg" => "image/svg+xml",
+        "png" => "image/png",
+        "jpg" | "jpeg" => "image/jpeg",
+        "gif" => "image/gif",
+        "webp" => "image/webp",
+        "ico" => "image/x-icon",
+        "woff" => "font/woff",
+        "woff2" => "font/woff2",
+        "ttf" => "font/ttf",
+        "otf" => "font/otf",
+        "eot" => "application/vnd.ms-fontobject",
+        "wasm" => "application/wasm",
+        "map" => "application/json; charset=utf-8",
+        "txt" => "text/plain; charset=utf-8",
+        "xml" => "application/xml; charset=utf-8",
+        "pdf" => "application/pdf",
+        "mp3" => "audio/mpeg",
+        "mp4" => "video/mp4",
+        _ => "application/octet-stream",
+    }
+}
+
+/// Per-user, writable data directory for Blesong.
+///   Windows : %APPDATA%\Blesong
+///   macOS   : $HOME/Library/Application Support/Blesong
+///   Linux   : $XDG_DATA_HOME/Blesong  (default ~/.local/share/Blesong)
+fn user_app_data_dir() -> Option<PathBuf> {
+    #[cfg(target_os = "windows")]
+    {
+        std::env::var_os("APPDATA").map(|p| PathBuf::from(p).join("Blesong"))
+    }
+    #[cfg(target_os = "macos")]
+    {
+        std::env::var_os("HOME")
+            .map(|p| PathBuf::from(p).join("Library/Application Support/Blesong"))
+    }
+    #[cfg(all(unix, not(target_os = "macos")))]
+    {
+        std::env::var_os("XDG_DATA_HOME")
+            .map(PathBuf::from)
+            .or_else(|| std::env::var_os("HOME").map(|p| PathBuf::from(p).join(".local/share")))
+            .map(|p| p.join("Blesong"))
+    }
+}
 
 fn get_db_path() -> PathBuf {
-    // Portable mode: the app runs from a directory that contains everything.
-    // The database lives next to the executable in a data/ folder.
+    // The working copy of the database has to live somewhere writable.
     //
-    // Layout (production):
-    //   /opt/blesong/blesong           (binary)
-    //   /opt/blesong/resources/data.sqlite  (seed, read-only)
-    //   /opt/blesong/data/data.sqlite       (working copy, created at first run)
+    //   On Windows the binary is usually installed under C:\Program Files\,
+    //   which is read-only for non-admin users — so we prefer %APPDATA%
+    //   there. On Unix we keep the portable layout (data/ next to the
+    //   binary) as the primary location.
     //
-    // In dev mode the CWD is src-tauri/, so:
-    //   src-tauri/resources/data.sqlite     (seed)
-    //   data/data.sqlite                    (working copy, outside src-tauri/)
+    // Dev mode (cwd = src-tauri/) still falls back to ../data/.
 
     let cwd = std::env::current_dir().unwrap_or_default();
     let exe_dir = std::env::current_exe()
@@ -38,53 +85,58 @@ fn get_db_path() -> PathBuf {
         .and_then(|p| p.parent().map(|d| d.to_path_buf()))
         .unwrap_or_else(|| cwd.clone());
 
-    // ── Working copy: next to binary in data/ ──
-    let work_dir = exe_dir.join("data");
-    let work_db = work_dir.join("data.sqlite");
-
-    // Dev fallback: ../data/ relative to src-tauri/
-    let dev_work_dir = cwd.join("../data");
-    let dev_work_db = dev_work_dir.join("data.sqlite");
-
-    // If working copy already exists, use it
-    if work_db.exists() {
-        return work_db;
+    let mut work_candidates: Vec<PathBuf> = Vec::new();
+    #[cfg(target_os = "windows")]
+    {
+        if let Some(d) = user_app_data_dir() {
+            work_candidates.push(d.join("data.sqlite"));
+        }
+        work_candidates.push(exe_dir.join("data/data.sqlite"));
     }
-    if dev_work_db.exists() {
-        return dev_work_db;
+    #[cfg(not(target_os = "windows"))]
+    {
+        work_candidates.push(exe_dir.join("data/data.sqlite"));
+        if let Some(d) = user_app_data_dir() {
+            work_candidates.push(d.join("data.sqlite"));
+        }
+    }
+    work_candidates.push(cwd.join("../data/data.sqlite"));
+
+    for c in &work_candidates {
+        if c.exists() {
+            return c.clone();
+        }
     }
 
-    // ── Seed locations (checked in order) ──
+    // No existing working copy — find the seed and copy it to the first
+    // writable candidate.
     let seed_candidates: Vec<PathBuf> = vec![
-        exe_dir.join("resources/data.sqlite"),                          // portable: next to binary
-        cwd.join("resources/data.sqlite"),                              // dev (cwd = src-tauri)
-        exe_dir.join("../Resources/resources/data.sqlite"),             // macOS bundle
+        exe_dir.join("resources/data.sqlite"),               // portable: next to binary
+        cwd.join("resources/data.sqlite"),                   // dev (cwd = src-tauri)
+        exe_dir.join("../Resources/resources/data.sqlite"),  // macOS bundle
     ];
 
-    // Try to copy seed to work_dir (next to binary)
-    for seed in &seed_candidates {
-        if seed.exists() {
-            // Try next to binary first
-            if std::fs::create_dir_all(&work_dir).is_ok() {
-                if std::fs::copy(seed, &work_db).is_ok() {
-                    println!("Copied seed database to {:?}", work_db);
-                    return work_db;
-                }
-            }
-            // Fallback for dev mode (../data/)
-            if std::fs::create_dir_all(&dev_work_dir).is_ok() {
-                if std::fs::copy(seed, &dev_work_db).is_ok() {
-                    println!("Copied seed database to {:?}", dev_work_db);
-                    return dev_work_db;
-                }
+    let seed = match seed_candidates.iter().find(|p| p.exists()) {
+        Some(p) => p.clone(),
+        None => panic!(
+            "Could not find seed database. Checked: {:?}",
+            seed_candidates
+        ),
+    };
+
+    for target in &work_candidates {
+        if let Some(parent) = target.parent() {
+            if std::fs::create_dir_all(parent).is_ok() && std::fs::copy(&seed, target).is_ok() {
+                println!("Copied seed database to {:?}", target);
+                return target.clone();
             }
         }
     }
 
     panic!(
-        "Could not find or copy seed database. Checked candidates: {:?}",
-        seed_candidates
-    )
+        "Could not write working database to any candidate: {:?}",
+        work_candidates
+    );
 }
 
 /// Resolve the directory containing the built Angular frontend.
@@ -162,18 +214,48 @@ fn start_http_server(db: Arc<Database>, server_config: Arc<ServerConfig>) {
                 .nest("/api/bible_bibles", bible_routes)
                 .nest("/api/server", server_routes);
 
-            // Serve the Angular SPA for external devices (QR code access)
+            // Serve the Angular SPA for external devices (QR code access).
+            // One unified fallback handler: serve the requested file if it exists,
+            // otherwise serve index.html with HTTP 200 so the Angular router can
+            // pick up deep links like /presenter/qr-menu.
             if let Some(dist) = get_frontend_dist_path() {
-                let index_path = dist.join("index.html");
-                let serve_dir = ServeDir::new(&dist);
-                // For SPA: serve static files first, fall back to index.html with 200
-                let spa_fallback = get(move || async move {
-                    match tokio::fs::read(&index_path).await {
-                        Ok(body) => axum::response::Html(body).into_response(),
-                        Err(_) => axum::http::StatusCode::NOT_FOUND.into_response(),
+                let dist = Arc::new(dist);
+                let spa_handler = get(move |uri: axum::http::Uri| {
+                    let dist = dist.clone();
+                    async move {
+                        let req_path = uri.path().trim_start_matches('/');
+                        // Block path traversal
+                        if req_path.split('/').any(|s| s == "..") {
+                            return axum::http::StatusCode::BAD_REQUEST.into_response();
+                        }
+                        let candidate = if req_path.is_empty() {
+                            dist.join("index.html")
+                        } else {
+                            dist.join(req_path)
+                        };
+                        if candidate.is_file() {
+                            if let Ok(body) = tokio::fs::read(&candidate).await {
+                                let ct = mime_for_path(&candidate);
+                                return (
+                                    axum::http::StatusCode::OK,
+                                    [(axum::http::header::CONTENT_TYPE, ct)],
+                                    body,
+                                )
+                                    .into_response();
+                            }
+                        }
+                        match tokio::fs::read(dist.join("index.html")).await {
+                            Ok(body) => (
+                                axum::http::StatusCode::OK,
+                                [(axum::http::header::CONTENT_TYPE, "text/html; charset=utf-8")],
+                                body,
+                            )
+                                .into_response(),
+                            Err(_) => axum::http::StatusCode::NOT_FOUND.into_response(),
+                        }
                     }
                 });
-                app = app.fallback_service(serve_dir.not_found_service(spa_fallback));
+                app = app.fallback(spa_handler);
             }
 
             let app = app.layer(cors);
