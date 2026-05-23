@@ -6,8 +6,13 @@ on:
     tags: ['v*']
   workflow_dispatch:
 
+concurrency:
+  group: build-ubuntu-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  SCCACHE_GHA_ENABLED: "true"
 
 jobs:
   build-linux:
@@ -44,32 +49,27 @@ jobs:
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Cache Rust dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            ~/.cargo/bin
-            src-tauri/target
-          key: linux-cargo-${{ hashFiles('src-tauri/Cargo.lock') }}
+      - name: Setup sccache
+        uses: mozilla-actions/sccache-action@v0.0.5
 
-      - name: Install Tauri CLI
-        run: |
-          if ! command -v cargo-tauri >/dev/null 2>&1; then
-            cargo install tauri-cli --version "^2.0" --locked
-          fi
+      - name: Enable sccache as RUSTC wrapper
+        run: echo "RUSTC_WRAPPER=sccache" >> "$GITHUB_ENV"
+
+      - name: Cache Cargo registry and target
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: "src-tauri -> target"
+          shared-key: "linux-tauri"
+
+      - name: Install Tauri CLI (prebuilt via npm)
+        run: npm install -g @tauri-apps/cli@^2
 
       - name: Install Angular dependencies
         run: npm ci
         working-directory: blesong-angular
 
-      - name: Build Angular (production)
-        run: npm run prod
-        working-directory: blesong-angular
-
       - name: Build Tauri for Ubuntu
-        run: cargo tauri build
+        run: tauri build
         working-directory: src-tauri
 
       - name: Verify binary was produced
