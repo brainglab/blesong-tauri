@@ -12,7 +12,6 @@ concurrency:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-  SCCACHE_GHA_ENABLED: "true"
 
 jobs:
   build-windows:
@@ -40,12 +39,6 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: x86_64-pc-windows-msvc
-
-      - name: Setup sccache
-        uses: mozilla-actions/sccache-action@v0.0.5
-
-      - name: Enable sccache as RUSTC wrapper
-        run: echo "RUSTC_WRAPPER=sccache" >> "$GITHUB_ENV"
 
       - name: Cache Cargo registry and target
         uses: Swatinem/rust-cache@v2
