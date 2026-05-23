@@ -2,9 +2,10 @@ import { Component, Input, OnInit, ElementRef, Renderer2, Output, EventEmitter }
 import { Subject } from 'rxjs';
 
 @Component({
-  selector: 'app-s-modal-yes-no',
-  templateUrl: './s-modal-yes-no.component.html',
-  styleUrls: ['./s-modal-yes-no.component.css']
+    selector: 'app-s-modal-yes-no',
+    templateUrl: './s-modal-yes-no.component.html',
+    styleUrls: ['./s-modal-yes-no.component.css'],
+    standalone: false
 })
 export class SModalYesNoComponent implements OnInit {
 

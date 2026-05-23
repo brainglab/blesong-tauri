@@ -1,7 +1,10 @@
 import { Pipe, PipeTransform } from "@angular/core";
 import { DomSanitizer } from "@angular/platform-browser";
 
-@Pipe({ name: "encapsulationHtml" })
+@Pipe({
+    name: "encapsulationHtml",
+    standalone: false
+})
 export class EncapsulationHtmlPipe implements PipeTransform {
   constructor(private sanitizer: DomSanitizer) { }
 

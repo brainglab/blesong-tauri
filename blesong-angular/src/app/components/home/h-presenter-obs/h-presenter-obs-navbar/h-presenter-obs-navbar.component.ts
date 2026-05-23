@@ -2,8 +2,9 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { TemplateModel } from 'src/app/models/template.model';
 
 @Component({
-  selector: 'app-h-presenter-obs-navbar',
-  templateUrl: './h-presenter-obs-navbar.component.html',
+    selector: 'app-h-presenter-obs-navbar',
+    templateUrl: './h-presenter-obs-navbar.component.html',
+    standalone: false
 })
 export class HPresenterObsNavbarComponent {
 

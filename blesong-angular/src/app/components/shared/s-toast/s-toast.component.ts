@@ -1,9 +1,10 @@
 import { Component, Input, OnInit, ElementRef } from '@angular/core';
 
 @Component({
-  selector: 'app-s-toast',
-  templateUrl: './s-toast.component.html',
-  styleUrls: ['./s-toast.component.css']
+    selector: 'app-s-toast',
+    templateUrl: './s-toast.component.html',
+    styleUrls: ['./s-toast.component.css'],
+    standalone: false
 })
 export class SToastComponent implements OnInit {
 

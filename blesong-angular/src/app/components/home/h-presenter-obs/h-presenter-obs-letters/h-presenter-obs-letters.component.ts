@@ -13,8 +13,9 @@ import { SModalOptionService } from '../../../shared/s-modal-option/s-modal-opti
 import { TemplateModel } from 'src/app/models/template.model';
 
 @Component({
-  selector: 'app-h-presenter-obs-letters',
-  templateUrl: './h-presenter-obs-letters.component.html'
+    selector: 'app-h-presenter-obs-letters',
+    templateUrl: './h-presenter-obs-letters.component.html',
+    standalone: false
 })
 export class HPresenterObsLettersComponent {
 

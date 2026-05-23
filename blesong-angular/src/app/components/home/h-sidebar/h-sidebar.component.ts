@@ -2,8 +2,9 @@ import { Component, OnInit, Input, Renderer2 } from '@angular/core';
 
 
 @Component({
-  selector: 'app-d-sidebar',
-  templateUrl: './h-sidebar.component.html',
+    selector: 'app-d-sidebar',
+    templateUrl: './h-sidebar.component.html',
+    standalone: false
 })
 export class HSidebarComponent {
   @Input() mController: String = '';

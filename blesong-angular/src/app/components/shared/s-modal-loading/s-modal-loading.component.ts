@@ -2,9 +2,10 @@ import { Component, Input, OnInit, ElementRef, Renderer2 } from '@angular/core';
 import { Subject } from 'rxjs';
 
 @Component({
-  selector: 'app-s-modal-loading',
-  templateUrl: './s-modal-loading.component.html',
-  styleUrls: ['./s-modal-loading.component.css']
+    selector: 'app-s-modal-loading',
+    templateUrl: './s-modal-loading.component.html',
+    styleUrls: ['./s-modal-loading.component.css'],
+    standalone: false
 })
 export class SModalLoadingComponent implements OnInit {
 

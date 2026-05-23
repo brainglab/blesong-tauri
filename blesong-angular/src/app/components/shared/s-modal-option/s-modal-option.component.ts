@@ -2,8 +2,9 @@ import { Component, ElementRef, Input, OnInit, Renderer2, ViewChild, AfterViewIn
 import { Subject } from 'rxjs';
 
 @Component({
-  selector: 'app-s-modal-option',
-  templateUrl: './s-modal-option.component.html'
+    selector: 'app-s-modal-option',
+    templateUrl: './s-modal-option.component.html',
+    standalone: false
 })
 export class SModalOptionComponent implements OnInit, AfterViewInit {
 

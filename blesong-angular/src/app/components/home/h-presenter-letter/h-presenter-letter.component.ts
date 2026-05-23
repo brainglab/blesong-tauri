@@ -6,8 +6,9 @@ import { MqttService } from 'src/app/services/mqtt.service';
 import gsap from 'gsap';
 
 @Component({
-  selector: 'app-h-presenter-letter',
-  templateUrl: './h-presenter-letter.component.html'
+    selector: 'app-h-presenter-letter',
+    templateUrl: './h-presenter-letter.component.html',
+    standalone: false
 })
 export class HPresenterLetterComponent implements OnInit, AfterViewInit, OnDestroy {
 

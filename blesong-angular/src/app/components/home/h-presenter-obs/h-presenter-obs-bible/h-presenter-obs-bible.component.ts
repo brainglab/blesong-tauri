@@ -18,8 +18,9 @@ import { BibleBooksReferenceModel } from 'src/app/models/bible_books_reference.m
 import { BibleVerseModel } from 'src/app/models/bible_verse.model';
 
 @Component({
-  selector: 'app-h-presenter-obs-bible',
-  templateUrl: './h-presenter-obs-bible.component.html',
+    selector: 'app-h-presenter-obs-bible',
+    templateUrl: './h-presenter-obs-bible.component.html',
+    standalone: false
 })
 export class HPresenterObsBibleComponent implements OnInit {
 

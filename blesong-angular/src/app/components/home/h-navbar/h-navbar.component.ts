@@ -2,8 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-d-navbar',
-  templateUrl: './h-navbar.component.html',
+    selector: 'app-d-navbar',
+    templateUrl: './h-navbar.component.html',
+    standalone: false
 })
 export class HNavbarComponent implements OnInit {
 

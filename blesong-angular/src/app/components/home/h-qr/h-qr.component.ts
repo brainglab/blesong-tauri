@@ -4,8 +4,9 @@ import { SToastService } from '../../shared/s-toast/s-toast.service';
 import { SModalLoadingService } from '../../shared/s-modal-loading/s-modal-loading.service';
 
 @Component({
-  selector: 'app-h-qr',
-  templateUrl: './h-qr.component.html',
+    selector: 'app-h-qr',
+    templateUrl: './h-qr.component.html',
+    standalone: false
 })
 export class HQrComponent implements OnInit {
 

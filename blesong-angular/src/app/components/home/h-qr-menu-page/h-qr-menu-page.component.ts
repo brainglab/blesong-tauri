@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-h-qr-menu-page',
-  templateUrl: './h-qr-menu-page.component.html',
+    selector: 'app-h-qr-menu-page',
+    templateUrl: './h-qr-menu-page.component.html',
+    standalone: false
 })
 export class HQrMenuPageComponent {
 
