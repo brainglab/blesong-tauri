@@ -66,13 +66,22 @@ pub async fn all(
     let page = if body.page <= 0 { 0 } else { body.page };
     let offset = per_page * page;
 
-    let order_field = body.order.order_field.as_deref().unwrap_or("song_name");
-    let order_dir = body.order.order_direction.as_deref().unwrap_or("ASC");
-
-    // Prefix order field with table alias if it's a song field
-    let order_clause = match order_field {
-        "autor_name" => format!("a.autor_name {}", order_dir),
-        f => format!("s.{} {}", f, order_dir),
+    // Whitelist orderable columns and direction to prevent SQL injection —
+    // these are interpolated into the SQL below and cannot be bound as
+    // parameters, so unknown values are rejected and replaced with defaults.
+    let order_dir = match body.order.order_direction.as_deref() {
+        Some("DESC") => "DESC",
+        _ => "ASC",
+    };
+    let order_clause = match body.order.order_field.as_deref() {
+        Some("autor_name") => format!("a.autor_name {}", order_dir),
+        Some("song_name") => format!("s.song_name {}", order_dir),
+        Some("autor_idx") => format!("s.autor_idx {}", order_dir),
+        Some("song_year") => format!("s.song_year {}", order_dir),
+        Some("song_content") => format!("s.song_content {}", order_dir),
+        Some("createdAt") => format!("s.createdAt {}", order_dir),
+        Some("updatedAt") => format!("s.updatedAt {}", order_dir),
+        _ => format!("s.song_name {}", order_dir),
     };
 
     let mut where_clause = String::from("1=1");

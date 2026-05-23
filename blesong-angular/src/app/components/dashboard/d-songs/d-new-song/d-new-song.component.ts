@@ -2,7 +2,7 @@
 // An app developed by Brainglab, Website: https://brainglab.com
 
 import { Router } from '@angular/router';
-import { Component, OnInit, Renderer2 } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 import { SongModel } from 'src/app/models/song.model';
 import { SongService } from 'src/app/services/song.service';
@@ -22,7 +22,7 @@ export class DNewSongComponent implements OnInit {
 
   mSong: SongModel = new SongModel()
 
-  constructor(public mRenderer: Renderer2, private mRouter: Router, private mSongService: SongService, private mSToastService: SToastService,
+  constructor(private mRouter: Router, private mSongService: SongService, private mSToastService: SToastService,
     private mSModalLoadingService: SModalLoadingService) {
 
   }

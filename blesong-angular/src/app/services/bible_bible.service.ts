@@ -108,8 +108,6 @@ export class BibleBibleService {
     body.bible_book_idx = mBibleBookIdx;
     body.bible_chapter_idx = mBibleChapterIdx;
 
-    console.log(`==> ${mBibleBibleIdx} - ${mBibleBookIdx} - ${mBibleChapterIdx}`);
-
     this.httpOptions.headers = new HttpHeaders({
       'Content-Type': 'application/json'
     });

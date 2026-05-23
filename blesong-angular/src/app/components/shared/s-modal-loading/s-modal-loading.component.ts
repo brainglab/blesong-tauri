@@ -1,10 +1,9 @@
-import { Component, Input, OnInit, ElementRef, Renderer2 } from '@angular/core';
+import { Component, Input, OnInit, ElementRef } from '@angular/core';
 import { Subject } from 'rxjs';
 
 @Component({
     selector: 'app-s-modal-loading',
     templateUrl: './s-modal-loading.component.html',
-    styleUrls: ['./s-modal-loading.component.css'],
     imports: []
 })
 export class SModalLoadingComponent implements OnInit {
@@ -14,7 +13,7 @@ export class SModalLoadingComponent implements OnInit {
   mClassType: string = 'default';
   mShow: boolean = false;
 
-  constructor(public mRenderer: Renderer2, private elementRef: ElementRef) { }
+  constructor(private elementRef: ElementRef) { }
 
   ngOnInit(): void {
     this.mShow = true;

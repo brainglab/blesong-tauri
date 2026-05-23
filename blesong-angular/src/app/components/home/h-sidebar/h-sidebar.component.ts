@@ -1,4 +1,4 @@
-import { Component, Input, Renderer2 } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 
@@ -14,9 +14,7 @@ export class HSidebarComponent {
   session: any = {};
   mCustomMenu: any = [];
 
-  constructor(public mRenderer: Renderer2) {
-
-  }
+  constructor() {}
 
   ngOnInit(): void {
     this.buildMenu();

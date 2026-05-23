@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer2, SimpleChanges } from '@angular/core';
+import { Component, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SModalYesNoService } from 'src/app/components/shared/s-modal-yes-no/s-modal-yes-no.service';
@@ -40,7 +40,7 @@ export class HPresenterObsBibleComponent implements OnInit {
 
   mValidators = Validators;
 
-  constructor(public mRenderer: Renderer2, private mRouter: Router, private mFormBuilder: FormBuilder, private mSToastService: SToastService,
+  constructor(private mRouter: Router, private mFormBuilder: FormBuilder, private mSToastService: SToastService,
     private mSModalLoadingService: SModalLoadingService, private mSModalYesNoService: SModalYesNoService, private mActivatedRoute: ActivatedRoute,
     private mSongService: SongService, private mMqttService: MqttService, private mSModalOptionService: SModalOptionService,
     private mBibleBibleService: BibleBibleService) {

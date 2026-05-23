@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, Renderer2, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
@@ -20,7 +20,7 @@ export class SModalOptionComponent implements OnInit, AfterViewInit {
   mSearchText: string = '';
   mFilteredOptions: any[] = [];
 
-  constructor(public mRenderer: Renderer2, private elementRef: ElementRef) { }
+  constructor(private elementRef: ElementRef) { }
 
   ngOnInit(): void {
     this.mShow = true;

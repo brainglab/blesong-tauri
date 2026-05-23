@@ -2,7 +2,7 @@
 // An app developed by Brainglab, Website: https://brainglab.com
 
 import { Router } from '@angular/router';
-import { Component, OnInit, Renderer2 } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 import { AutorModel } from 'src/app/models/autor.model';
 import { AutorService } from 'src/app/services/autor.service';
@@ -22,7 +22,7 @@ export class DNewAutorComponent implements OnInit {
 
   mAutor: AutorModel = new AutorModel()
 
-  constructor(public mRenderer: Renderer2, private mRouter: Router, private mAutorService: AutorService, private mSToastService: SToastService,
+  constructor(private mRouter: Router, private mAutorService: AutorService, private mSToastService: SToastService,
     private mSModalLoadingService: SModalLoadingService) {
 
   }

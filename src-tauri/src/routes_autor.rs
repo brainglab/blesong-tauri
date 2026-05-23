@@ -60,16 +60,18 @@ pub async fn all(
     let page = if body.page <= 0 { 0 } else { body.page };
     let offset = per_page * page;
 
-    let order_field = body
-        .order
-        .order_field
-        .as_deref()
-        .unwrap_or("createdAt");
-    let order_dir = body
-        .order
-        .order_direction
-        .as_deref()
-        .unwrap_or("ASC");
+    // Whitelist the orderable columns and direction to prevent SQL injection —
+    // `order_field` / `order_direction` are interpolated into the query below
+    // (cannot be bound as parameters), so anything outside this list is rejected.
+    let order_field = match body.order.order_field.as_deref() {
+        Some("autor_name") => "autor_name",
+        Some("updatedAt") => "updatedAt",
+        _ => "createdAt",
+    };
+    let order_dir = match body.order.order_direction.as_deref() {
+        Some("DESC") => "DESC",
+        _ => "ASC",
+    };
 
     // Build WHERE clause
     let mut where_clause = String::from("1=1");

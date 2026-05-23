@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer2 } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from "@angular/router";
 
 import { AutorModel } from 'src/app/models/autor.model';
@@ -22,7 +22,7 @@ export class DEditAutorComponent implements OnInit {
 
   disabled = false;
 
-  constructor(public mRenderer: Renderer2, private mRouter: Router, private mActivatedRoute: ActivatedRoute, private mAutorService: AutorService,
+  constructor(private mRouter: Router, private mActivatedRoute: ActivatedRoute, private mAutorService: AutorService,
     private mSToastService: SToastService, private mSModalLoadingService: SModalLoadingService) {
 
     let mEventClose = this.mSModalLoadingService.show();

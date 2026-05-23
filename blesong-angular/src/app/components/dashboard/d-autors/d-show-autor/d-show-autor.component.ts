@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer2 } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, RouterLink } from "@angular/router";
 import { AutorService } from 'src/app/services/autor.service';
 import { SToastService } from '../../../shared/s-toast/s-toast.service';
@@ -19,7 +19,7 @@ export class DShowAutorComponent implements OnInit {
 
   mIdx = ""
 
-  constructor(public mRenderer: Renderer2, private mRouter: Router, private mActivatedRoute: ActivatedRoute, private mAutorService: AutorService,
+  constructor(private mRouter: Router, private mActivatedRoute: ActivatedRoute, private mAutorService: AutorService,
     private mSToastService: SToastService, private mSModalLoadingService: SModalLoadingService) {
 
     let mEventClose = this.mSModalLoadingService.show();

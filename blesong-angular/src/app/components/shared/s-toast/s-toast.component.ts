@@ -4,7 +4,6 @@ import { LucideAngularModule } from 'lucide-angular';
 @Component({
     selector: 'app-s-toast',
     templateUrl: './s-toast.component.html',
-    styleUrls: ['./s-toast.component.css'],
     imports: [LucideAngularModule]
 })
 export class SToastComponent implements OnInit {

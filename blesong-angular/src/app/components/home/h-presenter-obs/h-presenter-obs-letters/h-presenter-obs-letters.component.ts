@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer2, SimpleChanges } from '@angular/core';
+import { Component, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SModalYesNoService } from 'src/app/components/shared/s-modal-yes-no/s-modal-yes-no.service';
@@ -38,7 +38,7 @@ export class HPresenterObsLettersComponent {
 
   mValidators = Validators;
 
-  constructor(public mRenderer: Renderer2, private mRouter: Router, private mFormBuilder: FormBuilder, private mSToastService: SToastService,
+  constructor(private mRouter: Router, private mFormBuilder: FormBuilder, private mSToastService: SToastService,
     private mSModalLoadingService: SModalLoadingService, private mSModalYesNoService: SModalYesNoService, private mActivatedRoute: ActivatedRoute,
     private mSongService: SongService, private mMqttService: MqttService, private mSModalOptionService: SModalOptionService,) {
 
@@ -81,7 +81,6 @@ export class HPresenterObsLettersComponent {
       let mResponseEvent = this.mSModalOptionService.show(mTitle, mOptions, mField);
       mResponseEvent.subscribe((response) => {
         if (response !== null) {
-          console.log(`==> mField: ${mField}, response: ${JSON.stringify(response)}`);
           this.mSong[mField] = response;
           this.mOptionText[mField] = mOptions.find(opt => opt.idx == response)?.name;
 
@@ -114,7 +113,6 @@ export class HPresenterObsLettersComponent {
       if (result['code'] != '00') {
         this.mSToastService.danger("Error inesperado");
       } else if (result['code'] == '00') {
-        console.log(`==> result: ${JSON.stringify(result)}`);
         this.mOptionsSongIdx = result.songs;
       }
     }).add(() => {
@@ -133,8 +131,6 @@ export class HPresenterObsLettersComponent {
   get mTemplateAnimationValid() { return this.mForm.get('template_animation').invalid && this.mForm.get('template_animation').touched }
 
   setSong() {
-    console.log(`==> mSongIdx: ${this.mSongIdx}`)
-
     if (this.mSongIdx == null) {
       this.mSongIndex = -1;
       this.mSongArray = [];
@@ -144,7 +140,6 @@ export class HPresenterObsLettersComponent {
       let mEventClose = this.mSModalLoadingService.show();
       this.mSongService.get(this.mSongIdx).subscribe({
         error: (err: any) => {
-          console.log(`==> err: ${JSON.stringify(err)}`);
           switch (err.error['code']) {
             default:
               this.mSToastService.danger(`Error inesperado, intenta mas tarde (Code: 01)`);
