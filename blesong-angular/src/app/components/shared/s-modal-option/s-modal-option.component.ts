@@ -1,10 +1,12 @@
 import { Component, ElementRef, Input, OnInit, Renderer2, ViewChild, AfterViewInit } from '@angular/core';
 import { Subject } from 'rxjs';
+import { NgClass } from '@angular/common';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 @Component({
     selector: 'app-s-modal-option',
     templateUrl: './s-modal-option.component.html',
-    standalone: false
+    imports: [NgClass, ReactiveFormsModule, FormsModule]
 })
 export class SModalOptionComponent implements OnInit, AfterViewInit {
 

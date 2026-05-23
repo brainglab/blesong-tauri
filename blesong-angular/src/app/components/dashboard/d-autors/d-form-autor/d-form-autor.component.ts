@@ -2,20 +2,20 @@
 // An app developed by Brainglab, Website: https://brainglab.com
 
 import { Component, OnInit, Input, Output, EventEmitter, ElementRef, ViewChild, Renderer2, SimpleChanges, OnChanges } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 
 import { SToastService } from 'src/app/components/shared/s-toast/s-toast.service';
 import { SModalLoadingService } from 'src/app/components/shared/s-modal-loading/s-modal-loading.service';
 import { AutorModel } from 'src/app/models/autor.model';
 
 import { SModalOptionService } from 'src/app/components/shared/s-modal-option/s-modal-option.service';
+import { BackButtonDirective } from '../../../../directives/back-button.directive';
 
 
 @Component({
-  selector: 'app-d-form-autor',
-  standalone: false,
-
-  templateUrl: './d-form-autor.component.html'
+    selector: 'app-d-form-autor',
+    templateUrl: './d-form-autor.component.html',
+    imports: [ReactiveFormsModule, BackButtonDirective]
 })
 export class DFormAutorComponent implements OnInit, OnChanges {
 

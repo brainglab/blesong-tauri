@@ -16,11 +16,13 @@ import { BibleBibleModel } from 'src/app/models/bible_bible.model';
 import { BibleBookModel } from 'src/app/models/bible_book.model';
 import { BibleBooksReferenceModel } from 'src/app/models/bible_books_reference.model';
 import { BibleVerseModel } from 'src/app/models/bible_verse.model';
+import { HPresenterObsNavbarComponent } from '../h-presenter-obs-navbar/h-presenter-obs-navbar.component';
+import { NgClass } from '@angular/common';
 
 @Component({
     selector: 'app-h-presenter-obs-bible',
     templateUrl: './h-presenter-obs-bible.component.html',
-    standalone: false
+    imports: [HPresenterObsNavbarComponent, NgClass]
 })
 export class HPresenterObsBibleComponent implements OnInit {
 

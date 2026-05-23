@@ -2,7 +2,7 @@
 // An app developed by Brainglab, Website: https://brainglab.com
 
 import { Component, OnInit, Renderer2 } from '@angular/core';
-import { ActivatedRoute, Params, Router } from "@angular/router";
+import { ActivatedRoute, Params, Router, RouterLink } from "@angular/router";
 import * as XLSX from 'xlsx';
 
 import { SongService } from 'src/app/services/song.service';
@@ -11,13 +11,16 @@ import { SModalLoadingService } from 'src/app/components/shared/s-modal-loading/
 import { SongModel } from 'src/app/models/song.model';
 import { OrderModel } from 'src/app/models/order.model';
 import { SModalYesNoService } from 'src/app/components/shared/s-modal-yes-no/s-modal-yes-no.service';
+import { HSidebarComponent } from '../../../home/h-sidebar/h-sidebar.component';
+import { HNavbarComponent } from '../../../home/h-navbar/h-navbar.component';
+import { DSearchSongComponent } from '../d-search-song/d-search-song.component';
+import { NgClass } from '@angular/common';
 
 
 @Component({
-  selector: 'app-d-list-song',
-  standalone: false,
-
-  templateUrl: './d-list-song.component.html'
+    selector: 'app-d-list-song',
+    templateUrl: './d-list-song.component.html',
+    imports: [HSidebarComponent, HNavbarComponent, RouterLink, DSearchSongComponent, NgClass]
 })
 export class DListSongComponent implements OnInit {
 

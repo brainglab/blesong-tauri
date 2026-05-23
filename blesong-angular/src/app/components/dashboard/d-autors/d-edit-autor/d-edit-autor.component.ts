@@ -5,13 +5,15 @@ import { AutorModel } from 'src/app/models/autor.model';
 import { AutorService } from 'src/app/services/autor.service';
 import { SToastService } from 'src/app/components/shared/s-toast/s-toast.service';
 import { SModalLoadingService } from 'src/app/components/shared/s-modal-loading/s-modal-loading.service';
+import { HSidebarComponent } from '../../../home/h-sidebar/h-sidebar.component';
+import { HNavbarComponent } from '../../../home/h-navbar/h-navbar.component';
+import { DFormAutorComponent } from '../d-form-autor/d-form-autor.component';
 
 
 @Component({
-  selector: 'app-d-edit-autor',
-  standalone: false,
-
-  templateUrl: './d-edit-autor.component.html'
+    selector: 'app-d-edit-autor',
+    templateUrl: './d-edit-autor.component.html',
+    imports: [HSidebarComponent, HNavbarComponent, DFormAutorComponent]
 })
 export class DEditAutorComponent implements OnInit {
   mAutor: AutorModel = new AutorModel();

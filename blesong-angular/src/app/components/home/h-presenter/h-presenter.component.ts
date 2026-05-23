@@ -4,11 +4,12 @@ import { RealtimeModel } from 'src/app/models/realtime.model';
 import { TemplateModel } from 'src/app/models/template.model';
 import { MqttService } from 'src/app/services/mqtt.service';
 import gsap from 'gsap';
+import { EncapsulationHtmlPipe } from '../../../pipes/encapsulation-html.pipe';
 
 @Component({
     selector: 'app-h-presenter',
     templateUrl: './h-presenter.component.html',
-    standalone: false
+    imports: [EncapsulationHtmlPipe]
 })
 export class HPresenterComponent implements OnInit, AfterViewInit, OnDestroy {
 

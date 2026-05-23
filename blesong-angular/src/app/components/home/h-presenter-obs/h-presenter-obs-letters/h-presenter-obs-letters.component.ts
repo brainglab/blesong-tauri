@@ -1,5 +1,5 @@
 import { Component, OnInit, Renderer2, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SModalYesNoService } from 'src/app/components/shared/s-modal-yes-no/s-modal-yes-no.service';
 import { SToastService } from 'src/app/components/shared/s-toast/s-toast.service';
@@ -11,11 +11,13 @@ import { OrderModel } from 'src/app/models/order.model';
 import { MqttService } from 'src/app/services/mqtt.service';
 import { SModalOptionService } from '../../../shared/s-modal-option/s-modal-option.service';
 import { TemplateModel } from 'src/app/models/template.model';
+import { HPresenterObsNavbarComponent } from '../h-presenter-obs-navbar/h-presenter-obs-navbar.component';
+import { NgClass } from '@angular/common';
 
 @Component({
     selector: 'app-h-presenter-obs-letters',
     templateUrl: './h-presenter-obs-letters.component.html',
-    standalone: false
+    imports: [HPresenterObsNavbarComponent, ReactiveFormsModule, NgClass]
 })
 export class HPresenterObsLettersComponent {
 

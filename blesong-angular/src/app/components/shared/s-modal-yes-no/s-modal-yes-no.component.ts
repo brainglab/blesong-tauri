@@ -1,11 +1,12 @@
 import { Component, Input, OnInit, ElementRef, Renderer2, Output, EventEmitter } from '@angular/core';
 import { Subject } from 'rxjs';
+import { NgClass } from '@angular/common';
 
 @Component({
     selector: 'app-s-modal-yes-no',
     templateUrl: './s-modal-yes-no.component.html',
     styleUrls: ['./s-modal-yes-no.component.css'],
-    standalone: false
+    imports: [NgClass]
 })
 export class SModalYesNoComponent implements OnInit {
 

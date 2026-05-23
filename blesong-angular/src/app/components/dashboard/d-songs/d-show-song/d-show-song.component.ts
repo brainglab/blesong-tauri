@@ -1,14 +1,18 @@
 import { Component, OnInit, Renderer2 } from '@angular/core';
-import { Router, ActivatedRoute } from "@angular/router";
+import { Router, ActivatedRoute, RouterLink } from "@angular/router";
 import { SongService } from 'src/app/services/song.service';
 import { SToastService } from '../../../shared/s-toast/s-toast.service';
 import { SModalLoadingService } from '../../../shared/s-modal-loading/s-modal-loading.service';
+import { HSidebarComponent } from '../../../home/h-sidebar/h-sidebar.component';
+import { HNavbarComponent } from '../../../home/h-navbar/h-navbar.component';
+import { BackButtonDirective } from '../../../../directives/back-button.directive';
+import { DatePipe } from '@angular/common';
+import { EncapsulationHtmlPipe } from '../../../../pipes/encapsulation-html.pipe';
 
 @Component({
-  selector: 'app-d-show-song',
-  standalone: false,
-
-  templateUrl: './d-show-song.component.html'
+    selector: 'app-d-show-song',
+    templateUrl: './d-show-song.component.html',
+    imports: [HSidebarComponent, HNavbarComponent, BackButtonDirective, RouterLink, DatePipe, EncapsulationHtmlPipe]
 })
 export class DShowSongComponent implements OnInit {
 

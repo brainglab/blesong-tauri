@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { ServerService } from 'src/app/services/server.service';
 import { SToastService } from '../../shared/s-toast/s-toast.service';
 import { SModalLoadingService } from '../../shared/s-modal-loading/s-modal-loading.service';
+import { QRCodeComponent } from 'angularx-qrcode';
 
 @Component({
     selector: 'app-h-qr',
     templateUrl: './h-qr.component.html',
-    standalone: false
+    imports: [QRCodeComponent]
 })
 export class HQrComponent implements OnInit {
 

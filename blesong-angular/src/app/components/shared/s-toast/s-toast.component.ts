@@ -1,10 +1,11 @@
 import { Component, Input, OnInit, ElementRef } from '@angular/core';
+import { NgClass } from '@angular/common';
 
 @Component({
     selector: 'app-s-toast',
     templateUrl: './s-toast.component.html',
     styleUrls: ['./s-toast.component.css'],
-    standalone: false
+    imports: [NgClass]
 })
 export class SToastComponent implements OnInit {
 

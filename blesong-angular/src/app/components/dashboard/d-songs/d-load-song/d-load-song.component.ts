@@ -8,12 +8,12 @@ import { SongModel } from 'src/app/models/song.model';
 import { SModalLoadingService } from 'src/app/components/shared/s-modal-loading/s-modal-loading.service';
 import { SongService } from 'src/app/services/song.service';
 import { SToastService } from 'src/app/components/shared/s-toast/s-toast.service';
+import { NgClass } from '@angular/common';
 
 @Component({
-  selector: 'app-d-load-song',
-  standalone: false,
-
-  templateUrl: './d-load-song.component.html'
+    selector: 'app-d-load-song',
+    templateUrl: './d-load-song.component.html',
+    imports: [NgClass]
 })
 export class DLoadSongComponent implements OnInit {
 

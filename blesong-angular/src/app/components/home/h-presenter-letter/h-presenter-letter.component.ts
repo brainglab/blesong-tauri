@@ -4,11 +4,13 @@ import { RealtimeModel } from 'src/app/models/realtime.model';
 import { TemplateModel } from 'src/app/models/template.model';
 import { MqttService } from 'src/app/services/mqtt.service';
 import gsap from 'gsap';
+import { RouterLink } from '@angular/router';
+import { NgClass } from '@angular/common';
 
 @Component({
     selector: 'app-h-presenter-letter',
     templateUrl: './h-presenter-letter.component.html',
-    standalone: false
+    imports: [RouterLink, NgClass]
 })
 export class HPresenterLetterComponent implements OnInit, AfterViewInit, OnDestroy {
 

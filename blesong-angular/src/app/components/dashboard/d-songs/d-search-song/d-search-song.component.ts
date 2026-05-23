@@ -3,7 +3,7 @@
 
 import { Component, OnInit, Input, Output, EventEmitter, ElementRef, ViewChild, Renderer2, SimpleChanges, OnChanges } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 
 import { SToastService } from 'src/app/components/shared/s-toast/s-toast.service';
 import { SModalLoadingService } from 'src/app/components/shared/s-modal-loading/s-modal-loading.service';
@@ -16,10 +16,9 @@ import { AutorService } from 'src/app/services/autor.service';
 
 
 @Component({
-  selector: 'app-d-search-song',
-  standalone: false,
-
-  templateUrl: './d-search-song.component.html'
+    selector: 'app-d-search-song',
+    templateUrl: './d-search-song.component.html',
+    imports: [ReactiveFormsModule]
 })
 export class DSearchSongComponent implements OnInit, OnChanges {
 

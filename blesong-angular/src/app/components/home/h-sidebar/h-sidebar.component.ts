@@ -1,10 +1,12 @@
 import { Component, OnInit, Input, Renderer2 } from '@angular/core';
+import { NgClass } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 
 @Component({
     selector: 'app-d-sidebar',
     templateUrl: './h-sidebar.component.html',
-    standalone: false
+    imports: [NgClass, RouterLink]
 })
 export class HSidebarComponent {
   @Input() mController: String = '';
