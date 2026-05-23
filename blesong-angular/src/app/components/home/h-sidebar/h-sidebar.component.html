@@ -1,49 +1,35 @@
-<nav class="navbar-vertical navbar">
-  <div class="vh-100" data-simplebar>
-    <!-- Brand logo -->
-    <a class="m-4" href="/dashboard">
-      <img class="mt-4" src="assets/images/logo.png" alt="" style="height:auto;width:180px!important;" />
-    </a>
+<aside class="bg-base-200 min-h-screen w-64 flex flex-col border-r border-base-300">
+  <a class="p-4 flex items-center justify-center" routerLink="/songs">
+    <img src="assets/images/logo.png" alt="Blesong" class="w-44" />
+  </a>
 
-    <!-- Navbar nav -->
-    <ul class="navbar-nav flex-column" [id]="'sideNavbar'">
-      @for (mHeaderMenu of mCustomMenu; track mHeaderMenu; let mCustomMenuIndex = $index) {
-        <div>
-          <!-- title header -->
-          @if (mHeaderMenu.show == 'true') {
-            <li class="nav-item">
-              <div class="navbar-heading mt-2">{{ mHeaderMenu.title }}</div>
+  <ul class="menu menu-lg w-full">
+    @for (mHeaderMenu of mCustomMenu; track mHeaderMenu) {
+      @if (mHeaderMenu.show === 'true') {
+        <li class="menu-title">{{ mHeaderMenu.title }}</li>
+
+        @for (mMenu of mHeaderMenu.menu; track mMenu) {
+          @if (mMenu.show === 'true') {
+            <li>
+              <details [open]="mMenu.active">
+                <summary>{{ mMenu.title }}</summary>
+                <ul>
+                  @for (mSubmenu of mMenu.submenu; track mSubmenu) {
+                    @if (mSubmenu.show === 'true') {
+                      <li>
+                        <a [routerLink]="mSubmenu.route"
+                           [class.menu-active]="mSubmenu.controller === mController">
+                          {{ mSubmenu.title }}
+                        </a>
+                      </li>
+                    }
+                  }
+                </ul>
+              </details>
             </li>
           }
-          <!-- menu -->
-          @if (mHeaderMenu.show == 'true') {
-            <div>
-              @for (mMenu of mHeaderMenu.menu; track mMenu; let mMenuIndex = $index) {
-                <li class="nav-item">
-                  @if (mMenu.show == 'true') {
-                    <div>
-                      <a class="nav-link" [ngClass]="mMenu.active ? '' : 'collapsed'" href="javascript:void();" data-bs-toggle="collapse" [attr.data-bs-target]="'#nav-' + mCustomMenuIndex + '-' + mMenuIndex" [attr.aria-expanded]="mMenu.active ? true : false" [attr.aria-controls]="'nav-' + mCustomMenuIndex + '-' + mMenuIndex">
-                        <i [class]="'fa-solid fa-fw me-3 ' + mMenu.icon" style="font-size: 20px;"></i> {{ mMenu.title }}
-                      </a>
-                      <div [id]="'nav-' + mCustomMenuIndex + '-' + mMenuIndex" [ngClass]="mMenu.active ? 'collapse show' : 'collapse'" [attr.data-bs-parent]="'#sideNavbar'">
-                        <ul class="nav flex-column">
-                          @for (mSubmenu of mMenu.submenu; track mSubmenu; let mSubmenuIndex = $index) {
-                            <li class="nav-item">
-                              @if (mSubmenu.show == 'true') {
-                                <a class="nav-link" [ngClass]="mSubmenu.controller == mController ? 'active' : ''" [routerLink]="mSubmenu.route">{{ mSubmenu.title }}</a>
-                              }
-                            </li>
-                          }
-                        </ul>
-                      </div>
-                    </div>
-                  }
-                </li>
-              }
-            </div>
-          }
-        </div>
+        }
       }
-    </ul>
-  </div>
-</nav>
+    }
+  </ul>
+</aside>

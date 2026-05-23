@@ -1,83 +1,59 @@
-<div id="db-wrapper">
+<div class="flex min-h-screen bg-base-100">
+  <app-d-sidebar mController="songs" />
 
-  <app-d-sidebar mController="songs"></app-d-sidebar>
+  <div class="flex-1 flex flex-col">
+    <app-d-navbar />
 
-  <div id="page-content">
-    <div class="header">
-
-      <app-d-navbar></app-d-navbar>
-
-    </div>
-    <div class="container-fluid bg-gray-100 p-4 animate__animated animate__fadeIn animate__faster">
-
-      <!-- title -->
-      <div class="row ">
-        <div class="col-lg-12 col-md-12 col-12">
-          <!-- Page header -->
-          <div class="border-bottom pb-3 mb-3 d-lg-flex justify-content-between align-items-center">
-            <div class="mb-2 mb-lg-0">
-              <h1 class="mb-0 h2 fw-bold">Cancion</h1>
-            </div>
-          </div>
-
-        </div>
+    <main class="p-6 max-w-5xl w-full mx-auto">
+      <div class="flex items-center justify-between border-b border-base-300 pb-3 mb-6">
+        <h1 class="text-2xl font-bold">Canción</h1>
       </div>
 
-      <div class="row justify-content-center">
+      <div class="card bg-base-100 border border-base-300 shadow-sm">
+        <div class="card-body p-0">
+          <div class="px-6 pt-6">
+            <h2 class="card-title text-lg">Datos generales</h2>
+          </div>
 
-        <div class="col-md-6">
+          <div class="overflow-x-auto">
+            <table class="table">
+              <tbody>
+                <tr>
+                  <th class="w-40">Nombre</th>
+                  <td>{{ mSong.song_name }}</td>
+                </tr>
+                <tr>
+                  <th>Autor</th>
+                  <td>{{ mAutor.autor_name }}</td>
+                </tr>
+                <tr>
+                  <th>Año</th>
+                  <td>{{ mSong.song_year }}</td>
+                </tr>
+                <tr>
+                  <th>Contenido</th>
+                  <td>
+                    <div [innerHtml]="mSong.song_content | encapsulationHtml"></div>
+                  </td>
+                </tr>
+                <tr>
+                  <th>Creación</th>
+                  <td>{{ mSong.createdAt | date:'dd/MM/yyyy HH:mm:ss':'+0000' }}</td>
+                </tr>
+                <tr>
+                  <th>Actualización</th>
+                  <td>{{ mSong.updatedAt | date:'dd/MM/yyyy HH:mm:ss':'+0000' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
-          <div class="card card-small shadow mb-4">
-            <div class="card-header">
-              <h3 class="card-title">Datos generales</h3>
-            </div>
-            <div class="table-responsive">
-              <table class="table table-hover bg-white mb-0">
-                <tbody>
-
-                  <tr class="text-left">
-                    <th class="px-4 fw-bolder">Nombre</th>
-                    <td class="px-4 text-break">{{ mSong.song_name }}</td>
-                  </tr>
-                  <tr class="text-left">
-                    <th class="px-4 fw-bolder">Autor</th>
-                    <td class="px-4 text-break">{{ mAutor.autor_name }}</td>
-                  </tr>
-                  <tr class="text-left">
-                    <th class="px-4 fw-bolder">Año</th>
-                    <td class="px-4 text-break">{{ mSong.song_year }}</td>
-                  </tr>
-                  <tr class="text-left">
-                    <th class="px-4 fw-bolder">Contenido</th>
-                    <td class="px-4 text-break">
-                      <div [innerHtml]="mSong.song_content | encapsulationHtml"></div>
-                    </td>
-                  </tr>
-
-
-                  <tr class="text-left">
-                    <th class="px-4 fw-bolder">Creación</th>
-                    <td class="px-4 text-break">{{ mSong.createdAt | date:'dd/MM/yyyy HH:mm:ss':'+0000'}}</td>
-                  </tr>
-                  <tr class="text-left">
-                    <th class="px-4 fw-bolder">Actualización</th>
-                    <td class="px-4 text-break">{{ mSong.updatedAt | date:'dd/MM/yyyy HH:mm:ss':'+0000' }}</td>
-                  </tr>
-
-
-                </tbody>
-              </table>
-            </div>
-            <div class="card-footer">
-              <div class="d-flex justify-content-end">
-                <button class="btn btn-secondary rounded-pill m-1" type="button" backButton>Volver</button>
-                <button class="btn btn-primary rounded-pill m-1" type="button" [routerLink]="['/songs/edit', mSong.idx]">Editar</button>
-              </div>
-            </div>
+          <div class="flex justify-end gap-2 px-6 py-4 border-t border-base-300">
+            <button class="btn btn-neutral" backButton>Volver</button>
+            <a class="btn btn-primary" [routerLink]="['/songs/edit', mSong.idx]">Editar</a>
           </div>
         </div>
-
       </div>
-
-    </div>
+    </main>
   </div>
+</div>
