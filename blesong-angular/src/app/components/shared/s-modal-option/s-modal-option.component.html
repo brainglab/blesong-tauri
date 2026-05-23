@@ -13,12 +13,12 @@
         <div class="w-100">
           <label class="form-label">Buscar</label>
           <input
-                 #mSearchInput
-                 type="text"
-                 class="form-control"
-                 [(ngModel)]="mSearchText"
-                 placeholder="Buscar..."
-                 (keyup)="filterOptions()">
+            #mSearchInput
+            type="text"
+            class="form-control"
+            [(ngModel)]="mSearchText"
+            placeholder="Buscar..."
+            (keyup)="filterOptions()">
         </div>
       </div>
       <div class="table-responsive" style="max-height: 300px;">
@@ -26,25 +26,31 @@
           <tbody>
 
             <!-- Mensaje cuando no hay opciones disponibles -->
-            <tr *ngIf="mFilteredOptions?.length === 0">
-              <td class="text-center py-4">
-                <i class="fa-solid fa-inbox fa-2x text-muted mb-2"></i>
-                <p class="text-muted mb-0">No hay registros disponibles</p>
-              </td>
-            </tr>
+            @if (mFilteredOptions?.length === 0) {
+              <tr>
+                <td class="text-center py-4">
+                  <i class="fa-solid fa-inbox fa-2x text-muted mb-2"></i>
+                  <p class="text-muted mb-0">No hay registros disponibles</p>
+                </td>
+              </tr>
+            }
 
             <!-- Iteramos sobre las opciones filtradas -->
-            <tr *ngFor="let mOption of mFilteredOptions" class="cursor-pointer" (click)="close(mOption.idx)">
-              <td class="align-middle">
-                <div class="d-flex align-items-center">
-                  <div class="me-3">
-                    <div class="text-dark">{{ mOption.name }}</div>
-                    <div class="small text-muted" *ngIf="mOption.description">{{ mOption.description }}</div>
+            @for (mOption of mFilteredOptions; track mOption) {
+              <tr class="cursor-pointer" (click)="close(mOption.idx)">
+                <td class="align-middle">
+                  <div class="d-flex align-items-center">
+                    <div class="me-3">
+                      <div class="text-dark">{{ mOption.name }}</div>
+                      @if (mOption.description) {
+                        <div class="small text-muted">{{ mOption.description }}</div>
+                      }
+                    </div>
+                    <i class="fa-solid fa-circle-chevron-right ms-auto"></i>
                   </div>
-                  <i class="fa-solid fa-circle-chevron-right ms-auto"></i>
-                </div>
-              </td>
-            </tr>
+                </td>
+              </tr>
+            }
           </tbody>
         </table>
       </div>

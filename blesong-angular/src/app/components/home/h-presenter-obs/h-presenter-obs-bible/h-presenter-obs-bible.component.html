@@ -5,94 +5,136 @@
     <div class="col-12 mb-2">
       <h3>Biblia</h3>
       <hr>
-      <!-- Navegación de migas de pan para la selección bíblica -->
-      <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item" [ngClass]="{'text-secondary': mSelectedBible}">
-            <span class="text-secondary" *ngIf="!mSelectedBible">Seleccionar Biblia</span>
-            <a href="javascript:void(0);" class="text-dark" *ngIf="mSelectedBible" role="button">{{mSelectedBible?.name}}</a>
-          </li>
-          <li class="breadcrumb-item" *ngIf="mSelectedBible" [ngClass]="{'text-secondary': mSelectedBook}">
-            <span class="text-secondary" *ngIf="!mSelectedBook">Seleccionar Libro</span>
-            <a href="javascript:void(0);" class="text-dark" *ngIf="mSelectedBook" role="button">{{mSelectedBook?.name}}</a>
-          </li>
-          <li class="breadcrumb-item" *ngIf="mSelectedBook" [ngClass]="{'text-secondary': mSelectedChapter}">
-            <span class="text-secondary" *ngIf="!mSelectedChapter">Seleccionar Capítulo</span>
-            <a href="javascript:void(0);" class="text-secondary" *ngIf="mSelectedChapter" role="button">Capítulo {{mSelectedChapter}}</a>
-          </li>
-        </ol>
-      </nav>
-    </div>
-
-    <div class="col-12 m-2 text text-center">
-      <button class="btn btn-outline-secondary btn-sm m-2" (click)="mResetSelection()">
-        <i class="fas fa-redo-alt me-1"></i> Nueva búsqueda
-      </button>
-    </div>
-
-    <!-- Selección de bíblias -->
-    <div *ngIf="!mSelectedBible">
-      <div class="col-12 mb-2" *ngIf="mBibleBibles.length > 0" role="button">
-        <div class="card card-custom bg-gray-100 mb-2" *ngFor="let mBibleBible of mBibleBibles; index as i" (click)="setBible(mBibleBible)">
-          <div class="card-body text-center" style="color: #ffffff;">
-            {{ mBibleBible.name }}
-          </div>
-        </div>
+        <!-- Navegación de migas de pan para la selección bíblica -->
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item" [ngClass]="{'text-secondary': mSelectedBible}">
+              @if (!mSelectedBible) {
+                <span class="text-secondary">Seleccionar Biblia</span>
+              }
+              @if (mSelectedBible) {
+                <a href="javascript:void(0);" class="text-dark" role="button">{{mSelectedBible?.name}}</a>
+              }
+            </li>
+            @if (mSelectedBible) {
+              <li class="breadcrumb-item" [ngClass]="{'text-secondary': mSelectedBook}">
+                @if (!mSelectedBook) {
+                  <span class="text-secondary">Seleccionar Libro</span>
+                }
+                @if (mSelectedBook) {
+                  <a href="javascript:void(0);" class="text-dark" role="button">{{mSelectedBook?.name}}</a>
+                }
+              </li>
+            }
+            @if (mSelectedBook) {
+              <li class="breadcrumb-item" [ngClass]="{'text-secondary': mSelectedChapter}">
+                @if (!mSelectedChapter) {
+                  <span class="text-secondary">Seleccionar Capítulo</span>
+                }
+                @if (mSelectedChapter) {
+                  <a href="javascript:void(0);" class="text-secondary" role="button">Capítulo {{mSelectedChapter}}</a>
+                }
+              </li>
+            }
+          </ol>
+        </nav>
       </div>
-    </div>
 
-    <!-- Selección de libros -->
-    <div *ngIf="mSelectedBible && !mSelectedBook">
-      <div class="col-12 mb-2" *ngIf="mBibleBooks.length > 0" role="button">
-        <div class="card card-custom bg-gray-100 mb-2" *ngFor="let mBibleBook of mBibleBooks; index as i" (click)="setBook(mBibleBook)">
-          <div class="card-body text-center" style="color: #ffffff;">
-            {{ mBibleBook.name }}
-          </div>
-        </div>
+      <div class="col-12 m-2 text text-center">
+        <button class="btn btn-outline-secondary btn-sm m-2" (click)="mResetSelection()">
+          <i class="fas fa-redo-alt me-1"></i> Nueva búsqueda
+        </button>
       </div>
-    </div>
 
-    <!-- Selección de capítulos -->
-    <div *ngIf="mSelectedBible && mSelectedBook && !mSelectedChapter">
-      <div class="col-12 mb-2" *ngIf="mBibleChapters.length > 0" role="button">
-        <div class="row">
-          <div class="col-4 mb-1 p-2" *ngFor="let mBibleChapter of mBibleChapters; index as i" (click)="setChapter(mBibleChapter.chapter)">
-            <div class="card card-custom bg-gray-100">
-              <div class="card-body text-center" style="color: #ffffff;">
-                {{ mBibleChapter.chapter }}
+      <!-- Selección de bíblias -->
+      @if (!mSelectedBible) {
+        <div>
+          @if (mBibleBibles.length > 0) {
+            <div class="col-12 mb-2" role="button">
+              @for (mBibleBible of mBibleBibles; track mBibleBible; let i = $index) {
+                <div class="card card-custom bg-gray-100 mb-2" (click)="setBible(mBibleBible)">
+                  <div class="card-body text-center" style="color: #ffffff;">
+                    {{ mBibleBible.name }}
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Selección de libros -->
+      @if (mSelectedBible && !mSelectedBook) {
+        <div>
+          @if (mBibleBooks.length > 0) {
+            <div class="col-12 mb-2" role="button">
+              @for (mBibleBook of mBibleBooks; track mBibleBook; let i = $index) {
+                <div class="card card-custom bg-gray-100 mb-2" (click)="setBook(mBibleBook)">
+                  <div class="card-body text-center" style="color: #ffffff;">
+                    {{ mBibleBook.name }}
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Selección de capítulos -->
+      @if (mSelectedBible && mSelectedBook && !mSelectedChapter) {
+        <div>
+          @if (mBibleChapters.length > 0) {
+            <div class="col-12 mb-2" role="button">
+              <div class="row">
+                @for (mBibleChapter of mBibleChapters; track mBibleChapter; let i = $index) {
+                  <div class="col-4 mb-1 p-2" (click)="setChapter(mBibleChapter.chapter)">
+                    <div class="card card-custom bg-gray-100">
+                      <div class="card-body text-center" style="color: #ffffff;">
+                        {{ mBibleChapter.chapter }}
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Selección de versículos -->
+      @if (mSelectedBible && mSelectedBook && mSelectedChapter) {
+        <div>
+          @if (mBibleVerses.length > 0) {
+            <div class="col-12 mb-2" role="button">
+              @for (mBibleVerse of mBibleVerses; track mBibleVerse; let i = $index) {
+                <div class="card card-custom bg-gray-100 mb-2" [ngClass]="mVerseIndex == i ? 'border border-primary border-5' : ''" (click)="setVerse(mBibleVerse.text, i)">
+                  <div class="card-body text-center" style="color: #ffffff;">
+                    <div>{{ mBibleVerse.text }}</div>
+                    <div class="mt-1">({{ mSelectedBook.name }} {{ mSelectedChapter }}:{{ mBibleVerse.verse }} {{ mSelectedBible.abreviation }})</div>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      @if (mBibleBibles.length <= 0) {
+        <div class="col-12">
+          <div class="row justify-content-center">
+            <div class="card animate__animated animate__fadeIn">
+              <div class="card-body text-center py-5 w-100">
+                <i class="fa-solid fa-hourglass-half fa-3x text-muted mb-3"></i>
+                <h4 class="text-muted">No haz seleccionado una canción.</h4>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      }
     </div>
 
-    <!-- Selección de versículos -->
-    <div *ngIf="mSelectedBible && mSelectedBook && mSelectedChapter">
-      <div class="col-12 mb-2" *ngIf="mBibleVerses.length > 0" role="button">
-        <div class="card card-custom bg-gray-100 mb-2" [ngClass]="mVerseIndex == i ? 'border border-primary border-5' : ''" *ngFor="let mBibleVerse of mBibleVerses; index as i" (click)="setVerse(mBibleVerse.text, i)">
-          <div class="card-body text-center" style="color: #ffffff;">
-            <div>{{ mBibleVerse.text }}</div>
-            <div class="mt-1">({{ mSelectedBook.name }} {{ mSelectedChapter }}:{{ mBibleVerse.verse }} {{ mSelectedBible.abreviation }})</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-12" *ngIf="mBibleBibles.length <= 0">
-      <div class="row justify-content-center">
-        <div class="card animate__animated animate__fadeIn">
-          <div class="card-body text-center py-5 w-100">
-            <i class="fa-solid fa-hourglass-half fa-3x text-muted mb-3"></i>
-            <h4 class="text-muted">No haz seleccionado una canción.</h4>
-          </div>
-        </div>
-      </div>
+    <!-- Footer -->
+    <div class="text-center m-4">
+      <p class="text-muted mb-0">© <span class="text-dark fw-bold">Blesong</span> - Todos los derechos reservados a <a href="https://brainglab.com" target="_blank" class="text-secondary">Brainglab</a>, consultora en servicios informáticos.</p>
     </div>
   </div>
-
-  <!-- Footer -->
-  <div class="text-center m-4">
-    <p class="text-muted mb-0">© <span class="text-dark fw-bold">Blesong</span> - Todos los derechos reservados a <a href="https://brainglab.com" target="_blank" class="text-secondary">Brainglab</a>, consultora en servicios informáticos.</p>
-  </div>
-</div>

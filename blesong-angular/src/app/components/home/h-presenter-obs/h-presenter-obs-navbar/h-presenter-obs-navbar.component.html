@@ -15,9 +15,9 @@
         </button>
         <!-- button para activar offcanvas -->
         <button class="btn btn-icon btn-primary ms-auto" type="button"
-                data-bs-toggle="offcanvas"
-                data-bs-target="#mSideObs"
-                aria-controls="mSideObs">
+          data-bs-toggle="offcanvas"
+          data-bs-target="#mSideObs"
+          aria-controls="mSideObs">
           <i class="fe fe-menu"></i>
         </button>
       </div>
@@ -109,7 +109,9 @@
               <span>Suave</span>
             </div>
             <div>
-              <i class="fa-solid fa-check text-success me-2" *ngIf="mTemplate.template_animation === 0"></i>
+              @if (mTemplate.template_animation === 0) {
+                <i class="fa-solid fa-check text-success me-2"></i>
+              }
 
             </div>
           </div>
@@ -121,7 +123,9 @@
               <span>Brillante</span>
             </div>
             <div>
-              <i class="fa-solid fa-check text-success me-2" *ngIf="mTemplate.template_animation === 1"></i>
+              @if (mTemplate.template_animation === 1) {
+                <i class="fa-solid fa-check text-success me-2"></i>
+              }
 
             </div>
           </div>
@@ -133,7 +137,9 @@
               <span>Desvanecimiento</span>
             </div>
             <div>
-              <i class="fa-solid fa-check text-success me-2" *ngIf="mTemplate.template_animation === 2"></i>
+              @if (mTemplate.template_animation === 2) {
+                <i class="fa-solid fa-check text-success me-2"></i>
+              }
 
             </div>
           </div>
@@ -145,7 +151,9 @@
               <span>Desvanecimiento con brillo</span>
             </div>
             <div>
-              <i class="fa-solid fa-check text-success me-2" *ngIf="mTemplate.template_animation === 3"></i>
+              @if (mTemplate.template_animation === 3) {
+                <i class="fa-solid fa-check text-success me-2"></i>
+              }
 
             </div>
           </div>

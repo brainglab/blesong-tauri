@@ -2,11 +2,21 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <i [class]="'fa-solid fa-circle-check fa-2x text-custom-' + mClassType" *ngIf="mClassType == 'success'"></i>
-        <i [class]="'fa-solid fa-circle-info fa-2x text-custom-' + mClassType" *ngIf="mClassType == 'info'"></i>
-        <i [class]="'fa-solid fa-circle-exclamation fa-2x text-custom-' + mClassType" *ngIf="mClassType == 'warning'"></i>
-        <i [class]="'fa-solid fa-triangle-exclamation fa-2x text-custom-' + mClassType" *ngIf="mClassType == 'danger'"></i>
-        <i [class]="'fa-solid fa-circle-question fa-2x text-custom-' + mClassType" *ngIf="mClassType == 'info'"></i>
+        @if (mClassType == 'success') {
+          <i [class]="'fa-solid fa-circle-check fa-2x text-custom-' + mClassType"></i>
+        }
+        @if (mClassType == 'info') {
+          <i [class]="'fa-solid fa-circle-info fa-2x text-custom-' + mClassType"></i>
+        }
+        @if (mClassType == 'warning') {
+          <i [class]="'fa-solid fa-circle-exclamation fa-2x text-custom-' + mClassType"></i>
+        }
+        @if (mClassType == 'danger') {
+          <i [class]="'fa-solid fa-triangle-exclamation fa-2x text-custom-' + mClassType"></i>
+        }
+        @if (mClassType == 'info') {
+          <i [class]="'fa-solid fa-circle-question fa-2x text-custom-' + mClassType"></i>
+        }
         <h3 class="modal-title w-100 d-flex justify-content-center ps-4">{{ mTitle }}</h3>
         <!--begin::Close-->
         <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" (click)="close(false)">

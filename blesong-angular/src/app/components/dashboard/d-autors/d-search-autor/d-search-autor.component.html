@@ -4,14 +4,26 @@
   <div class="card-header">
     <div class="row">
       <div class="col-md-3 mb-3">
-        <label class="form-label" for="autor_name">Nombre <span class="text-danger" *ngIf="this.mForm.controls['autor_name'].hasValidator(mValidators.required)">*</span></label>
+        <label class="form-label" for="autor_name">Nombre @if (this.mForm.controls['autor_name'].hasValidator(mValidators.required)) {
+          <span class="text-danger">*</span>
+        }</label>
         <input class="form-control" autocomplete="off" id="autor_name" type="text" #autor_name formControlName="autor_name" [(ngModel)]="mAutor.autor_name" [class.is-invalid]="mAutorNameValid" placeholder="Nombre...">
-        <small *ngIf="mAutorNameValid" class="text-danger">
-          <div *ngIf="this.mForm.get('autor_name').errors.required">No puede estar vacío</div>
-          <div *ngIf="this.mForm.get('autor_name').errors.minlength">Debe tener al menos 1 caractéres</div>
-          <div *ngIf="this.mForm.get('autor_name').errors.maxlength">Debe tener como máximo 255 caractéres</div>
-          <div *ngIf="this.mForm.get('autor_name').errors.pattern">Campo no válido</div>
-        </small>
+        @if (mAutorNameValid) {
+          <small class="text-danger">
+            @if (this.mForm.get('autor_name').errors.required) {
+              <div>No puede estar vacío</div>
+            }
+            @if (this.mForm.get('autor_name').errors.minlength) {
+              <div>Debe tener al menos 1 caractéres</div>
+            }
+            @if (this.mForm.get('autor_name').errors.maxlength) {
+              <div>Debe tener como máximo 255 caractéres</div>
+            }
+            @if (this.mForm.get('autor_name').errors.pattern) {
+              <div>Campo no válido</div>
+            }
+          </small>
+        }
       </div>
 
 
@@ -23,48 +35,84 @@
   <div class="card-header">
     <div class="row mb-3">
       <div class="col-md-4">
-        <label class="form-label" for="order_field">Ordenar por <span class="text-danger" *ngIf="this.mForm.controls['order_field'].hasValidator(mValidators.required)">*</span></label>
+        <label class="form-label" for="order_field">Ordenar por @if (this.mForm.controls['order_field'].hasValidator(mValidators.required)) {
+          <span class="text-danger">*</span>
+        }</label>
         <div class="input-group">
           <input class="form-control" autocomplete="off" id="order_field" type="text" #order_field formControlName="order_field" [(ngModel)]="mOptionOrderText['order_field']" [class.is-invalid]="mOrderFieldValid" placeholder="Ordenar por..." readonly>
           <button class="btn btn-sm btn-light" type="button" (click)="showModalOptionOrder('Seleccione campo', mOptionOrderField, 'order_field', true)"><i class="fa-solid fa-circle-xmark"></i></button>
           <button class="btn btn-sm btn-primary" type="button" (click)="showModalOptionOrder('Seleccione campo', mOptionOrderField, 'order_field')"><i class="fa-solid fa-circle-chevron-down"></i></button>
         </div>
-        <small *ngIf="mOrderFieldValid" class="text-danger">
-          <div *ngIf="this.mForm.get('order_field').errors.required">No puede estar vacío</div>
-          <div *ngIf="this.mForm.get('order_field').errors.minlength">Debe tener al menos 1 caractéres</div>
-          <div *ngIf="this.mForm.get('order_field').errors.maxlength">Debe tener como máximo 255 caractéres</div>
-          <div *ngIf="this.mForm.get('order_field').errors.pattern">Campo no válido</div>
-        </small>
+        @if (mOrderFieldValid) {
+          <small class="text-danger">
+            @if (this.mForm.get('order_field').errors.required) {
+              <div>No puede estar vacío</div>
+            }
+            @if (this.mForm.get('order_field').errors.minlength) {
+              <div>Debe tener al menos 1 caractéres</div>
+            }
+            @if (this.mForm.get('order_field').errors.maxlength) {
+              <div>Debe tener como máximo 255 caractéres</div>
+            }
+            @if (this.mForm.get('order_field').errors.pattern) {
+              <div>Campo no válido</div>
+            }
+          </small>
+        }
       </div>
 
       <div class="col-md-4">
-        <label class="form-label" for="order_direction">Dirección <span class="text-danger" *ngIf="this.mForm.controls['order_direction'].hasValidator(mValidators.required)">*</span></label>
+        <label class="form-label" for="order_direction">Dirección @if (this.mForm.controls['order_direction'].hasValidator(mValidators.required)) {
+          <span class="text-danger">*</span>
+        }</label>
         <div class="input-group">
           <input class="form-control" autocomplete="off" id="order_direction" type="text" #order_direction formControlName="order_direction" [(ngModel)]="mOptionOrderText['order_direction']" [class.is-invalid]="mOrderDirectionValid" placeholder="Dirección..." readonly>
           <button class="btn btn-sm btn-light" type="button" (click)="showModalOptionOrder('Seleccione dirección', mOptionOrderDirection, 'order_direction', true)"><i class="fa-solid fa-circle-xmark"></i></button>
           <button class="btn btn-sm btn-primary" type="button" (click)="showModalOptionOrder('Seleccione dirección', mOptionOrderDirection, 'order_direction')"><i class="fa-solid fa-circle-chevron-down"></i></button>
         </div>
-        <small *ngIf="mOrderDirectionValid" class="text-danger">
-          <div *ngIf="this.mForm.get('order_direction').errors.required">No puede estar vacío</div>
-          <div *ngIf="this.mForm.get('order_direction').errors.minlength">Debe tener al menos 1 caractéres</div>
-          <div *ngIf="this.mForm.get('order_direction').errors.maxlength">Debe tener como máximo 255 caractéres</div>
-          <div *ngIf="this.mForm.get('order_direction').errors.pattern">Campo no válido</div>
-        </small>
+        @if (mOrderDirectionValid) {
+          <small class="text-danger">
+            @if (this.mForm.get('order_direction').errors.required) {
+              <div>No puede estar vacío</div>
+            }
+            @if (this.mForm.get('order_direction').errors.minlength) {
+              <div>Debe tener al menos 1 caractéres</div>
+            }
+            @if (this.mForm.get('order_direction').errors.maxlength) {
+              <div>Debe tener como máximo 255 caractéres</div>
+            }
+            @if (this.mForm.get('order_direction').errors.pattern) {
+              <div>Campo no válido</div>
+            }
+          </small>
+        }
       </div>
 
       <div class="col-md-4">
-        <label class="form-label" for="order_count">Mostrar <span class="text-danger" *ngIf="this.mForm.controls['order_count'].hasValidator(mValidators.required)">*</span></label>
+        <label class="form-label" for="order_count">Mostrar @if (this.mForm.controls['order_count'].hasValidator(mValidators.required)) {
+          <span class="text-danger">*</span>
+        }</label>
         <div class="input-group">
           <input class="form-control" autocomplete="off" id="order_count" type="text" #order_count formControlName="order_count" [(ngModel)]="mOptionOrderText['order_count']" [class.is-invalid]="mOrderCountValid" placeholder="Registros..." readonly>
           <button class="btn btn-sm btn-light" type="button" (click)="showModalOptionOrder('Seleccione registros', mOptionOrderCount, 'order_count', true)"><i class="fa-solid fa-circle-xmark"></i></button>
           <button class="btn btn-sm btn-primary" type="button" (click)="showModalOptionOrder('Seleccione registros', mOptionOrderCount, 'order_count')"><i class="fa-solid fa-circle-chevron-down"></i></button>
         </div>
-        <small *ngIf="mOrderCountValid" class="text-danger">
-          <div *ngIf="this.mForm.get('order_count').errors.required">No puede estar vacío</div>
-          <div *ngIf="this.mForm.get('order_count').errors.minlength">Debe tener al menos 1 caractéres</div>
-          <div *ngIf="this.mForm.get('order_count').errors.maxlength">Debe tener como máximo 255 caractéres</div>
-          <div *ngIf="this.mForm.get('order_count').errors.pattern">Campo no válido</div>
-        </small>
+        @if (mOrderCountValid) {
+          <small class="text-danger">
+            @if (this.mForm.get('order_count').errors.required) {
+              <div>No puede estar vacío</div>
+            }
+            @if (this.mForm.get('order_count').errors.minlength) {
+              <div>Debe tener al menos 1 caractéres</div>
+            }
+            @if (this.mForm.get('order_count').errors.maxlength) {
+              <div>Debe tener como máximo 255 caractéres</div>
+            }
+            @if (this.mForm.get('order_count').errors.pattern) {
+              <div>Campo no válido</div>
+            }
+          </small>
+        }
       </div>
     </div>
     <div class="row">

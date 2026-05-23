@@ -3,15 +3,27 @@
 
   <!-- fields -->
   <div class="mb-3">
-  <label class="form-label" for="autor_name">Nombre <span class="text-danger" *ngIf="this.mForm.controls['autor_name'].hasValidator(mValidators.required)">*</span></label>
-  <input class="form-control" autocomplete="off" id="autor_name" type="text" #autor_name formControlName="autor_name" [(ngModel)]="mAutor.autor_name" [class.is-invalid]="mAutorNameValid" placeholder="Nombre...">
-  <small *ngIf="mAutorNameValid" class="text-danger">
-    <div *ngIf="this.mForm.get('autor_name').errors.required">No puede estar vacío</div>
-    <div *ngIf="this.mForm.get('autor_name').errors.minlength">Debe tener al menos 1 caractéres</div>
-    <div *ngIf="this.mForm.get('autor_name').errors.maxlength">Debe tener como máximo 255 caractéres</div>
-    <div *ngIf="this.mForm.get('autor_name').errors.pattern">Campo no válido</div>
-  </small>
-</div>
+    <label class="form-label" for="autor_name">Nombre @if (this.mForm.controls['autor_name'].hasValidator(mValidators.required)) {
+      <span class="text-danger">*</span>
+    }</label>
+    <input class="form-control" autocomplete="off" id="autor_name" type="text" #autor_name formControlName="autor_name" [(ngModel)]="mAutor.autor_name" [class.is-invalid]="mAutorNameValid" placeholder="Nombre...">
+    @if (mAutorNameValid) {
+      <small class="text-danger">
+        @if (this.mForm.get('autor_name').errors.required) {
+          <div>No puede estar vacío</div>
+        }
+        @if (this.mForm.get('autor_name').errors.minlength) {
+          <div>Debe tener al menos 1 caractéres</div>
+        }
+        @if (this.mForm.get('autor_name').errors.maxlength) {
+          <div>Debe tener como máximo 255 caractéres</div>
+        }
+        @if (this.mForm.get('autor_name').errors.pattern) {
+          <div>Campo no válido</div>
+        }
+      </small>
+    }
+  </div>
 
 
 

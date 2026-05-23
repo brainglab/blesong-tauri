@@ -8,7 +8,7 @@ import { SModalYesNoComponent } from './components/shared/s-modal-yes-no/s-modal
 import { SToastContainerComponent } from './components/shared/s-toast/s-toast-container.component';
 import { SToastComponent } from './components/shared/s-toast/s-toast.component';
 import { SModalOptionComponent } from './components/shared/s-modal-option/s-modal-option.component';
-import { QRCodeModule } from 'angularx-qrcode';
+import { QRCodeComponent } from 'angularx-qrcode';
 
 import { BackButtonDirective } from './directives/back-button.directive';
 
@@ -106,7 +106,7 @@ import { HPresenterObsBibleComponent } from './components/home/h-presenter-obs/h
     ReactiveFormsModule,
     BrowserAnimationsModule,
     DragDropModule,
-    QRCodeModule,
+    QRCodeComponent,
     FormsModule,
   ],
   providers: [
