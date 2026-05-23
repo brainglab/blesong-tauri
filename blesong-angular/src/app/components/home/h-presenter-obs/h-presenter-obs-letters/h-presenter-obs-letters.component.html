@@ -1,68 +1,58 @@
-<app-h-presenter-obs-navbar (mResponse)="sendStandBy()"></app-h-presenter-obs-navbar>
+<app-h-presenter-obs-navbar (mResponse)="sendStandBy()" />
 
-<div class="row m-2">
-  <div class="col-12 mb-2">
-    <h3>Letras</h3>
-    <hr>
-      <form autocomplete="off" [formGroup]="mForm" #f="ngForm">
+<div class="max-w-5xl mx-auto p-4">
+  <h2 class="text-2xl font-bold mb-3">Letras</h2>
+  <div class="divider my-2"></div>
 
-        <div class="mb-3">
-          <label class="form-label" for="song_idx">Canción @if (this.mForm.controls['song_idx'].hasValidator(mValidators.required)) {
-            <span class="text-danger">*</span>
-          }</label>
-          <div class="input-group">
-            <input class="form-control" autocomplete="off" id="song_idx" type="text" #song_idx formControlName="song_idx" [class.is-invalid]="mSongIdxValid" placeholder="Canción..." readonly (click)="showModalOption('Seleccione Canción', mOptionsSongIdx, 'song_idx' )">
-            <button class="btn btn-sm btn-light" type="button" (click)="showModalOption('Seleccione Canción', mOptionsSongIdx, 'song_idx' , true)"><i class="fa-solid fa-circle-xmark"></i></button>
-            <button class="btn btn-sm btn-primary" type="button" (click)="showModalOption('Seleccione Canción', mOptionsSongIdx, 'song_idx' )"><i class="fa-solid fa-circle-chevron-down"></i></button>
-          </div>
-          @if (mSongIdxValid) {
-            <small class="text-danger">
-              @if (this.mForm.get('song_idx').errors.required) {
-                <div>No puede estar vacío</div>
-              }
-              @if (this.mForm.get('song_idx').errors.minlength) {
-                <div>Debe tener al menos 1 caractéres</div>
-              }
-              @if (this.mForm.get('song_idx').errors.maxlength) {
-                <div>Debe tener como máximo 255 caractéres</div>
-              }
-              @if (this.mForm.get('song_idx').errors.pattern) {
-                <div>Campo no válido</div>
-              }
-            </small>
-          }
-        </div>
-
-      </form>
-    </div>
-
-    @if (mSongArray.length > 0) {
-      <div class="col-12 mb-2" role="button">
-        @for (mSong of mSongArray; track mSong; let i = $index) {
-          <div class="card card-custom bg-gray-100 mb-2" [ngClass]="mSongIndex == i ? 'border border-primary border-5' : ''" (click)="setSongPart(i)">
-            <div class="card-body text-center" style="color: #ffffff;">
-              {{ mSong }}
-            </div>
-          </div>
+  <form autocomplete="off" [formGroup]="mForm" #f="ngForm">
+    <fieldset class="fieldset mb-4">
+      <legend class="fieldset-legend">
+        Canción
+        @if (mForm.controls['song_idx'].hasValidator(mValidators.required)) {
+          <span class="text-error">*</span>
         }
+      </legend>
+      <div class="join w-full">
+        <input class="input input-bordered join-item flex-1" [class.input-error]="mSongIdxValid"
+               type="text" formControlName="song_idx" placeholder="Canción..." readonly
+               (click)="showModalOption('Seleccione Canción', mOptionsSongIdx, 'song_idx')" />
+        <button class="btn btn-ghost join-item" type="button"
+                (click)="showModalOption('Seleccione Canción', mOptionsSongIdx, 'song_idx', true)">✕</button>
+        <button class="btn btn-primary join-item" type="button"
+                (click)="showModalOption('Seleccione Canción', mOptionsSongIdx, 'song_idx')">▾</button>
       </div>
-    }
+      @if (mSongIdxValid) {
+        @if (mForm.get('song_idx').errors.required) { <p class="fieldset-label text-error">No puede estar vacío</p> }
+      }
+    </fieldset>
+  </form>
 
-    @if (mSongArray.length <= 0) {
-      <div class="col-12">
-        <div class="row justify-content-center">
-          <div class="card animate__animated animate__fadeIn">
-            <div class="card-body text-center py-5 w-100">
-              <i class="fa-solid fa-hourglass-half fa-3x text-muted mb-3"></i>
-              <h4 class="text-muted">No haz seleccionado una canción.</h4>
-            </div>
+  @if (mSongArray.length > 0) {
+    <div class="space-y-2">
+      @for (mSong of mSongArray; track mSong; let i = $index) {
+        <div class="card bg-base-100 border cursor-pointer transition-all"
+             [class.border-primary]="mSongIndex == i"
+             [class.border-2]="mSongIndex == i"
+             [class.border-base-300]="mSongIndex != i"
+             (click)="setSongPart(i)">
+          <div class="card-body items-center text-center py-4">
+            <div class="text-base whitespace-pre-wrap" [innerHTML]="mSong"></div>
           </div>
         </div>
-      </div>
-    }
-  </div>
+      }
+    </div>
+  }
 
-  <!-- Footer -->
-  <div class="text-center m-4">
-    <p class="text-muted mb-0">© <span class="text-dark fw-bold">Blesong</span> - Todos los derechos reservados a <a href="https://brainglab.com" target="_blank" class="text-secondary">Brainglab</a>, consultora en servicios informáticos.</p>
-  </div>
+  @if (mSongArray.length <= 0) {
+    <div class="card bg-base-100 border border-base-300 mt-4">
+      <div class="card-body items-center text-center py-12">
+        <h3 class="text-lg opacity-70">No haz seleccionado una canción.</h3>
+      </div>
+    </div>
+  }
+</div>
+
+<footer class="text-center text-sm opacity-60 py-6">
+  © <span class="font-bold opacity-90">Blesong</span> — Todos los derechos reservados a
+  <a href="https://brainglab.com" target="_blank" class="link link-hover">Brainglab</a>.
+</footer>

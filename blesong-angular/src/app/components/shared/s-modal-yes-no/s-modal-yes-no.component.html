@@ -1,44 +1,24 @@
-<div class="modal fade" [ngClass]="mShow ? 'show animate__animated animate__fadeInDown animate__faster' : 'animate__animated animate__fadeOutUp'" tabindex="-1" id="kt_modal_1" style="display: block;" aria-modal="true" role="dialog">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        @if (mClassType == 'success') {
-          <i [class]="'fa-solid fa-circle-check fa-2x text-custom-' + mClassType"></i>
+<dialog class="modal" [class.modal-open]="mShow">
+  <div class="modal-box">
+    <div class="flex items-center justify-between mb-2">
+      <h3 class="text-lg font-bold">
+        @switch (mClassType) {
+          @case ('success') { <span class="text-success">✓</span> }
+          @case ('warning') { <span class="text-warning">!</span> }
+          @case ('danger')  { <span class="text-error">!</span> }
+          @case ('info')    { <span class="text-info">i</span> }
         }
-        @if (mClassType == 'info') {
-          <i [class]="'fa-solid fa-circle-info fa-2x text-custom-' + mClassType"></i>
-        }
-        @if (mClassType == 'warning') {
-          <i [class]="'fa-solid fa-circle-exclamation fa-2x text-custom-' + mClassType"></i>
-        }
-        @if (mClassType == 'danger') {
-          <i [class]="'fa-solid fa-triangle-exclamation fa-2x text-custom-' + mClassType"></i>
-        }
-        @if (mClassType == 'info') {
-          <i [class]="'fa-solid fa-circle-question fa-2x text-custom-' + mClassType"></i>
-        }
-        <h3 class="modal-title w-100 d-flex justify-content-center ps-4">{{ mTitle }}</h3>
-        <!--begin::Close-->
-        <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" (click)="close(false)">
-          <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
-          <span class="svg-icon svg-icon-2x">
-            <span class="fa-solid fa-xmark fa-xl"></span>
-          </span>
-          <!--end::Svg Icon-->
-        </div>
-        <!--end::Close-->
-      </div>
-      <div class="modal-body">
-        <p class="fs-4 d-flex justify-content-center">{{ mText }}</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="close(false)">No</button>
-        <button type="button" class="btn btn-primary" (click)="close(true)">Si</button>
-      </div>
+        {{ mTitle }}
+      </h3>
+      <button type="button" class="btn btn-sm btn-circle btn-ghost" (click)="close(false)" aria-label="Cerrar">✕</button>
+    </div>
+
+    <p class="py-4">{{ mText }}</p>
+
+    <div class="modal-action">
+      <button type="button" class="btn btn-neutral" (click)="close(false)">No</button>
+      <button type="button" class="btn btn-primary" (click)="close(true)">Sí</button>
     </div>
   </div>
-</div>
-
-<!-- background modal -->
-<div class="modal-background {{mShow ? 'd-block animate__animated animate__fadeIn animate__faster' : 'animate__animated animate__fadeOut'}}">
-</div>
+  <div class="modal-backdrop" (click)="close(false)"></div>
+</dialog>

@@ -1,140 +1,114 @@
-<app-h-presenter-obs-navbar (mResponse)="sendStandBy()"></app-h-presenter-obs-navbar>
+<app-h-presenter-obs-navbar (mResponse)="sendStandBy()" />
 
-<div class="container">
-  <div class="row m-2">
-    <div class="col-12 mb-2">
-      <h3>Biblia</h3>
-      <hr>
-        <!-- Navegación de migas de pan para la selección bíblica -->
-        <nav aria-label="breadcrumb">
-          <ol class="breadcrumb">
-            <li class="breadcrumb-item" [ngClass]="{'text-secondary': mSelectedBible}">
-              @if (!mSelectedBible) {
-                <span class="text-secondary">Seleccionar Biblia</span>
-              }
-              @if (mSelectedBible) {
-                <a href="javascript:void(0);" class="text-dark" role="button">{{mSelectedBible?.name}}</a>
-              }
-            </li>
-            @if (mSelectedBible) {
-              <li class="breadcrumb-item" [ngClass]="{'text-secondary': mSelectedBook}">
-                @if (!mSelectedBook) {
-                  <span class="text-secondary">Seleccionar Libro</span>
-                }
-                @if (mSelectedBook) {
-                  <a href="javascript:void(0);" class="text-dark" role="button">{{mSelectedBook?.name}}</a>
-                }
-              </li>
-            }
-            @if (mSelectedBook) {
-              <li class="breadcrumb-item" [ngClass]="{'text-secondary': mSelectedChapter}">
-                @if (!mSelectedChapter) {
-                  <span class="text-secondary">Seleccionar Capítulo</span>
-                }
-                @if (mSelectedChapter) {
-                  <a href="javascript:void(0);" class="text-secondary" role="button">Capítulo {{mSelectedChapter}}</a>
-                }
-              </li>
-            }
-          </ol>
-        </nav>
-      </div>
+<div class="max-w-5xl mx-auto p-4">
+  <h2 class="text-2xl font-bold mb-3">Biblia</h2>
+  <div class="divider my-2"></div>
 
-      <div class="col-12 m-2 text text-center">
-        <button class="btn btn-outline-secondary btn-sm m-2" (click)="mResetSelection()">
-          <i class="fas fa-redo-alt me-1"></i> Nueva búsqueda
-        </button>
-      </div>
-
-      <!-- Selección de bíblias -->
-      @if (!mSelectedBible) {
-        <div>
-          @if (mBibleBibles.length > 0) {
-            <div class="col-12 mb-2" role="button">
-              @for (mBibleBible of mBibleBibles; track mBibleBible; let i = $index) {
-                <div class="card card-custom bg-gray-100 mb-2" (click)="setBible(mBibleBible)">
-                  <div class="card-body text-center" style="color: #ffffff;">
-                    {{ mBibleBible.name }}
-                  </div>
-                </div>
-              }
-            </div>
+  <div class="breadcrumbs text-sm">
+    <ul>
+      <li>
+        @if (!mSelectedBible) {
+          <span class="opacity-60">Seleccionar Biblia</span>
+        }
+        @if (mSelectedBible) {
+          <span class="font-medium">{{ mSelectedBible.name }}</span>
+        }
+      </li>
+      @if (mSelectedBible) {
+        <li>
+          @if (!mSelectedBook) {
+            <span class="opacity-60">Seleccionar Libro</span>
           }
+          @if (mSelectedBook) {
+            <span class="font-medium">{{ mSelectedBook.name }}</span>
+          }
+        </li>
+      }
+      @if (mSelectedBook) {
+        <li>
+          @if (!mSelectedChapter) {
+            <span class="opacity-60">Seleccionar Capítulo</span>
+          }
+          @if (mSelectedChapter) {
+            <span class="opacity-80">Capítulo {{ mSelectedChapter }}</span>
+          }
+        </li>
+      }
+    </ul>
+  </div>
+
+  <div class="text-center my-4">
+    <button class="btn btn-sm btn-outline" type="button" (click)="mResetSelection()">Nueva búsqueda</button>
+  </div>
+
+  @if (!mSelectedBible) {
+    <div class="space-y-2">
+      @for (mBibleBible of mBibleBibles; track mBibleBible) {
+        <div class="card bg-base-100 border border-base-300 cursor-pointer hover:border-primary"
+             (click)="setBible(mBibleBible)">
+          <div class="card-body items-center text-center py-4">
+            <span class="font-medium">{{ mBibleBible.name }}</span>
+          </div>
         </div>
       }
+    </div>
+  }
 
-      <!-- Selección de libros -->
-      @if (mSelectedBible && !mSelectedBook) {
-        <div>
-          @if (mBibleBooks.length > 0) {
-            <div class="col-12 mb-2" role="button">
-              @for (mBibleBook of mBibleBooks; track mBibleBook; let i = $index) {
-                <div class="card card-custom bg-gray-100 mb-2" (click)="setBook(mBibleBook)">
-                  <div class="card-body text-center" style="color: #ffffff;">
-                    {{ mBibleBook.name }}
-                  </div>
-                </div>
-              }
-            </div>
-          }
+  @if (mSelectedBible && !mSelectedBook) {
+    <div class="space-y-2">
+      @for (mBibleBook of mBibleBooks; track mBibleBook) {
+        <div class="card bg-base-100 border border-base-300 cursor-pointer hover:border-primary"
+             (click)="setBook(mBibleBook)">
+          <div class="card-body items-center text-center py-4">
+            <span class="font-medium">{{ mBibleBook.name }}</span>
+          </div>
         </div>
       }
+    </div>
+  }
 
-      <!-- Selección de capítulos -->
-      @if (mSelectedBible && mSelectedBook && !mSelectedChapter) {
-        <div>
-          @if (mBibleChapters.length > 0) {
-            <div class="col-12 mb-2" role="button">
-              <div class="row">
-                @for (mBibleChapter of mBibleChapters; track mBibleChapter; let i = $index) {
-                  <div class="col-4 mb-1 p-2" (click)="setChapter(mBibleChapter.chapter)">
-                    <div class="card card-custom bg-gray-100">
-                      <div class="card-body text-center" style="color: #ffffff;">
-                        {{ mBibleChapter.chapter }}
-                      </div>
-                    </div>
-                  </div>
-                }
-              </div>
-            </div>
-          }
+  @if (mSelectedBible && mSelectedBook && !mSelectedChapter) {
+    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
+      @for (mBibleChapter of mBibleChapters; track mBibleChapter) {
+        <div class="card bg-base-100 border border-base-300 cursor-pointer hover:border-primary"
+             (click)="setChapter(mBibleChapter.chapter)">
+          <div class="card-body items-center text-center py-4">
+            <span class="font-medium">{{ mBibleChapter.chapter }}</span>
+          </div>
         </div>
       }
+    </div>
+  }
 
-      <!-- Selección de versículos -->
-      @if (mSelectedBible && mSelectedBook && mSelectedChapter) {
-        <div>
-          @if (mBibleVerses.length > 0) {
-            <div class="col-12 mb-2" role="button">
-              @for (mBibleVerse of mBibleVerses; track mBibleVerse; let i = $index) {
-                <div class="card card-custom bg-gray-100 mb-2" [ngClass]="mVerseIndex == i ? 'border border-primary border-5' : ''" (click)="setVerse(mBibleVerse.text, i)">
-                  <div class="card-body text-center" style="color: #ffffff;">
-                    <div>{{ mBibleVerse.text }}</div>
-                    <div class="mt-1">({{ mSelectedBook.name }} {{ mSelectedChapter }}:{{ mBibleVerse.verse }} {{ mSelectedBible.abreviation }})</div>
-                  </div>
-                </div>
-              }
-            </div>
-          }
-        </div>
-      }
-
-      @if (mBibleBibles.length <= 0) {
-        <div class="col-12">
-          <div class="row justify-content-center">
-            <div class="card animate__animated animate__fadeIn">
-              <div class="card-body text-center py-5 w-100">
-                <i class="fa-solid fa-hourglass-half fa-3x text-muted mb-3"></i>
-                <h4 class="text-muted">No haz seleccionado una canción.</h4>
-              </div>
+  @if (mSelectedBible && mSelectedBook && mSelectedChapter) {
+    <div class="space-y-2">
+      @for (mBibleVerse of mBibleVerses; track mBibleVerse; let i = $index) {
+        <div class="card bg-base-100 border cursor-pointer transition-all"
+             [class.border-primary]="mVerseIndex == i"
+             [class.border-2]="mVerseIndex == i"
+             [class.border-base-300]="mVerseIndex != i"
+             (click)="setVerse(mBibleVerse.text, i)">
+          <div class="card-body py-3">
+            <div>{{ mBibleVerse.text }}</div>
+            <div class="text-xs opacity-60 mt-1">
+              {{ mSelectedBook.name }} {{ mSelectedChapter }}:{{ mBibleVerse.verse }} {{ mSelectedBible.abreviation }}
             </div>
           </div>
         </div>
       }
     </div>
+  }
 
-    <!-- Footer -->
-    <div class="text-center m-4">
-      <p class="text-muted mb-0">© <span class="text-dark fw-bold">Blesong</span> - Todos los derechos reservados a <a href="https://brainglab.com" target="_blank" class="text-secondary">Brainglab</a>, consultora en servicios informáticos.</p>
+  @if (mBibleBibles.length <= 0) {
+    <div class="card bg-base-100 border border-base-300 mt-4">
+      <div class="card-body items-center text-center py-12">
+        <h3 class="text-lg opacity-70">No haz seleccionado una canción.</h3>
+      </div>
     </div>
-  </div>
+  }
+</div>
+
+<footer class="text-center text-sm opacity-60 py-6">
+  © <span class="font-bold opacity-90">Blesong</span> — Todos los derechos reservados a
+  <a href="https://brainglab.com" target="_blank" class="link link-hover">Brainglab</a>.
+</footer>

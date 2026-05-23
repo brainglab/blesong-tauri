@@ -1,65 +1,52 @@
-<div class="modal fade" [ngClass]="mShow ? 'show animate__animated animate__fadeInDown animate__faster' : 'animate__animated animate__fadeOutUp'" tabindex="-1" id="kt_modal_1" style="display: block; z-index: 1056 !important;" aria-modal="true" role="dialog">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header" appDraggable>
-        <h3 class="modal-title w-100 d-flex justify-content-center ps-4">{{ mTitle }}</h3>
-        <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" (click)="close(null)">
-          <span class="svg-icon svg-icon-2x">
-            <span class="fa-solid fa-xmark fa-xl"></span>
-          </span>
-        </div>
-      </div>
-      <div class="modal-header">
-        <div class="w-100">
-          <label class="form-label">Buscar</label>
-          <input
-            #mSearchInput
-            type="text"
-            class="form-control"
-            [(ngModel)]="mSearchText"
-            placeholder="Buscar..."
-            (keyup)="filterOptions()">
-        </div>
-      </div>
-      <div class="table-responsive" style="max-height: 300px;">
-        <table class="table table-hover m-0">
-          <tbody>
+<dialog class="modal" [class.modal-open]="mShow">
+  <div class="modal-box max-w-lg">
+    <div class="flex items-center justify-between mb-3">
+      <h3 class="text-lg font-bold">{{ mTitle }}</h3>
+      <button type="button" class="btn btn-sm btn-circle btn-ghost" (click)="close(null)" aria-label="Cerrar">✕</button>
+    </div>
 
-            <!-- Mensaje cuando no hay opciones disponibles -->
-            @if (mFilteredOptions?.length === 0) {
-              <tr>
-                <td class="text-center py-4">
-                  <i class="fa-solid fa-inbox fa-2x text-muted mb-2"></i>
-                  <p class="text-muted mb-0">No hay registros disponibles</p>
-                </td>
-              </tr>
-            }
+    <fieldset class="fieldset mb-3">
+      <legend class="fieldset-legend">Buscar</legend>
+      <input
+        #mSearchInput
+        type="text"
+        class="input input-bordered w-full"
+        [(ngModel)]="mSearchText"
+        placeholder="Buscar..."
+        (keyup)="filterOptions()" />
+    </fieldset>
 
-            <!-- Iteramos sobre las opciones filtradas -->
-            @for (mOption of mFilteredOptions; track mOption) {
-              <tr class="cursor-pointer" (click)="close(mOption.idx)">
-                <td class="align-middle">
-                  <div class="d-flex align-items-center">
-                    <div class="me-3">
-                      <div class="text-dark">{{ mOption.name }}</div>
-                      @if (mOption.description) {
-                        <div class="small text-muted">{{ mOption.description }}</div>
-                      }
-                    </div>
-                    <i class="fa-solid fa-circle-chevron-right ms-auto"></i>
+    <div class="overflow-y-auto max-h-80 border border-base-300 rounded-box">
+      <table class="table table-hover m-0">
+        <tbody>
+          @if (mFilteredOptions?.length === 0) {
+            <tr>
+              <td class="text-center py-6 opacity-60">No hay registros disponibles</td>
+            </tr>
+          }
+
+          @for (mOption of mFilteredOptions; track mOption) {
+            <tr class="cursor-pointer hover" (click)="close(mOption.idx)">
+              <td>
+                <div class="flex items-center justify-between gap-3">
+                  <div>
+                    <div class="font-medium">{{ mOption.name }}</div>
+                    @if (mOption.description) {
+                      <div class="text-xs opacity-60">{{ mOption.description }}</div>
+                    }
                   </div>
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-sm btn-light" (click)="close(null)">Cancelar</button>
-      </div>
+                  <span class="opacity-50">›</span>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="modal-action">
+      <button type="button" class="btn btn-ghost btn-sm" (click)="close(null)">Cancelar</button>
     </div>
   </div>
-</div>
-
-<!-- background modal -->
-<div class="modal-background {{mShow ? 'd-block animate__animated animate__fadeIn animate__faster' : 'animate__animated animate__fadeOut'}}" style="z-index: 1055 !important;"></div>
+  <div class="modal-backdrop" (click)="close(null)"></div>
+</dialog>

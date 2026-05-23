@@ -1,12 +1,11 @@
 import { Component, Input, OnInit, ElementRef, Renderer2 } from '@angular/core';
 import { Subject } from 'rxjs';
-import { NgClass } from '@angular/common';
 
 @Component({
     selector: 'app-s-modal-loading',
     templateUrl: './s-modal-loading.component.html',
     styleUrls: ['./s-modal-loading.component.css'],
-    imports: [NgClass]
+    imports: []
 })
 export class SModalLoadingComponent implements OnInit {
 

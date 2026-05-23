@@ -1,17 +1,17 @@
-<div (click)="close()" [class]="'alert alert-' + mClassType" [ngClass]="mShow ? 'animate__animated animate__tada' : 'animate__animated animate__zoomOut'" role="alert">
-
-  @if (mClassType == 'success') {
-    <i [class]="'fa-solid fa-circle-check me-2'" style="font-size: 20px;"></i>
+<div role="alert"
+     [class]="'alert shadow-lg transition-opacity duration-300 ' + (
+       mClassType === 'success' ? 'alert-success' :
+       mClassType === 'info' ? 'alert-info' :
+       mClassType === 'warning' ? 'alert-warning' :
+       mClassType === 'danger' ? 'alert-error' : 'alert')"
+     [class.opacity-0]="!mShow"
+     [class.opacity-100]="mShow"
+     (click)="close()">
+  @switch (mClassType) {
+    @case ('success') { <span class="font-bold">✓</span> }
+    @case ('info')    { <span class="font-bold">i</span> }
+    @case ('warning') { <span class="font-bold">!</span> }
+    @case ('danger')  { <span class="font-bold">⚠</span> }
   }
-  @if (mClassType == 'info') {
-    <i [class]="'fa-solid fa-circle-info me-2'" style="font-size: 20px;"></i>
-  }
-  @if (mClassType == 'warning') {
-    <i [class]="'fa-solid fa-circle-exclamation me-2'" style="font-size: 20px;"></i>
-  }
-  @if (mClassType == 'danger') {
-    <i [class]="'fa-solid fa-triangle-exclamation me-2'" style="font-size: 20px;"></i>
-  }
-
-  {{ mText }}
+  <span>{{ mText }}</span>
 </div>

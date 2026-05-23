@@ -1,41 +1,15 @@
-<div id="db-wrapper">
+<div class="flex min-h-screen bg-base-100">
+  <app-d-sidebar mController="autors" />
 
-  <app-d-sidebar mController="autors"></app-d-sidebar>
+  <div class="flex-1 flex flex-col">
+    <app-d-navbar />
 
-  <div id="page-content">
-    <div class="header">
-
-      <app-d-navbar></app-d-navbar>
-
-    </div>
-    <div class="container-fluid p-4 animate__animated animate__fadeIn animate__faster">
-
-      <!-- title -->
-      <div class="row ">
-        <div class="col-lg-12 col-md-12 col-12">
-          <!-- Page header -->
-          <div class="border-bottom pb-3 mb-3 d-lg-flex justify-content-between align-items-center">
-            <div class="mb-2 mb-lg-0">
-              <h1 class="mb-0 h2 fw-bold">Código QR</h1>
-            </div>
-          </div>
-
-        </div>
+    <main class="p-6 max-w-2xl w-full mx-auto">
+      <div class="flex items-center justify-between border-b border-base-300 pb-3 mb-6">
+        <h1 class="text-2xl font-bold">Código QR</h1>
       </div>
 
-      <div class="row justify-content-center">
-        <div class="col-lg-6 col-md-12 col-12">
-
-          <div class="row justify-content-center">
-            <div class="col-12">
-
-              <app-h-qr></app-h-qr>
-
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-    </div>
+      <app-h-qr />
+    </main>
   </div>
+</div>
