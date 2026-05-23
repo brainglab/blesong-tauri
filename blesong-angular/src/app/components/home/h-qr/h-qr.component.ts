@@ -18,27 +18,20 @@ export class HQrComponent implements OnInit {
 
     let mEventClose = this.mSModalLoadingService.show();
     this.serverService.get().subscribe({
-      error: (err: any) => {
-
-        switch (err.error['code']) {
-          default:
-            this.mSToastService.danger(`Error inesperado, intenta mas tarde (Code: 01)`);
-            break;
-        }
+      error: () => {
+        this.mCurrentUrl = '';
+        this.mSToastService.danger('No se pudo obtener la IP local del servidor');
       },
       next: (result: any) => {
-
-
-        // result
-        if (result && result.ip && result.port) {
-          // Usar la IP y puerto del servidor (8080) para que dispositivos
-          // externos puedan acceder al frontend servido por axum
+        // El QR sólo es útil si la app está expuesta en una IP de LAN real.
+        // Si get_local_ip() en el backend no detectó NIC y cayó a 127.0.0.1,
+        // un teléfono no puede alcanzarla — mostramos error en vez de un QR roto.
+        if (result?.ip && result?.port && result.ip !== '127.0.0.1') {
           this.mCurrentUrl = `http://${result.ip}:${result.port}/presenter/qr-menu`;
         } else {
-          // Fallback: usar la url actual
-          this.mCurrentUrl = window.location.origin + '/presenter/qr-menu';
+          this.mCurrentUrl = '';
+          this.mSToastService.danger('No se detectó red local activa. Conéctate a una red WiFi/LAN y reintenta.');
         }
-
       },
     }).add(() => {
       mEventClose.next();

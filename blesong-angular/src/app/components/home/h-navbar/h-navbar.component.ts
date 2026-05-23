@@ -1,14 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-d-navbar',
   templateUrl: './h-navbar.component.html',
 })
-export class HNavbarComponent {
-  mFileURL = environment.file.endpoint;
-  mImageUrl: string = "";
+export class HNavbarComponent implements OnInit {
 
   mSession: any = {};
   mName: string = '';
@@ -17,11 +14,7 @@ export class HNavbarComponent {
   mCompanies: any = [];
   mCompanySelected: any = {};
 
-  constructor(private mRouter: Router) {
-
-    let timeStamp = (new Date()).getTime();
-    this.mImageUrl = `${this.mFileURL}${this.mSession.user_image_url}?t=${timeStamp}`;
-  }
+  constructor(private mRouter: Router) { }
 
   ngOnInit(): void {
   }
@@ -31,8 +24,6 @@ export class HNavbarComponent {
     if (localStorage.getItem('mnv')) {
       menuIsOpen = localStorage.getItem('mnv')
     }
-
-    // data-kt-aside-minimize="on"
 
     let mElement = document.getElementById("db-wrapper");
     if (menuIsOpen == '1') {

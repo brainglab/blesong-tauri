@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { environment } from 'src/environments/environment.prod';
+import { environment } from 'src/environments/environment';
 
 import { DEditAutorComponent } from './components/dashboard/d-autors/d-edit-autor/d-edit-autor.component';
 import { DListAutorComponent } from './components/dashboard/d-autors/d-list-autor/d-list-autor.component';

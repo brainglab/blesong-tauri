@@ -164,67 +164,6 @@ export class SongService {
       );
   }
 
-  // upload cover
-  fileUpload(mField: string, mFileToUpload, mIdx: string) {
-    let body = new FormData();
-    body.append("field", mField);
-    body.append("idx", mIdx);
-    body.append("file", mFileToUpload);
-
-
-
-    return this.http.post(`${environment.apiUrl}/songs/file/upload`, body, {
-      reportProgress: true,
-      observe: 'events',
-      headers: new HttpHeaders({
-        'field': mField,
-        'idx': mIdx,
-      })
-    }).pipe(
-      map(response => {
-        if (response['code']) {
-          if (response['code'] == '00') {
-
-          }
-        }
-
-        return response
-      }),
-      catchError(err => {
-        return throwError(() => err);
-      })
-    );
-  }
-
-  // delete cover
-  fileRemove(mField: string, mIdx: string, mKey: string) {
-    let body: any = {};
-    body.field = mField;
-    body.idx = mIdx;
-    body.key = mKey;
-
-    this.httpOptions.headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-
-    });
-
-    return this.http.post(`${environment.apiUrl}/songs/file/remove`, body, this.httpOptions)
-      .pipe(
-        map((response: Response) => {
-          if (response['code']) {
-            if (response['code'] == '00') {
-
-            }
-          }
-
-          return response
-        }),
-        catchError(err => {
-          return throwError(() => err);
-        })
-      );
-  }
-
   // remove one
   remove(mIdx: string) {
     let body: any = {};

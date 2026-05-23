@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import mqtt from 'mqtt';
 import { Subject } from 'rxjs';
-import { environment } from 'src/environments/environment.prod';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -11,8 +11,6 @@ export class MqttService implements OnDestroy {
   private client: mqtt.MqttClient | null = null;
   private brokerUrl = environment.broker.url;
   private mqttOptions = {
-    username: environment.broker.username,
-    password: environment.broker.password,
     clean: true,
     connectTimeout: 4000,
     reconnectPeriod: 5000,

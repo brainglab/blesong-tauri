@@ -8,7 +8,6 @@ import { SModalYesNoComponent } from './components/shared/s-modal-yes-no/s-modal
 import { SToastContainerComponent } from './components/shared/s-toast/s-toast-container.component';
 import { SToastComponent } from './components/shared/s-toast/s-toast.component';
 import { SModalOptionComponent } from './components/shared/s-modal-option/s-modal-option.component';
-import { UploadFileComponent } from './components/shared/upload-file/upload-file.component';
 import { QRCodeModule } from 'angularx-qrcode';
 
 import { BackButtonDirective } from './directives/back-button.directive';
@@ -23,9 +22,7 @@ import { TruncatePipe } from './pipes/truncate.pipe';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { MarkdownModule } from 'ngx-markdown';
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { NgxTypedJsModule } from 'ngx-typed-js';
 import { LocationStrategy, PathLocationStrategy } from '@angular/common';
 
 import { HSidebarComponent } from './components/home/h-sidebar/h-sidebar.component';
@@ -65,7 +62,6 @@ import { HPresenterObsBibleComponent } from './components/home/h-presenter-obs/h
     SToastContainerComponent,
     SToastComponent,
     SModalOptionComponent,
-    UploadFileComponent,
 
     BackButtonDirective,
 
@@ -109,8 +105,6 @@ import { HPresenterObsBibleComponent } from './components/home/h-presenter-obs/h
     AppRoutingModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
-    NgxTypedJsModule,
-    MarkdownModule.forRoot(),
     DragDropModule,
     QRCodeModule,
     FormsModule,
