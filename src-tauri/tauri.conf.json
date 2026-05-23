@@ -5,7 +5,7 @@
   "identifier": "com.blesong.app",
   "build": {
     "frontendDist": "../blesong-angular/dist/blesong/browser",
-    "beforeDevCommand": "cd ../blesong-angular && npx ng serve --port 4200",
+    "beforeDevCommand": "npm --prefix blesong-angular exec -- ng serve --port 4200",
     "beforeBuildCommand": "node scripts/prebuild-tauri.mjs",
     "devUrl": "http://localhost:4200"
   },

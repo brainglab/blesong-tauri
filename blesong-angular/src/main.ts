@@ -5,7 +5,6 @@ import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { QRCodeComponent } from 'angularx-qrcode';
 
 import { AppRoutingModule } from './app/app-routing.module';
 import { AppComponent } from './app/app.component';
@@ -13,13 +12,14 @@ import { APP_ICONS } from './app/icons';
 
 bootstrapApplication(AppComponent, {
   providers: [
+    // QRCodeComponent is standalone — it's imported directly by h-qr.component,
+    // not via importProvidersFrom (which only accepts NgModules).
     importProvidersFrom(
       BrowserModule,
       AppRoutingModule,
       ReactiveFormsModule,
       BrowserAnimationsModule,
       DragDropModule,
-      QRCodeComponent,
       FormsModule,
       APP_ICONS,
     ),
