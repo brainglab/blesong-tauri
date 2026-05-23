@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
     selector: 'app-d-navbar',
     templateUrl: './h-navbar.component.html',
-    imports: [RouterLink]
+    imports: [RouterLink, LucideAngularModule]
 })
 export class HNavbarComponent implements OnInit {
 

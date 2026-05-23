@@ -12,12 +12,13 @@ import { MqttService } from 'src/app/services/mqtt.service';
 import { SModalOptionService } from '../../../shared/s-modal-option/s-modal-option.service';
 import { TemplateModel } from 'src/app/models/template.model';
 import { HPresenterObsNavbarComponent } from '../h-presenter-obs-navbar/h-presenter-obs-navbar.component';
-import { NgClass } from '@angular/common';
+import { LucideAngularModule } from 'lucide-angular';
+import { EncapsulationHtmlPipe } from '../../../../pipes/encapsulation-html.pipe';
 
 @Component({
     selector: 'app-h-presenter-obs-letters',
     templateUrl: './h-presenter-obs-letters.component.html',
-    imports: [HPresenterObsNavbarComponent, ReactiveFormsModule, NgClass]
+    imports: [HPresenterObsNavbarComponent, ReactiveFormsModule, LucideAngularModule, EncapsulationHtmlPipe]
 })
 export class HPresenterObsLettersComponent {
 

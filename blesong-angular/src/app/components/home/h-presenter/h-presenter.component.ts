@@ -5,11 +5,13 @@ import { TemplateModel } from 'src/app/models/template.model';
 import { MqttService } from 'src/app/services/mqtt.service';
 import gsap from 'gsap';
 import { EncapsulationHtmlPipe } from '../../../pipes/encapsulation-html.pipe';
+import { RouterLink } from '@angular/router';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
     selector: 'app-h-presenter',
     templateUrl: './h-presenter.component.html',
-    imports: [EncapsulationHtmlPipe]
+    imports: [EncapsulationHtmlPipe, RouterLink, LucideAngularModule]
 })
 export class HPresenterComponent implements OnInit, AfterViewInit, OnDestroy {
 

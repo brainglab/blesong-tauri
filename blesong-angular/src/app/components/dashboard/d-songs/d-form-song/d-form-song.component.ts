@@ -11,12 +11,13 @@ import { SongModel } from 'src/app/models/song.model';
 import { SModalOptionService } from 'src/app/components/shared/s-modal-option/s-modal-option.service';
 import { AutorService } from 'src/app/services/autor.service';
 import { BackButtonDirective } from '../../../../directives/back-button.directive';
+import { LucideAngularModule } from 'lucide-angular';
 
 
 @Component({
     selector: 'app-d-form-song',
     templateUrl: './d-form-song.component.html',
-    imports: [ReactiveFormsModule, BackButtonDirective]
+    imports: [ReactiveFormsModule, BackButtonDirective, LucideAngularModule]
 })
 export class DFormSongComponent implements OnInit, OnChanges {
 

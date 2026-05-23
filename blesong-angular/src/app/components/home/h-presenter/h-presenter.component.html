@@ -10,6 +10,7 @@
   <div class="max-w-2xl mx-auto pt-32 px-4">
     <div class="card bg-base-100 border border-base-300 shadow-sm">
       <div class="card-body items-center text-center py-12">
+        <i-lucide name="hourglass" class="size-12 opacity-50 mb-3"></i-lucide>
         <h2 class="text-xl opacity-70">En espera de iniciar una canción</h2>
       </div>
     </div>
@@ -26,7 +27,7 @@
         <div class="text-xl"
              [class.font-medium]="mIndex === mRealtime.song_slide_selected"
              [class.opacity-60]="mIndex !== mRealtime.song_slide_selected"
-             [innerHTML]="mSong"></div>
+             [innerHTML]="mSong | encapsulationHtml"></div>
       </div>
     </div>
   }

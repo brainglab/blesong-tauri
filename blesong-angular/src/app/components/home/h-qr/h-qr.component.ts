@@ -3,11 +3,12 @@ import { ServerService } from 'src/app/services/server.service';
 import { SToastService } from '../../shared/s-toast/s-toast.service';
 import { SModalLoadingService } from '../../shared/s-modal-loading/s-modal-loading.service';
 import { QRCodeComponent } from 'angularx-qrcode';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
     selector: 'app-h-qr',
     templateUrl: './h-qr.component.html',
-    imports: [QRCodeComponent]
+    imports: [QRCodeComponent, LucideAngularModule]
 })
 export class HQrComponent implements OnInit {
 

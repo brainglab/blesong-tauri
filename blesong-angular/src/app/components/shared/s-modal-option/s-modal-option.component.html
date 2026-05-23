@@ -2,18 +2,25 @@
   <div class="modal-box max-w-lg">
     <div class="flex items-center justify-between mb-3">
       <h3 class="text-lg font-bold">{{ mTitle }}</h3>
-      <button type="button" class="btn btn-sm btn-circle btn-ghost" (click)="close(null)" aria-label="Cerrar">✕</button>
+      <button type="button" class="btn btn-sm btn-circle btn-ghost" (click)="close(null)" aria-label="Cerrar">
+        <i-lucide name="x" class="size-4"></i-lucide>
+      </button>
     </div>
 
     <fieldset class="fieldset mb-3">
       <legend class="fieldset-legend">Buscar</legend>
-      <input
-        #mSearchInput
-        type="text"
-        class="input input-bordered w-full"
-        [(ngModel)]="mSearchText"
-        placeholder="Buscar..."
-        (keyup)="filterOptions()" />
+      <div class="join w-full">
+        <span class="btn btn-ghost join-item pointer-events-none">
+          <i-lucide name="search" class="size-4"></i-lucide>
+        </span>
+        <input
+          #mSearchInput
+          type="text"
+          class="input input-bordered join-item flex-1"
+          [(ngModel)]="mSearchText"
+          placeholder="Buscar..."
+          (keyup)="filterOptions()" />
+      </div>
     </fieldset>
 
     <div class="overflow-y-auto max-h-80 border border-base-300 rounded-box">
@@ -35,7 +42,7 @@
                       <div class="text-xs opacity-60">{{ mOption.description }}</div>
                     }
                   </div>
-                  <span class="opacity-50">›</span>
+                  <i-lucide name="chevron-right" class="size-4 opacity-50"></i-lucide>
                 </div>
               </td>
             </tr>

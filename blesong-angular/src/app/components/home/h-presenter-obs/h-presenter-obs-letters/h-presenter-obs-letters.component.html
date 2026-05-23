@@ -16,10 +16,14 @@
         <input class="input input-bordered join-item flex-1" [class.input-error]="mSongIdxValid"
                type="text" formControlName="song_idx" placeholder="Canción..." readonly
                (click)="showModalOption('Seleccione Canción', mOptionsSongIdx, 'song_idx')" />
-        <button class="btn btn-ghost join-item" type="button"
-                (click)="showModalOption('Seleccione Canción', mOptionsSongIdx, 'song_idx', true)">✕</button>
-        <button class="btn btn-primary join-item" type="button"
-                (click)="showModalOption('Seleccione Canción', mOptionsSongIdx, 'song_idx')">▾</button>
+        <button class="btn btn-ghost join-item" type="button" aria-label="Limpiar"
+                (click)="showModalOption('Seleccione Canción', mOptionsSongIdx, 'song_idx', true)">
+          <i-lucide name="x" class="size-4"></i-lucide>
+        </button>
+        <button class="btn btn-primary join-item" type="button" aria-label="Elegir canción"
+                (click)="showModalOption('Seleccione Canción', mOptionsSongIdx, 'song_idx')">
+          <i-lucide name="chevron-down" class="size-4"></i-lucide>
+        </button>
       </div>
       @if (mSongIdxValid) {
         @if (mForm.get('song_idx').errors.required) { <p class="fieldset-label text-error">No puede estar vacío</p> }
@@ -36,7 +40,7 @@
              [class.border-base-300]="mSongIndex != i"
              (click)="setSongPart(i)">
           <div class="card-body items-center text-center py-4">
-            <div class="text-base whitespace-pre-wrap" [innerHTML]="mSong"></div>
+            <div class="text-base whitespace-pre-wrap" [innerHTML]="mSong | encapsulationHtml"></div>
           </div>
         </div>
       }
@@ -46,6 +50,7 @@
   @if (mSongArray.length <= 0) {
     <div class="card bg-base-100 border border-base-300 mt-4">
       <div class="card-body items-center text-center py-12">
+        <i-lucide name="hourglass" class="size-12 opacity-50 mb-3"></i-lucide>
         <h3 class="text-lg opacity-70">No haz seleccionado una canción.</h3>
       </div>
     </div>

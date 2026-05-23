@@ -8,12 +8,12 @@ import { AutorModel } from 'src/app/models/autor.model';
 import { SModalLoadingService } from 'src/app/components/shared/s-modal-loading/s-modal-loading.service';
 import { AutorService } from 'src/app/services/autor.service';
 import { SToastService } from 'src/app/components/shared/s-toast/s-toast.service';
-import { NgClass } from '@angular/common';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
     selector: 'app-d-load-autor',
     templateUrl: './d-load-autor.component.html',
-    imports: [NgClass]
+    imports: [LucideAngularModule]
 })
 export class DLoadAutorComponent implements OnInit {
 

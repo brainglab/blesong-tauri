@@ -37,10 +37,14 @@
         autocomplete="off" id="autor_idx" type="text" #autor_idx
         formControlName="autor_idx" [(ngModel)]="mOptionText['autor_idx']"
         placeholder="Autor..." readonly />
-      <button class="btn btn-ghost join-item" type="button"
-              (click)="showModalOption('Seleccione Autor', mOptionsAutorIdx, 'autor_idx', true)">✕</button>
-      <button class="btn btn-primary join-item" type="button"
-              (click)="showModalOption('Seleccione Autor', mOptionsAutorIdx, 'autor_idx')">▾</button>
+      <button class="btn btn-ghost join-item" type="button" aria-label="Limpiar"
+              (click)="showModalOption('Seleccione Autor', mOptionsAutorIdx, 'autor_idx', true)">
+        <i-lucide name="x" class="size-4"></i-lucide>
+      </button>
+      <button class="btn btn-primary join-item" type="button" aria-label="Elegir autor"
+              (click)="showModalOption('Seleccione Autor', mOptionsAutorIdx, 'autor_idx')">
+        <i-lucide name="chevron-down" class="size-4"></i-lucide>
+      </button>
     </div>
     @if (mAutorIdxValid) {
       @if (mForm.get('autor_idx').errors.required) { <p class="fieldset-label text-error">No puede estar vacío</p> }

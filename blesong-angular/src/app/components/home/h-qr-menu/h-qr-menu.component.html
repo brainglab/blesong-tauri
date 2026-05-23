@@ -5,7 +5,10 @@
     </a>
   </div>
   <div>
-    <button routerLink="/" type="button" class="btn btn-ghost btn-sm">Inicio</button>
+    <button routerLink="/" type="button" class="btn btn-ghost btn-sm">
+      <i-lucide name="house" class="size-4"></i-lucide>
+      Inicio
+    </button>
   </div>
 </nav>
 
@@ -19,26 +22,38 @@
   <ul class="menu bg-base-200 rounded-box w-full gap-1">
     <li>
       <a routerLink="/presenter/obs-letters" class="flex items-center justify-between">
-        <span class="font-medium">OBS Letras</span>
-        <span class="opacity-50">›</span>
+        <span class="flex items-center gap-2 font-medium">
+          <i-lucide name="monitor" class="size-4"></i-lucide>
+          OBS Letras
+        </span>
+        <i-lucide name="chevron-right" class="size-4 opacity-50"></i-lucide>
       </a>
     </li>
     <li>
       <a routerLink="/presenter/slide" class="flex items-center justify-between">
-        <span class="font-medium">Presentación</span>
-        <span class="opacity-50">›</span>
+        <span class="flex items-center gap-2 font-medium">
+          <i-lucide name="monitor" class="size-4"></i-lucide>
+          Presentación
+        </span>
+        <i-lucide name="chevron-right" class="size-4 opacity-50"></i-lucide>
       </a>
     </li>
     <li>
       <a routerLink="/presenter/letter" class="flex items-center justify-between">
-        <span class="font-medium">Letra coro</span>
-        <span class="opacity-50">›</span>
+        <span class="flex items-center gap-2 font-medium">
+          <i-lucide name="file-text" class="size-4"></i-lucide>
+          Letra coro
+        </span>
+        <i-lucide name="chevron-right" class="size-4 opacity-50"></i-lucide>
       </a>
     </li>
     <li>
       <a routerLink="/presenter/qr-menu-page" class="flex items-center justify-between">
-        <span class="font-medium">QR</span>
-        <span class="opacity-50">›</span>
+        <span class="flex items-center gap-2 font-medium">
+          <i-lucide name="qr-code" class="size-4"></i-lucide>
+          QR
+        </span>
+        <i-lucide name="chevron-right" class="size-4 opacity-50"></i-lucide>
       </a>
     </li>
   </ul>

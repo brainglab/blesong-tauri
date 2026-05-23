@@ -2,7 +2,9 @@
   <div class="modal-box max-w-2xl">
     <div class="flex items-start justify-between mb-4">
       <h3 class="text-lg font-bold">Carga masiva — Autores</h3>
-      <button type="button" class="btn btn-sm btn-circle btn-ghost" (click)="close(true)" aria-label="Cerrar">✕</button>
+      <button type="button" class="btn btn-sm btn-circle btn-ghost" (click)="close(true)" aria-label="Cerrar">
+        <i-lucide name="x" class="size-4"></i-lucide>
+      </button>
     </div>
 
     <div #list class="text-center space-y-3">
@@ -11,7 +13,10 @@
       <input type="file" (change)="upload($event)"
              accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
              class="hidden" id="input" lang="es" />
-      <label class="btn btn-neutral" for="input">Carga masiva</label>
+      <label class="btn btn-neutral" for="input">
+        <i-lucide name="upload" class="size-4"></i-lucide>
+        Carga masiva
+      </label>
 
       <p class="text-sm opacity-70">El archivo "Excel" debe contener la siguiente columna:</p>
       <p class="font-medium">Nombre</p>
@@ -30,9 +35,11 @@
               <tr>
                 <td class="text-left" [innerHTML]="item.index"></td>
                 <td class="text-left">
-                  <span [class.text-success]="item.state == 1" [class.text-error]="item.state != 1">
-                    {{ item.state == 1 ? '✓' : '✕' }}
-                  </span>
+                  @if (item.state == 1) {
+                    <i-lucide name="circle-check" class="size-4 inline-block text-success mr-1"></i-lucide>
+                  } @else {
+                    <i-lucide name="circle-x" class="size-4 inline-block text-error mr-1"></i-lucide>
+                  }
                   {{ item.message }}
                 </td>
               </tr>

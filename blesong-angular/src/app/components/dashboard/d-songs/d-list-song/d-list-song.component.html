@@ -9,9 +9,15 @@
         <h1 class="text-2xl font-bold">Listado de canciones</h1>
         <div class="flex gap-2">
           @if (mSongs.length > 0) {
-            <button class="btn btn-sm btn-outline" type="button" (click)="exportToExcel()">Exportar</button>
+            <button class="btn btn-sm btn-outline" type="button" (click)="exportToExcel()">
+              <i-lucide name="download" class="size-4"></i-lucide>
+              Exportar
+            </button>
           }
-          <a class="btn btn-sm btn-primary" [routerLink]="['/songs/new']">Nueva</a>
+          <a class="btn btn-sm btn-primary" [routerLink]="['/songs/new']">
+            <i-lucide name="plus" class="size-4"></i-lucide>
+            Nueva
+          </a>
         </div>
       </div>
 
@@ -28,13 +34,21 @@
                 <tr>
                   <th>
                     Nombre
-                    @if (mOrder.order_field == 'song_name' && mOrder.order_direction == 'ASC') { <span class="text-primary">▲</span> }
-                    @if (mOrder.order_field == 'song_name' && mOrder.order_direction == 'DESC') { <span class="text-primary">▼</span> }
+                    @if (mOrder.order_field == 'song_name' && mOrder.order_direction == 'ASC') {
+                      <i-lucide name="chevron-up" class="size-4 inline-block text-primary"></i-lucide>
+                    }
+                    @if (mOrder.order_field == 'song_name' && mOrder.order_direction == 'DESC') {
+                      <i-lucide name="chevron-down" class="size-4 inline-block text-primary"></i-lucide>
+                    }
                   </th>
                   <th>
                     Contenido
-                    @if (mOrder.order_field == 'song_content' && mOrder.order_direction == 'ASC') { <span class="text-primary">▲</span> }
-                    @if (mOrder.order_field == 'song_content' && mOrder.order_direction == 'DESC') { <span class="text-primary">▼</span> }
+                    @if (mOrder.order_field == 'song_content' && mOrder.order_direction == 'ASC') {
+                      <i-lucide name="chevron-up" class="size-4 inline-block text-primary"></i-lucide>
+                    }
+                    @if (mOrder.order_field == 'song_content' && mOrder.order_direction == 'DESC') {
+                      <i-lucide name="chevron-down" class="size-4 inline-block text-primary"></i-lucide>
+                    }
                   </th>
                   <th class="w-1"></th>
                 </tr>
@@ -54,9 +68,15 @@
                     </td>
                     <td>
                       <div class="join">
-                        <button class="btn btn-sm btn-ghost join-item" type="button" (click)="show(mSong.idx)">Ver</button>
-                        <button class="btn btn-sm btn-ghost join-item" type="button" (click)="edit(mSong.idx)">Editar</button>
-                        <button class="btn btn-sm btn-ghost join-item text-error" type="button" (click)="delete(mSong.idx, mSong.song_name, mSong.song_image_url)">Eliminar</button>
+                        <button class="btn btn-sm btn-ghost join-item" type="button" (click)="show(mSong.idx)" aria-label="Ver">
+                          <i-lucide name="eye" class="size-4"></i-lucide>
+                        </button>
+                        <button class="btn btn-sm btn-ghost join-item" type="button" (click)="edit(mSong.idx)" aria-label="Editar">
+                          <i-lucide name="pencil" class="size-4"></i-lucide>
+                        </button>
+                        <button class="btn btn-sm btn-ghost join-item text-error" type="button" (click)="delete(mSong.idx, mSong.song_name, mSong.song_image_url)" aria-label="Eliminar">
+                          <i-lucide name="trash-2" class="size-4"></i-lucide>
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -68,6 +88,7 @@
 
         @if (mSongs.length <= 0) {
           <div class="border-t border-base-300 py-16 text-center opacity-60">
+            <i-lucide name="hourglass" class="size-12 mx-auto mb-3"></i-lucide>
             <h3 class="text-lg">No hay registros para mostrar</h3>
           </div>
         }
@@ -79,13 +100,21 @@
             </span>
 
             <div class="join">
-              <button class="join-item btn btn-sm" type="button" (click)="changePage(0)" [disabled]="mPage <= 0">«</button>
-              <button class="join-item btn btn-sm" type="button" (click)="changePage(mPage - 1)" [disabled]="mPage <= 0">‹</button>
+              <button class="join-item btn btn-sm" type="button" (click)="changePage(0)" [disabled]="mPage <= 0" aria-label="Primera página">
+                <i-lucide name="chevrons-left" class="size-4"></i-lucide>
+              </button>
+              <button class="join-item btn btn-sm" type="button" (click)="changePage(mPage - 1)" [disabled]="mPage <= 0" aria-label="Página anterior">
+                <i-lucide name="chevron-left" class="size-4"></i-lucide>
+              </button>
               <button class="join-item btn btn-sm btn-active" type="button" disabled>
                 Página {{ mPage + 1 }} de {{ mTotalPages }}
               </button>
-              <button class="join-item btn btn-sm" type="button" (click)="changePage(mPage + 1)" [disabled]="mPage >= mTotalPages - 1">›</button>
-              <button class="join-item btn btn-sm" type="button" (click)="changePage(mTotalPages - 1)" [disabled]="mPage >= mTotalPages - 1">»</button>
+              <button class="join-item btn btn-sm" type="button" (click)="changePage(mPage + 1)" [disabled]="mPage >= mTotalPages - 1" aria-label="Página siguiente">
+                <i-lucide name="chevron-right" class="size-4"></i-lucide>
+              </button>
+              <button class="join-item btn btn-sm" type="button" (click)="changePage(mTotalPages - 1)" [disabled]="mPage >= mTotalPages - 1" aria-label="Última página">
+                <i-lucide name="chevrons-right" class="size-4"></i-lucide>
+              </button>
             </div>
           </div>
         }

@@ -8,10 +8,10 @@
      [class.opacity-100]="mShow"
      (click)="close()">
   @switch (mClassType) {
-    @case ('success') { <span class="font-bold">✓</span> }
-    @case ('info')    { <span class="font-bold">i</span> }
-    @case ('warning') { <span class="font-bold">!</span> }
-    @case ('danger')  { <span class="font-bold">⚠</span> }
+    @case ('success') { <i-lucide name="circle-check" class="size-5"></i-lucide> }
+    @case ('info')    { <i-lucide name="info" class="size-5"></i-lucide> }
+    @case ('warning') { <i-lucide name="triangle-alert" class="size-5"></i-lucide> }
+    @case ('danger')  { <i-lucide name="circle-alert" class="size-5"></i-lucide> }
   }
   <span>{{ mText }}</span>
 </div>

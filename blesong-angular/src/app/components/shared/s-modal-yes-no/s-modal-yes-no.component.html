@@ -1,16 +1,18 @@
 <dialog class="modal" [class.modal-open]="mShow">
   <div class="modal-box">
-    <div class="flex items-center justify-between mb-2">
-      <h3 class="text-lg font-bold">
+    <div class="flex items-center justify-between mb-2 gap-3">
+      <h3 class="text-lg font-bold flex items-center gap-2">
         @switch (mClassType) {
-          @case ('success') { <span class="text-success">✓</span> }
-          @case ('warning') { <span class="text-warning">!</span> }
-          @case ('danger')  { <span class="text-error">!</span> }
-          @case ('info')    { <span class="text-info">i</span> }
+          @case ('success') { <i-lucide name="circle-check" class="size-5 text-success"></i-lucide> }
+          @case ('info')    { <i-lucide name="info" class="size-5 text-info"></i-lucide> }
+          @case ('warning') { <i-lucide name="triangle-alert" class="size-5 text-warning"></i-lucide> }
+          @case ('danger')  { <i-lucide name="circle-alert" class="size-5 text-error"></i-lucide> }
         }
         {{ mTitle }}
       </h3>
-      <button type="button" class="btn btn-sm btn-circle btn-ghost" (click)="close(false)" aria-label="Cerrar">✕</button>
+      <button type="button" class="btn btn-sm btn-circle btn-ghost" (click)="close(false)" aria-label="Cerrar">
+        <i-lucide name="x" class="size-4"></i-lucide>
+      </button>
     </div>
 
     <p class="py-4">{{ mText }}</p>

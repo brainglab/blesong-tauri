@@ -6,15 +6,14 @@
   </div>
 
   <div class="flex gap-2">
-    <button class="btn btn-sm btn-neutral" (click)="sendStandBy()">Descanso</button>
+    <button class="btn btn-sm btn-neutral" (click)="sendStandBy()">
+      <i-lucide name="coffee" class="size-4"></i-lucide>
+      Descanso
+    </button>
 
     <div class="dropdown dropdown-end">
       <div tabindex="0" role="button" class="btn btn-square btn-sm btn-primary" aria-label="Opciones OBS">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="3" y1="6" x2="21" y2="6"></line>
-          <line x1="3" y1="12" x2="21" y2="12"></line>
-          <line x1="3" y1="18" x2="21" y2="18"></line>
-        </svg>
+        <i-lucide name="menu" class="size-4"></i-lucide>
       </div>
 
       <div tabindex="0" class="dropdown-content card card-compact bg-base-100 shadow-xl w-80 z-50 mt-2">
@@ -23,14 +22,23 @@
           <div>
             <h3 class="text-sm font-semibold opacity-70 mb-2">Navegación</h3>
             <div class="grid grid-cols-2 gap-2">
-              <a routerLink="/presenter/obs-letters" class="btn btn-outline btn-sm justify-start">Letras</a>
-              <a routerLink="/presenter/obs-bible" class="btn btn-outline btn-sm justify-start">Biblia</a>
+              <a routerLink="/presenter/obs-letters" class="btn btn-outline btn-sm justify-start">
+                <i-lucide name="music" class="size-4"></i-lucide>
+                Letras
+              </a>
+              <a routerLink="/presenter/obs-bible" class="btn btn-outline btn-sm justify-start">
+                <i-lucide name="file-text" class="size-4"></i-lucide>
+                Biblia
+              </a>
             </div>
           </div>
 
           <div>
             <h3 class="text-sm font-semibold opacity-70 mb-2">OBS</h3>
-            <button class="btn btn-outline btn-sm w-full justify-start" (click)="reload()">Recargar</button>
+            <button class="btn btn-outline btn-sm w-full justify-start" (click)="reload()">
+              <i-lucide name="refresh-cw" class="size-4"></i-lucide>
+              Recargar
+            </button>
           </div>
 
           <div>
@@ -38,8 +46,12 @@
               Tamaño de letra <span class="badge badge-sm">{{ mTemplate.template_body_fontsize }}</span>
             </h3>
             <div class="join w-full">
-              <button class="btn btn-outline btn-sm join-item flex-1" (click)="setFontSize('sub')">−</button>
-              <button class="btn btn-outline btn-sm join-item flex-1" (click)="setFontSize('add')">+</button>
+              <button class="btn btn-outline btn-sm join-item flex-1" (click)="setFontSize('sub')">
+                <i-lucide name="minus" class="size-4"></i-lucide>
+              </button>
+              <button class="btn btn-outline btn-sm join-item flex-1" (click)="setFontSize('add')">
+                <i-lucide name="plus" class="size-4"></i-lucide>
+              </button>
             </div>
           </div>
 
@@ -48,21 +60,25 @@
             <ul class="menu menu-sm bg-base-200 rounded-box w-full">
               <li>
                 <a (click)="setAnimation(0)" [class.menu-active]="mTemplate.template_animation === 0">
+                  <i-lucide name="sparkles" class="size-4"></i-lucide>
                   Suave
                 </a>
               </li>
               <li>
                 <a (click)="setAnimation(1)" [class.menu-active]="mTemplate.template_animation === 1">
+                  <i-lucide name="sparkles" class="size-4"></i-lucide>
                   Brillante
                 </a>
               </li>
               <li>
                 <a (click)="setAnimation(2)" [class.menu-active]="mTemplate.template_animation === 2">
+                  <i-lucide name="sparkles" class="size-4"></i-lucide>
                   Desvanecimiento
                 </a>
               </li>
               <li>
                 <a (click)="setAnimation(3)" [class.menu-active]="mTemplate.template_animation === 3">
+                  <i-lucide name="sparkles" class="size-4"></i-lucide>
                   Desvanecimiento con brillo
                 </a>
               </li>

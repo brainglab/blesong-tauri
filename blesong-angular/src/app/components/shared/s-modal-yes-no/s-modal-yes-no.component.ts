@@ -1,11 +1,12 @@
 import { Component, Input, OnInit, ElementRef, Renderer2, Output, EventEmitter } from '@angular/core';
 import { Subject } from 'rxjs';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
     selector: 'app-s-modal-yes-no',
     templateUrl: './s-modal-yes-no.component.html',
     styleUrls: ['./s-modal-yes-no.component.css'],
-    imports: []
+    imports: [LucideAngularModule]
 })
 export class SModalYesNoComponent implements OnInit {
 

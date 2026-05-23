@@ -38,7 +38,10 @@
   </div>
 
   <div class="text-center my-4">
-    <button class="btn btn-sm btn-outline" type="button" (click)="mResetSelection()">Nueva búsqueda</button>
+    <button class="btn btn-sm btn-outline" type="button" (click)="mResetSelection()">
+      <i-lucide name="refresh-cw" class="size-4"></i-lucide>
+      Nueva búsqueda
+    </button>
   </div>
 
   @if (!mSelectedBible) {
@@ -102,6 +105,7 @@
   @if (mBibleBibles.length <= 0) {
     <div class="card bg-base-100 border border-base-300 mt-4">
       <div class="card-body items-center text-center py-12">
+        <i-lucide name="hourglass" class="size-12 opacity-50 mb-3"></i-lucide>
         <h3 class="text-lg opacity-70">No haz seleccionado una canción.</h3>
       </div>
     </div>

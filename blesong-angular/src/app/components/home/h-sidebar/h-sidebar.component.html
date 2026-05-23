@@ -12,13 +12,17 @@
           @if (mMenu.show === 'true') {
             <li>
               <details [open]="mMenu.active">
-                <summary>{{ mMenu.title }}</summary>
+                <summary>
+                  <i-lucide [name]="mMenu.icon" class="size-4 inline-block"></i-lucide>
+                  {{ mMenu.title }}
+                </summary>
                 <ul>
                   @for (mSubmenu of mMenu.submenu; track mSubmenu) {
                     @if (mSubmenu.show === 'true') {
                       <li>
                         <a [routerLink]="mSubmenu.route"
                            [class.menu-active]="mSubmenu.controller === mController">
+                          <i-lucide [name]="mSubmenu.icon" class="size-4 inline-block"></i-lucide>
                           {{ mSubmenu.title }}
                         </a>
                       </li>

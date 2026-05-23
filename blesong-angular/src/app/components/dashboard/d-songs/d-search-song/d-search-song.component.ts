@@ -13,12 +13,14 @@ import { OrderModel } from 'src/app/models/order.model';
 import { SModalOptionService } from 'src/app/components/shared/s-modal-option/s-modal-option.service';
 
 import { AutorService } from 'src/app/services/autor.service';
+import { LucideAngularModule } from 'lucide-angular';
+import { FormsModule } from '@angular/forms';
 
 
 @Component({
     selector: 'app-d-search-song',
     templateUrl: './d-search-song.component.html',
-    imports: [ReactiveFormsModule]
+    imports: [ReactiveFormsModule, FormsModule, LucideAngularModule]
 })
 export class DSearchSongComponent implements OnInit, OnChanges {
 

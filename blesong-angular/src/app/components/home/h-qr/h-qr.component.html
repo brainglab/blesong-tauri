@@ -9,7 +9,10 @@
     <p class="text-sm opacity-70">Puedes copiar el enlace directamente:</p>
     <div class="join w-full">
       <input type="text" class="input input-bordered join-item flex-1" [value]="mCurrentUrl" readonly />
-      <button class="btn btn-primary join-item" type="button" (click)="mCopyToClipboard()">Copiar</button>
+      <button class="btn btn-primary join-item" type="button" (click)="mCopyToClipboard()">
+        <i-lucide name="copy" class="size-4"></i-lucide>
+        Copiar
+      </button>
     </div>
   </div>
 </div>

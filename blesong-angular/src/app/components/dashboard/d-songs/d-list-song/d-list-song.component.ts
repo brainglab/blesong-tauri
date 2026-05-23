@@ -14,12 +14,13 @@ import { SModalYesNoService } from 'src/app/components/shared/s-modal-yes-no/s-m
 import { HSidebarComponent } from '../../../home/h-sidebar/h-sidebar.component';
 import { HNavbarComponent } from '../../../home/h-navbar/h-navbar.component';
 import { DSearchSongComponent } from '../d-search-song/d-search-song.component';
+import { LucideAngularModule } from 'lucide-angular';
 
 
 @Component({
     selector: 'app-d-list-song',
     templateUrl: './d-list-song.component.html',
-    imports: [HSidebarComponent, HNavbarComponent, RouterLink, DSearchSongComponent]
+    imports: [HSidebarComponent, HNavbarComponent, RouterLink, DSearchSongComponent, LucideAngularModule]
 })
 export class DListSongComponent implements OnInit {
 

@@ -4,25 +4,53 @@
   </div>
 
   <div class="hidden lg:flex flex-1 justify-center gap-1">
-    <a class="btn btn-ghost btn-sm" routerLink="/presenter/obs-letters">OBS Letras</a>
-    <a class="btn btn-ghost btn-sm" routerLink="/presenter/slide">Presentación</a>
-    <a class="btn btn-ghost btn-sm" routerLink="/presenter/qr-dashboard">QR</a>
-    <a class="btn btn-ghost btn-sm" routerLink="/presenter/letter">Letra coro</a>
+    <a class="btn btn-ghost btn-sm" routerLink="/presenter/obs-letters">
+      <i-lucide name="monitor" class="size-4"></i-lucide>
+      OBS Letras
+    </a>
+    <a class="btn btn-ghost btn-sm" routerLink="/presenter/slide">
+      <i-lucide name="monitor" class="size-4"></i-lucide>
+      Presentación
+    </a>
+    <a class="btn btn-ghost btn-sm" routerLink="/presenter/qr-dashboard">
+      <i-lucide name="qr-code" class="size-4"></i-lucide>
+      QR
+    </a>
+    <a class="btn btn-ghost btn-sm" routerLink="/presenter/letter">
+      <i-lucide name="file-text" class="size-4"></i-lucide>
+      Letra coro
+    </a>
   </div>
 
   <div class="dropdown dropdown-end lg:hidden">
     <div tabindex="0" role="button" class="btn btn-square btn-ghost" aria-label="Menú">
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="3" y1="6" x2="21" y2="6"></line>
-        <line x1="3" y1="12" x2="21" y2="12"></line>
-        <line x1="3" y1="18" x2="21" y2="18"></line>
-      </svg>
+      <i-lucide name="menu" class="size-5"></i-lucide>
     </div>
     <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box w-56 shadow-lg z-10 mt-2 p-2">
-      <li><a routerLink="/presenter/obs-letters">OBS Letras</a></li>
-      <li><a routerLink="/presenter/slide">Presentación</a></li>
-      <li><a routerLink="/presenter/qr-dashboard">QR</a></li>
-      <li><a routerLink="/presenter/letter">Letra coro</a></li>
+      <li>
+        <a routerLink="/presenter/obs-letters">
+          <i-lucide name="monitor" class="size-4"></i-lucide>
+          OBS Letras
+        </a>
+      </li>
+      <li>
+        <a routerLink="/presenter/slide">
+          <i-lucide name="monitor" class="size-4"></i-lucide>
+          Presentación
+        </a>
+      </li>
+      <li>
+        <a routerLink="/presenter/qr-dashboard">
+          <i-lucide name="qr-code" class="size-4"></i-lucide>
+          QR
+        </a>
+      </li>
+      <li>
+        <a routerLink="/presenter/letter">
+          <i-lucide name="file-text" class="size-4"></i-lucide>
+          Letra coro
+        </a>
+      </li>
     </ul>
   </div>
 </nav>

@@ -14,12 +14,13 @@ import { SModalYesNoService } from 'src/app/components/shared/s-modal-yes-no/s-m
 import { HSidebarComponent } from '../../../home/h-sidebar/h-sidebar.component';
 import { HNavbarComponent } from '../../../home/h-navbar/h-navbar.component';
 import { DSearchAutorComponent } from '../d-search-autor/d-search-autor.component';
+import { LucideAngularModule } from 'lucide-angular';
 
 
 @Component({
     selector: 'app-d-list-autor',
     templateUrl: './d-list-autor.component.html',
-    imports: [HSidebarComponent, HNavbarComponent, RouterLink, DSearchAutorComponent]
+    imports: [HSidebarComponent, HNavbarComponent, RouterLink, DSearchAutorComponent, LucideAngularModule]
 })
 export class DListAutorComponent implements OnInit {
 

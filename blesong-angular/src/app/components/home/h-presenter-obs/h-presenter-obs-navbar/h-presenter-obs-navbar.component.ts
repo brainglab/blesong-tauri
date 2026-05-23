@@ -1,11 +1,12 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { TemplateModel } from 'src/app/models/template.model';
 import { RouterLink } from '@angular/router';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
     selector: 'app-h-presenter-obs-navbar',
     templateUrl: './h-presenter-obs-navbar.component.html',
-    imports: [RouterLink]
+    imports: [RouterLink, LucideAngularModule]
 })
 export class HPresenterObsNavbarComponent {
 

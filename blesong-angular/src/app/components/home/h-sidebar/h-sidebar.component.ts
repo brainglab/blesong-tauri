@@ -1,11 +1,12 @@
-import { Component, OnInit, Input, Renderer2 } from '@angular/core';
+import { Component, Input, Renderer2 } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { LucideAngularModule } from 'lucide-angular';
 
 
 @Component({
     selector: 'app-d-sidebar',
     templateUrl: './h-sidebar.component.html',
-    imports: [RouterLink]
+    imports: [RouterLink, LucideAngularModule]
 })
 export class HSidebarComponent {
   @Input() mController: String = '';
@@ -31,7 +32,7 @@ export class HSidebarComponent {
         menu: [
           {
             title: "Inicio",
-            icon: "fa-house",
+            icon: "house",
             active: false,
             show: `true`,
             submenu: [
@@ -39,12 +40,14 @@ export class HSidebarComponent {
                 title: "Canciones",
                 route: "/songs",
                 controller: "songs",
+                icon: "music",
                 show: `true`,
               },
               {
                 title: "Autores",
                 route: "/autors",
                 controller: "autors",
+                icon: "users",
                 show: `true`,
               },
             ]

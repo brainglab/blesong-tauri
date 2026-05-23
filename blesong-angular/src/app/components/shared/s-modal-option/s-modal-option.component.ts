@@ -1,11 +1,12 @@
 import { Component, ElementRef, Input, OnInit, Renderer2, ViewChild, AfterViewInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
     selector: 'app-s-modal-option',
     templateUrl: './s-modal-option.component.html',
-    imports: [ReactiveFormsModule, FormsModule]
+    imports: [ReactiveFormsModule, FormsModule, LucideAngularModule]
 })
 export class SModalOptionComponent implements OnInit, AfterViewInit {
 
