@@ -1,126 +1,80 @@
-<form autocomplete="off" [formGroup]="mForm" (ngSubmit)="search()" #f="ngForm">
+<form autocomplete="off" [formGroup]="mForm" (ngSubmit)="search()" #f="ngForm" class="space-y-4">
 
-  <!-- fields -->
-  <div class="card-header">
-    <div class="row">
-      <div class="col-md-3 mb-3">
-        <label class="form-label" for="autor_name">Nombre @if (this.mForm.controls['autor_name'].hasValidator(mValidators.required)) {
-          <span class="text-danger">*</span>
-        }</label>
-        <input class="form-control" autocomplete="off" id="autor_name" type="text" #autor_name formControlName="autor_name" [(ngModel)]="mAutor.autor_name" [class.is-invalid]="mAutorNameValid" placeholder="Nombre...">
-        @if (mAutorNameValid) {
-          <small class="text-danger">
-            @if (this.mForm.get('autor_name').errors.required) {
-              <div>No puede estar vacío</div>
-            }
-            @if (this.mForm.get('autor_name').errors.minlength) {
-              <div>Debe tener al menos 1 caractéres</div>
-            }
-            @if (this.mForm.get('autor_name').errors.maxlength) {
-              <div>Debe tener como máximo 255 caractéres</div>
-            }
-            @if (this.mForm.get('autor_name').errors.pattern) {
-              <div>Campo no válido</div>
-            }
-          </small>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">Nombre</legend>
+      <input
+        class="input input-bordered w-full"
+        [class.input-error]="mAutorNameValid"
+        autocomplete="off"
+        id="autor_name"
+        type="text"
+        formControlName="autor_name"
+        [(ngModel)]="mAutor.autor_name"
+        placeholder="Nombre..." />
+      @if (mAutorNameValid) {
+        @if (mForm.get('autor_name').errors.maxlength) {
+          <p class="fieldset-label text-error">Debe tener como máximo 255 caracteres</p>
         }
-      </div>
-
-
-
-    </div>
+        @if (mForm.get('autor_name').errors.pattern) {
+          <p class="fieldset-label text-error">Campo no válido</p>
+        }
+      }
+    </fieldset>
   </div>
 
-  <!-- order -->
-  <div class="card-header">
-    <div class="row mb-3">
-      <div class="col-md-4">
-        <label class="form-label" for="order_field">Ordenar por @if (this.mForm.controls['order_field'].hasValidator(mValidators.required)) {
-          <span class="text-danger">*</span>
-        }</label>
-        <div class="input-group">
-          <input class="form-control" autocomplete="off" id="order_field" type="text" #order_field formControlName="order_field" [(ngModel)]="mOptionOrderText['order_field']" [class.is-invalid]="mOrderFieldValid" placeholder="Ordenar por..." readonly>
-          <button class="btn btn-sm btn-light" type="button" (click)="showModalOptionOrder('Seleccione campo', mOptionOrderField, 'order_field', true)"><i class="fa-solid fa-circle-xmark"></i></button>
-          <button class="btn btn-sm btn-primary" type="button" (click)="showModalOptionOrder('Seleccione campo', mOptionOrderField, 'order_field')"><i class="fa-solid fa-circle-chevron-down"></i></button>
-        </div>
-        @if (mOrderFieldValid) {
-          <small class="text-danger">
-            @if (this.mForm.get('order_field').errors.required) {
-              <div>No puede estar vacío</div>
-            }
-            @if (this.mForm.get('order_field').errors.minlength) {
-              <div>Debe tener al menos 1 caractéres</div>
-            }
-            @if (this.mForm.get('order_field').errors.maxlength) {
-              <div>Debe tener como máximo 255 caractéres</div>
-            }
-            @if (this.mForm.get('order_field').errors.pattern) {
-              <div>Campo no válido</div>
-            }
-          </small>
-        }
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">Ordenar por</legend>
+      <div class="join w-full">
+        <input
+          class="input input-bordered join-item flex-1"
+          autocomplete="off"
+          type="text"
+          formControlName="order_field"
+          [(ngModel)]="mOptionOrderText['order_field']"
+          placeholder="Ordenar por..."
+          readonly />
+        <button class="btn btn-ghost join-item" type="button" (click)="showModalOptionOrder('Seleccione campo', mOptionOrderField, 'order_field', true)">✕</button>
+        <button class="btn btn-primary join-item" type="button" (click)="showModalOptionOrder('Seleccione campo', mOptionOrderField, 'order_field')">▾</button>
       </div>
+    </fieldset>
 
-      <div class="col-md-4">
-        <label class="form-label" for="order_direction">Dirección @if (this.mForm.controls['order_direction'].hasValidator(mValidators.required)) {
-          <span class="text-danger">*</span>
-        }</label>
-        <div class="input-group">
-          <input class="form-control" autocomplete="off" id="order_direction" type="text" #order_direction formControlName="order_direction" [(ngModel)]="mOptionOrderText['order_direction']" [class.is-invalid]="mOrderDirectionValid" placeholder="Dirección..." readonly>
-          <button class="btn btn-sm btn-light" type="button" (click)="showModalOptionOrder('Seleccione dirección', mOptionOrderDirection, 'order_direction', true)"><i class="fa-solid fa-circle-xmark"></i></button>
-          <button class="btn btn-sm btn-primary" type="button" (click)="showModalOptionOrder('Seleccione dirección', mOptionOrderDirection, 'order_direction')"><i class="fa-solid fa-circle-chevron-down"></i></button>
-        </div>
-        @if (mOrderDirectionValid) {
-          <small class="text-danger">
-            @if (this.mForm.get('order_direction').errors.required) {
-              <div>No puede estar vacío</div>
-            }
-            @if (this.mForm.get('order_direction').errors.minlength) {
-              <div>Debe tener al menos 1 caractéres</div>
-            }
-            @if (this.mForm.get('order_direction').errors.maxlength) {
-              <div>Debe tener como máximo 255 caractéres</div>
-            }
-            @if (this.mForm.get('order_direction').errors.pattern) {
-              <div>Campo no válido</div>
-            }
-          </small>
-        }
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">Dirección</legend>
+      <div class="join w-full">
+        <input
+          class="input input-bordered join-item flex-1"
+          autocomplete="off"
+          type="text"
+          formControlName="order_direction"
+          [(ngModel)]="mOptionOrderText['order_direction']"
+          placeholder="Dirección..."
+          readonly />
+        <button class="btn btn-ghost join-item" type="button" (click)="showModalOptionOrder('Seleccione dirección', mOptionOrderDirection, 'order_direction', true)">✕</button>
+        <button class="btn btn-primary join-item" type="button" (click)="showModalOptionOrder('Seleccione dirección', mOptionOrderDirection, 'order_direction')">▾</button>
       </div>
+    </fieldset>
 
-      <div class="col-md-4">
-        <label class="form-label" for="order_count">Mostrar @if (this.mForm.controls['order_count'].hasValidator(mValidators.required)) {
-          <span class="text-danger">*</span>
-        }</label>
-        <div class="input-group">
-          <input class="form-control" autocomplete="off" id="order_count" type="text" #order_count formControlName="order_count" [(ngModel)]="mOptionOrderText['order_count']" [class.is-invalid]="mOrderCountValid" placeholder="Registros..." readonly>
-          <button class="btn btn-sm btn-light" type="button" (click)="showModalOptionOrder('Seleccione registros', mOptionOrderCount, 'order_count', true)"><i class="fa-solid fa-circle-xmark"></i></button>
-          <button class="btn btn-sm btn-primary" type="button" (click)="showModalOptionOrder('Seleccione registros', mOptionOrderCount, 'order_count')"><i class="fa-solid fa-circle-chevron-down"></i></button>
-        </div>
-        @if (mOrderCountValid) {
-          <small class="text-danger">
-            @if (this.mForm.get('order_count').errors.required) {
-              <div>No puede estar vacío</div>
-            }
-            @if (this.mForm.get('order_count').errors.minlength) {
-              <div>Debe tener al menos 1 caractéres</div>
-            }
-            @if (this.mForm.get('order_count').errors.maxlength) {
-              <div>Debe tener como máximo 255 caractéres</div>
-            }
-            @if (this.mForm.get('order_count').errors.pattern) {
-              <div>Campo no válido</div>
-            }
-          </small>
-        }
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">Mostrar</legend>
+      <div class="join w-full">
+        <input
+          class="input input-bordered join-item flex-1"
+          autocomplete="off"
+          type="text"
+          formControlName="order_count"
+          [(ngModel)]="mOptionOrderText['order_count']"
+          placeholder="Registros..."
+          readonly />
+        <button class="btn btn-ghost join-item" type="button" (click)="showModalOptionOrder('Seleccione registros', mOptionOrderCount, 'order_count', true)">✕</button>
+        <button class="btn btn-primary join-item" type="button" (click)="showModalOptionOrder('Seleccione registros', mOptionOrderCount, 'order_count')">▾</button>
       </div>
-    </div>
-    <div class="row">
-      <div class="col-md-12 d-flex justify-content-end">
-        <button class="btn btn-sm btn-light m-1" type="button" (click)="clear()"><i class="fa-solid fa-delete-left me-1" style="font-size: 15px;"></i>Limpiar</button>
-        <button class="btn btn-sm btn-secondary m-1" type="submit"><i class="fa-solid fa-magnifying-glass me-1" style="font-size: 15px;"></i>Buscar</button>
-      </div>
-    </div>
+    </fieldset>
   </div>
 
+  <div class="flex justify-end gap-2">
+    <button class="btn btn-sm btn-ghost" type="button" (click)="clear()">Limpiar</button>
+    <button class="btn btn-sm btn-primary" type="submit">Buscar</button>
+  </div>
 </form>

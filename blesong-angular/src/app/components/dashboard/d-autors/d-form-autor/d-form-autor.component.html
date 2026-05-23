@@ -1,37 +1,42 @@
-<div class="text-muted mb-4">(*) Campos obligatorios</div>
-<form autocomplete="off" [formGroup]="mForm" (ngSubmit)="save()" #f="ngForm">
+<p class="text-sm opacity-70 mb-4">(*) Campos obligatorios</p>
 
-  <!-- fields -->
-  <div class="mb-3">
-    <label class="form-label" for="autor_name">Nombre @if (this.mForm.controls['autor_name'].hasValidator(mValidators.required)) {
-      <span class="text-danger">*</span>
-    }</label>
-    <input class="form-control" autocomplete="off" id="autor_name" type="text" #autor_name formControlName="autor_name" [(ngModel)]="mAutor.autor_name" [class.is-invalid]="mAutorNameValid" placeholder="Nombre...">
+<form autocomplete="off" [formGroup]="mForm" (ngSubmit)="save()" #f="ngForm" class="space-y-4">
+
+  <fieldset class="fieldset">
+    <legend class="fieldset-legend">
+      Nombre
+      @if (mForm.controls['autor_name'].hasValidator(mValidators.required)) {
+        <span class="text-error">*</span>
+      }
+    </legend>
+    <input
+      class="input input-bordered w-full"
+      [class.input-error]="mAutorNameValid"
+      autocomplete="off"
+      id="autor_name"
+      type="text"
+      #autor_name
+      formControlName="autor_name"
+      [(ngModel)]="mAutor.autor_name"
+      placeholder="Nombre del autor" />
     @if (mAutorNameValid) {
-      <small class="text-danger">
-        @if (this.mForm.get('autor_name').errors.required) {
-          <div>No puede estar vacío</div>
-        }
-        @if (this.mForm.get('autor_name').errors.minlength) {
-          <div>Debe tener al menos 1 caractéres</div>
-        }
-        @if (this.mForm.get('autor_name').errors.maxlength) {
-          <div>Debe tener como máximo 255 caractéres</div>
-        }
-        @if (this.mForm.get('autor_name').errors.pattern) {
-          <div>Campo no válido</div>
-        }
-      </small>
+      @if (mForm.get('autor_name').errors.required) {
+        <p class="fieldset-label text-error">No puede estar vacío</p>
+      }
+      @if (mForm.get('autor_name').errors.minlength) {
+        <p class="fieldset-label text-error">Debe tener al menos 1 carácter</p>
+      }
+      @if (mForm.get('autor_name').errors.maxlength) {
+        <p class="fieldset-label text-error">Debe tener como máximo 255 caracteres</p>
+      }
+      @if (mForm.get('autor_name').errors.pattern) {
+        <p class="fieldset-label text-error">Campo no válido</p>
+      }
     }
+  </fieldset>
+
+  <div class="flex justify-end gap-2 pt-2">
+    <button class="btn btn-neutral" type="button" backButton>Cancelar</button>
+    <button class="btn btn-primary" type="submit">Guardar</button>
   </div>
-
-
-
-
-  <div class="d-flex justify-content-end">
-    <button class="btn btn-secondary rounded-pill m-1" type="button" backButton>Cancelar</button>
-    <button class="btn btn-primary rounded-pill m-1" type="submit">Guardar</button>
-  </div>
-
-
 </form>

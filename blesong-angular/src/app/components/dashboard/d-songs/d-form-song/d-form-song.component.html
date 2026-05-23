@@ -1,116 +1,95 @@
-<div class="text-muted mb-4">(*) Campos obligatorios</div>
-<form autocomplete="off" [formGroup]="mForm" (ngSubmit)="save()" #f="ngForm">
+<p class="text-sm opacity-70 mb-4">(*) Campos obligatorios</p>
 
-  <!-- fields -->
-  <div class="mb-3">
-    <label class="form-label" for="song_name">Nombre @if (this.mForm.controls['song_name'].hasValidator(mValidators.required)) {
-      <span class="text-danger">*</span>
-    }</label>
-    <input class="form-control" autocomplete="off" id="song_name" type="text" #song_name formControlName="song_name" [(ngModel)]="mSong.song_name" [class.is-invalid]="mSongNameValid" placeholder="Nombre...">
+<form autocomplete="off" [formGroup]="mForm" (ngSubmit)="save()" #f="ngForm" class="space-y-4">
+
+  <fieldset class="fieldset">
+    <legend class="fieldset-legend">
+      Nombre
+      @if (mForm.controls['song_name'].hasValidator(mValidators.required)) {
+        <span class="text-error">*</span>
+      }
+    </legend>
+    <input
+      class="input input-bordered w-full"
+      [class.input-error]="mSongNameValid"
+      autocomplete="off" id="song_name" type="text" #song_name
+      formControlName="song_name" [(ngModel)]="mSong.song_name"
+      placeholder="Nombre de la canción" />
     @if (mSongNameValid) {
-      <small class="text-danger">
-        @if (this.mForm.get('song_name').errors.required) {
-          <div>No puede estar vacío</div>
-        }
-        @if (this.mForm.get('song_name').errors.minlength) {
-          <div>Debe tener al menos 1 caractéres</div>
-        }
-        @if (this.mForm.get('song_name').errors.maxlength) {
-          <div>Debe tener como máximo 255 caractéres</div>
-        }
-        @if (this.mForm.get('song_name').errors.pattern) {
-          <div>Campo no válido</div>
-        }
-      </small>
+      @if (mForm.get('song_name').errors.required) { <p class="fieldset-label text-error">No puede estar vacío</p> }
+      @if (mForm.get('song_name').errors.minlength) { <p class="fieldset-label text-error">Debe tener al menos 1 carácter</p> }
+      @if (mForm.get('song_name').errors.maxlength) { <p class="fieldset-label text-error">Máximo 255 caracteres</p> }
+      @if (mForm.get('song_name').errors.pattern) { <p class="fieldset-label text-error">Campo no válido</p> }
     }
-  </div>
+  </fieldset>
 
-
-  <div class="mb-3">
-    <label class="form-label" for="autor_idx">Autor @if (this.mForm.controls['autor_idx'].hasValidator(mValidators.required)) {
-      <span class="text-danger">*</span>
-    }</label>
-    <div class="input-group">
-      <input class="form-control" autocomplete="off" id="autor_idx" type="text" #autor_idx formControlName="autor_idx" [(ngModel)]="mOptionText['autor_idx']" [class.is-invalid]="mAutorIdxValid" placeholder="Autor..." readonly>
-      <button class="btn btn-sm btn-light" type="button" (click)="showModalOption('Seleccione Autor', mOptionsAutorIdx, 'autor_idx' , true)"><i class="fa-solid fa-circle-xmark"></i></button>
-      <button class="btn btn-sm btn-primary" type="button" (click)="showModalOption('Seleccione Autor', mOptionsAutorIdx, 'autor_idx' )"><i class="fa-solid fa-circle-chevron-down"></i></button>
+  <fieldset class="fieldset">
+    <legend class="fieldset-legend">
+      Autor
+      @if (mForm.controls['autor_idx'].hasValidator(mValidators.required)) {
+        <span class="text-error">*</span>
+      }
+    </legend>
+    <div class="join w-full">
+      <input
+        class="input input-bordered join-item flex-1"
+        [class.input-error]="mAutorIdxValid"
+        autocomplete="off" id="autor_idx" type="text" #autor_idx
+        formControlName="autor_idx" [(ngModel)]="mOptionText['autor_idx']"
+        placeholder="Autor..." readonly />
+      <button class="btn btn-ghost join-item" type="button"
+              (click)="showModalOption('Seleccione Autor', mOptionsAutorIdx, 'autor_idx', true)">✕</button>
+      <button class="btn btn-primary join-item" type="button"
+              (click)="showModalOption('Seleccione Autor', mOptionsAutorIdx, 'autor_idx')">▾</button>
     </div>
     @if (mAutorIdxValid) {
-      <small class="text-danger">
-        @if (this.mForm.get('autor_idx').errors.required) {
-          <div>No puede estar vacío</div>
-        }
-        @if (this.mForm.get('autor_idx').errors.minlength) {
-          <div>Debe tener al menos 1 caractéres</div>
-        }
-        @if (this.mForm.get('autor_idx').errors.maxlength) {
-          <div>Debe tener como máximo 255 caractéres</div>
-        }
-        @if (this.mForm.get('autor_idx').errors.pattern) {
-          <div>Campo no válido</div>
-        }
-      </small>
+      @if (mForm.get('autor_idx').errors.required) { <p class="fieldset-label text-error">No puede estar vacío</p> }
     }
-  </div>
+  </fieldset>
 
-
-  <div class="mb-3">
-    <label class="form-label" for="song_year">Año @if (this.mForm.controls['song_year'].hasValidator(mValidators.required)) {
-      <span class="text-danger">*</span>
-    }</label>
-    <input class="form-control" autocomplete="off" id="song_year" type="text" #song_year formControlName="song_year" [(ngModel)]="mSong.song_year" [class.is-invalid]="mSongYearValid" placeholder="Año...">
+  <fieldset class="fieldset">
+    <legend class="fieldset-legend">
+      Año
+      @if (mForm.controls['song_year'].hasValidator(mValidators.required)) {
+        <span class="text-error">*</span>
+      }
+    </legend>
+    <input
+      class="input input-bordered w-full"
+      [class.input-error]="mSongYearValid"
+      autocomplete="off" id="song_year" type="text" #song_year
+      formControlName="song_year" [(ngModel)]="mSong.song_year"
+      placeholder="Año..." />
     @if (mSongYearValid) {
-      <small class="text-danger">
-        @if (this.mForm.get('song_year').errors.required) {
-          <div>No puede estar vacío</div>
-        }
-        @if (this.mForm.get('song_year').errors.minlength) {
-          <div>Debe tener al menos 1 caractéres</div>
-        }
-        @if (this.mForm.get('song_year').errors.maxlength) {
-          <div>Debe tener como máximo 255 caractéres</div>
-        }
-        @if (this.mForm.get('song_year').errors.pattern) {
-          <div>Campo no válido</div>
-        }
-      </small>
+      @if (mForm.get('song_year').errors.required) { <p class="fieldset-label text-error">No puede estar vacío</p> }
+      @if (mForm.get('song_year').errors.maxlength) { <p class="fieldset-label text-error">Máximo 255 caracteres</p> }
+      @if (mForm.get('song_year').errors.pattern) { <p class="fieldset-label text-error">Campo no válido</p> }
     }
-  </div>
+  </fieldset>
 
-
-  <div class="mb-3">
-    <label class="form-label" for="song_content">Contenido @if (this.mForm.controls['song_content'].hasValidator(mValidators.required)) {
-      <span class="text-danger">*</span>
-    }</label>
-    <textarea class="form-control" autocomplete="off" id="song_content" type="text" #song_content formControlName="song_content" [(ngModel)]="mSong.song_content" [class.is-invalid]="mSongContentValid" placeholder="Contenido..." rows="15" style="min-height: 300px;"></textarea>
+  <fieldset class="fieldset">
+    <legend class="fieldset-legend">
+      Contenido
+      @if (mForm.controls['song_content'].hasValidator(mValidators.required)) {
+        <span class="text-error">*</span>
+      }
+    </legend>
+    <textarea
+      class="textarea textarea-bordered w-full font-mono"
+      [class.textarea-error]="mSongContentValid"
+      autocomplete="off" id="song_content" #song_content
+      formControlName="song_content" [(ngModel)]="mSong.song_content"
+      placeholder="Contenido (estrofas, coros...)" rows="15"
+      style="min-height: 300px;"></textarea>
     @if (mSongContentValid) {
-      <small class="text-danger">
-        @if (this.mForm.get('song_content').errors.required) {
-          <div>No puede estar vacío</div>
-        }
-        @if (this.mForm.get('song_content').errors.minlength) {
-          <div>Debe tener al menos 1 caractéres</div>
-        }
-        @if (this.mForm.get('song_content').errors.maxlength) {
-          <div>Debe tener como máximo 5000 caractéres</div>
-        }
-        @if (this.mForm.get('song_content').errors.pattern) {
-          <div>Campo no válido</div>
-        }
-      </small>
+      @if (mForm.get('song_content').errors.required) { <p class="fieldset-label text-error">No puede estar vacío</p> }
+      @if (mForm.get('song_content').errors.maxlength) { <p class="fieldset-label text-error">Máximo 5000 caracteres</p> }
     }
-    <div class="text-end text-muted">
-      <small>{{ mSong.song_content?.length || 0 }}/5000 caracteres</small>
-    </div>
+    <p class="fieldset-label text-right opacity-60">{{ mSong.song_content?.length || 0 }}/5000 caracteres</p>
+  </fieldset>
+
+  <div class="flex justify-end gap-2 pt-2">
+    <button class="btn btn-neutral" type="button" backButton>Cancelar</button>
+    <button class="btn btn-primary" type="submit">Guardar</button>
   </div>
-
-
-
-
-  <div class="d-flex justify-content-end">
-    <button class="btn btn-secondary rounded-pill m-1" type="button" backButton>Cancelar</button>
-    <button class="btn btn-primary rounded-pill m-1" type="submit">Guardar</button>
-  </div>
-
-
 </form>

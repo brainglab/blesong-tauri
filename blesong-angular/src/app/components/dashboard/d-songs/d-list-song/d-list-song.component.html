@@ -1,164 +1,95 @@
-<div id="db-wrapper">
+<div class="flex min-h-screen bg-base-100">
+  <app-d-sidebar mController="songs" />
 
-  <app-d-sidebar mController="songs"></app-d-sidebar>
+  <div class="flex-1 flex flex-col">
+    <app-d-navbar />
 
-  <div id="page-content">
-    <div class="header">
+    <main class="p-6 max-w-7xl w-full mx-auto">
+      <div class="flex items-center justify-between border-b border-base-300 pb-3 mb-6 flex-wrap gap-3">
+        <h1 class="text-2xl font-bold">Listado de canciones</h1>
+        <div class="flex gap-2">
+          @if (mSongs.length > 0) {
+            <button class="btn btn-sm btn-outline" type="button" (click)="exportToExcel()">Exportar</button>
+          }
+          <a class="btn btn-sm btn-primary" [routerLink]="['/songs/new']">Nueva</a>
+        </div>
+      </div>
 
-      <app-d-navbar></app-d-navbar>
+      <div class="card bg-base-100 border border-base-300 shadow-sm mb-4">
+        <div class="card-body">
+          <h2 class="card-title text-base">Búsqueda avanzada</h2>
+          <app-d-search-song (mSongResponse)="search($event)" />
+        </div>
 
-    </div>
-    <div class="container-fluid bg-gray-100 p-4 animate__animated animate__fadeIn animate__faster">
+        @if (mSongs.length > 0) {
+          <div class="overflow-x-auto border-t border-base-300">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>
+                    Nombre
+                    @if (mOrder.order_field == 'song_name' && mOrder.order_direction == 'ASC') { <span class="text-primary">▲</span> }
+                    @if (mOrder.order_field == 'song_name' && mOrder.order_direction == 'DESC') { <span class="text-primary">▼</span> }
+                  </th>
+                  <th>
+                    Contenido
+                    @if (mOrder.order_field == 'song_content' && mOrder.order_direction == 'ASC') { <span class="text-primary">▲</span> }
+                    @if (mOrder.order_field == 'song_content' && mOrder.order_direction == 'DESC') { <span class="text-primary">▼</span> }
+                  </th>
+                  <th class="w-1"></th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (mSong of mSongs; track mSong) {
+                  <tr>
+                    <td>
+                      <div class="font-medium">{{ mSong.song_name }}</div>
+                      <div class="text-xs opacity-60">{{ mSong.autor?.autor_name }}</div>
+                      <div class="text-xs opacity-60">{{ mSong.song_year }}</div>
+                    </td>
+                    <td class="max-w-md">
+                      <span class="text-sm opacity-80">
+                        {{ mSong.song_content?.length > 200 ? mSong.song_content.substring(0,200) + '...' : mSong.song_content }}
+                      </span>
+                    </td>
+                    <td>
+                      <div class="join">
+                        <button class="btn btn-sm btn-ghost join-item" type="button" (click)="show(mSong.idx)">Ver</button>
+                        <button class="btn btn-sm btn-ghost join-item" type="button" (click)="edit(mSong.idx)">Editar</button>
+                        <button class="btn btn-sm btn-ghost join-item text-error" type="button" (click)="delete(mSong.idx, mSong.song_name, mSong.song_image_url)">Eliminar</button>
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
 
-      <!-- title -->
-      <div class="row ">
-        <div class="col-lg-12 col-md-12 col-12">
-          <!-- Page header -->
-          <div class="border-bottom pb-3 mb-3 d-lg-flex justify-content-between align-items-center">
-            <div class="mb-2 mb-lg-0">
-              <h1 class="mb-0 h2 fw-bold">Listado de Canciones</h1>
-            </div>
-            <!-- button -->
-            <div>
-              @if (mSongs.length > 0) {
-                <button class="btn btn-outline-secondary rounded-pill me-2" type="button" (click)="exportToExcel()">
-                  <i class="fa-solid fa-cloud-arrow-up me-2" style="font-size: 15px;"></i>Exportar
-                </button>
-              }
-              <button class="btn btn-primary rounded-pill" type="button" [routerLink]="['/songs/new']">
-                <span class="fa-solid fa-circle-plus me-2"></span>Nuevo
+        @if (mSongs.length <= 0) {
+          <div class="border-t border-base-300 py-16 text-center opacity-60">
+            <h3 class="text-lg">No hay registros para mostrar</h3>
+          </div>
+        }
+
+        @if (mSongs.length > 0) {
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 px-6 py-4 border-t border-base-300">
+            <span class="badge badge-ghost">
+              Mostrando del {{ mFromRegisters }} al {{ mToRegisters }} de {{ mTotalRegisters }} total
+            </span>
+
+            <div class="join">
+              <button class="join-item btn btn-sm" type="button" (click)="changePage(0)" [disabled]="mPage <= 0">«</button>
+              <button class="join-item btn btn-sm" type="button" (click)="changePage(mPage - 1)" [disabled]="mPage <= 0">‹</button>
+              <button class="join-item btn btn-sm btn-active" type="button" disabled>
+                Página {{ mPage + 1 }} de {{ mTotalPages }}
               </button>
+              <button class="join-item btn btn-sm" type="button" (click)="changePage(mPage + 1)" [disabled]="mPage >= mTotalPages - 1">›</button>
+              <button class="join-item btn btn-sm" type="button" (click)="changePage(mTotalPages - 1)" [disabled]="mPage >= mTotalPages - 1">»</button>
             </div>
           </div>
-
-        </div>
+        }
       </div>
-
-      <div class="row ">
-        <div class="col-lg-12 col-md-12 col-12">
-          <div class="card card-small shadow mb-4">
-            <div class="card-header">
-              <h3 class="card-title align-items-center">Búsqueda avanzada</h3>
-            </div>
-            <div class="card-body pt-3 pb-1">
-              <app-d-search-song (mSongResponse)="search($event)"></app-d-search-song>
-            </div>
-            @if (mSongs.length > 0) {
-              <div class="table-responsive">
-                <table class="table table-hover mb-0">
-                  <thead class="table-light">
-                    <tr class="fw-bold fs-6 text-gray border-bottom-2 border-gray-200">
-                      <th class="align-middle">
-                        Nombre
-                        @if (mOrder.order_field == 'song_name' && mOrder.order_direction == 'ASC') {
-                          <i class="fa-solid fa-circle-chevron-up text-primary ms-1" style="font-size: 15px;"></i>
-                        }
-                        @if (mOrder.order_field == 'song_name' && mOrder.order_direction == 'DESC') {
-                          <i class="fa-solid fa-circle-chevron-down text-primary ms-1" style="font-size: 15px;"></i>
-                        }
-                      </th>
-                      <th class="align-middle">
-                        Contenido
-                        @if (mOrder.order_field == 'song_content' && mOrder.order_direction == 'ASC') {
-                          <i class="fa-solid fa-circle-chevron-up text-primary ms-1" style="font-size: 15px;"></i>
-                        }
-                        @if (mOrder.order_field == 'song_content' && mOrder.order_direction == 'DESC') {
-                          <i class="fa-solid fa-circle-chevron-down text-primary ms-1" style="font-size: 15px;"></i>
-                        }
-                      </th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    @for (mSong of mSongs; track mSong) {
-                      <tr>
-                        <td class="align-middle">
-                          <div class="text-dark">{{ mSong.song_name }}</div>
-                          <div class="small text-muted">{{ mSong.autor.autor_name }}</div>
-                          <div class="small text-muted">{{ mSong.song_year }}</div>
-                        </td>
-                        <td class="align-middle">{{ mSong.song_content.length > 200 ? mSong.song_content.substring(0,200) + '...' : mSong.song_content }}</td>
-                        <td class="align-middle">
-                          <div class="d-flex justify-content-end">
-                            <div class="btn-group" role="group" aria-label="Basic example">
-                              <a class="btn btn-sm btn-ico btn-light" href="javascript:void(0);" (click)="show(mSong.idx)"><i class="fa-solid fa-eye" style="font-size: 15px;"></i></a>
-                              <a class="btn btn-sm btn-ico btn-light" href="javascript:void(0);" (click)="edit(mSong.idx)"><i class="fa-solid fa-pencil" style="font-size: 15px;"></i></a>
-                              <a class="btn btn-sm btn-ico btn-light" href="javascript:void(0);" (click)="delete(mSong.idx, mSong.song_name, mSong.song_image_url)"><i class="fa-solid fa-trash-can" style="font-size: 15px;"></i></a>
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                    }
-                  </tbody>
-                </table>
-              </div>
-            }
-            @if (mSongs.length <= 0) {
-              <div class="card-body">
-                <div class="mt-10 mb-5 d-flex justify-content-center text-muted">
-                  <h4 class="text-muted">No hay registros para mostrar</h4>
-                </div>
-                <div class="mb-10 d-flex justify-content-center text-muted">
-                  <i class="fa-solid fa-ghost text-light" style="font-size: 200px;"></i>
-                </div>
-              </div>
-            }
-            <div class="card-footer">
-
-              @if (mSongs.length > 0) {
-                <div class="row">
-                  <div class="col-3 d-flex justify-content-start">
-                    <div class="badge badge-pill badge-light text-primary badge-marketing mb-3">
-                      Mostrando del {{ mFromRegisters }} al {{ mToRegisters }} de {{ mTotalRegisters }} total
-                    </div>
-                  </div>
-                  <div class="col-9 d-flex justify-content-end">
-                    <nav>
-                      <ul class="pagination mb-0">
-                        <li class="page-item">
-                          <a href="javascript:;" (click)="changePage(0)" class="btn btn-sm btn-primary mx-1" [ngClass]="(mPage) <= 0 ? 'disabled' : ''">
-                            <i class="fa-solid fa-circle-chevron-left" style="font-size: 15px;"></i>
-                          </a>
-                        </li>
-                        <li class="page-item">
-                          <a href="javascript:;" (click)="changePage(mPage - 1)" class="btn btn-sm btn-primary mx-1" [ngClass]="(mPage) <= 0 ? 'disabled' : ''">
-                            <i class="fa-solid fa-circle-chevron-left" style="font-size: 15px;"></i>
-                          </a>
-                        </li>
-                        <li class="page-item disabled">
-                          <div class="dropdown dropup-center dropup">
-                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                              Página {{ mPage + 1 }} de {{ mTotalPages }}
-                            </button>
-                            <div class="dropdown-menu scrollable-menu" aria-labelledby="dropdownMenuButton">
-                              @for (item of mPages; track item) {
-                                <a class="dropdown-item" href="javascript:;" (click)="changePage(item.idx)" [ngClass]="item.idx == mPage ? 'active' : ''">{{ item.name }}</a>
-                              }
-                            </div>
-                          </div>
-                        </li>
-                        <li class="page-item">
-                          <a href="javascript:;" (click)="changePage(mPage + 1)" class="btn btn-sm btn-primary mx-1" [ngClass]="mPage >= mTotalPages - 1 ? 'disabled' : ''">
-                            <i class="fa-solid fa-circle-chevron-right" style="font-size: 15px;"></i>
-                          </a>
-                        </li>
-                        <li class="page-item">
-                          <a href="javascript:;" (click)="changePage(mTotalPages - 1)" class="btn btn-sm btn-primary mx-1" [ngClass]="mPage >= mTotalPages - 1 ? 'disabled' : ''">
-                            <i class="fa-solid fa-circle-chevron-right" style="font-size: 15px;"></i>
-                          </a>
-                        </li>
-                      </ul>
-                    </nav>
-                  </div>
-                </div>
-              }
-
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-    </div>
+    </main>
   </div>
 </div>
