@@ -168,4 +168,51 @@ export class HPresenterObsBibleComponent implements OnInit {
     this.mVerseIndex.set(-1);
     localStorage.removeItem(STORAGE_BIBLE_KEY);
   }
+
+  // ------------------------------------------------------------ upload / delete
+
+  mUploading = signal<boolean>(false);
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file) return;
+
+    if (!file.name.toLowerCase().endsWith('.bblx')) {
+      this.mSToastService.danger('El archivo debe terminar en .bblx');
+      return;
+    }
+
+    this.mUploading.set(true);
+    const close = this.mSModalLoadingService.show();
+    this.mBibleService.uploadBible(file).subscribe({
+      next: () => {
+        this.mSToastService.success(`Biblia "${file.name}" cargada`);
+        this.loadBibles();
+      },
+      error: (err) => {
+        const msg = err?.error?.msg ?? 'No se pudo cargar la biblia';
+        this.mSToastService.danger(msg);
+      },
+    }).add(() => {
+      this.mUploading.set(false);
+      close.next();
+    });
+  }
+
+  deleteBible(bible: BibleListItem, event: Event): void {
+    event.stopPropagation();
+    if (!confirm(`¿Eliminar la biblia "${bible.name}"?`)) return;
+
+    const close = this.mSModalLoadingService.show();
+    this.mBibleService.deleteBible(bible.idx).subscribe({
+      next: () => {
+        this.mSToastService.success('Biblia eliminada');
+        if (this.mSelectedBible()?.idx === bible.idx) this.changeBible();
+        this.loadBibles();
+      },
+      error: () => this.mSToastService.danger('No se pudo eliminar'),
+    }).add(() => close.next());
+  }
 }

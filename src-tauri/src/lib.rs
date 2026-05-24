@@ -51,7 +51,7 @@ fn mime_for_path(path: &std::path::Path) -> &'static str {
 ///   Windows : %APPDATA%\Blesong
 ///   macOS   : $HOME/Library/Application Support/Blesong
 ///   Linux   : $XDG_DATA_HOME/Blesong  (default ~/.local/share/Blesong)
-fn user_app_data_dir() -> Option<PathBuf> {
+pub fn user_app_data_dir() -> Option<PathBuf> {
     #[cfg(target_os = "windows")]
     {
         std::env::var_os("APPDATA").map(|p| PathBuf::from(p).join("Blesong"))
@@ -196,12 +196,18 @@ fn start_http_server(db: Arc<Database>, server_config: Arc<ServerConfig>, bible_
                 .route("/remove", post(routes_song::remove))
                 .with_state(db.clone());
 
-            // Bible routes
+            // Bible routes — `upload` accepts up to 64 MiB to fit large `.bblx` files.
             let bible_routes = Router::new()
                 .route("/selection", post(routes_bible::selection))
                 .route("/selection_books", post(routes_bible::selection_books))
                 .route("/selection_chapters", post(routes_bible::selection_chapters))
                 .route("/selection_verses", post(routes_bible::selection_verses))
+                .route(
+                    "/upload",
+                    post(routes_bible::upload)
+                        .layer(axum::extract::DefaultBodyLimit::max(64 * 1024 * 1024)),
+                )
+                .route("/delete", post(routes_bible::delete))
                 .with_state(bible_config.clone());
 
             // Server routes

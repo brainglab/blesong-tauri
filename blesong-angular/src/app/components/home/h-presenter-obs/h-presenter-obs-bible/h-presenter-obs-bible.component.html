@@ -41,30 +41,42 @@
 
   <!-- ============================================ Step 1 — pick a bible -->
   @if (!mSelectedBible()) {
+    <div class="flex items-center justify-between gap-3 mt-4 mb-2">
+      <h3 class="text-sm font-semibold opacity-70">Biblias disponibles</h3>
+      <label class="btn btn-sm btn-primary cursor-pointer" [class.btn-disabled]="mUploading()">
+        <i-lucide name="upload" class="size-4"></i-lucide>
+        {{ mUploading() ? 'Cargando...' : 'Cargar .bblx' }}
+        <input type="file" accept=".bblx" class="hidden"
+               (change)="onFileSelected($event)" [disabled]="mUploading()">
+      </label>
+    </div>
+
     @if (mBibles().length > 0) {
-      <div class="space-y-2 mt-4">
+      <div class="space-y-2">
         @for (b of mBibles(); track b.idx) {
-          <button type="button"
-                  class="w-full text-left card bg-base-100 border border-base-300 hover:border-primary cursor-pointer transition-colors"
-                  (click)="setBible(b)">
+          <div class="card bg-base-100 border border-base-300 hover:border-primary transition-colors">
             <div class="card-body py-4">
               <div class="flex items-center justify-between gap-3">
-                <div>
+                <button type="button" class="flex-1 text-left cursor-pointer" (click)="setBible(b)">
                   <div class="font-semibold">{{ b.name }}</div>
                   <div class="text-xs opacity-60 font-mono">{{ b.abreviation }}</div>
-                </div>
+                </button>
+                <button type="button" class="btn btn-sm btn-square btn-ghost text-error"
+                        (click)="deleteBible(b, $event)" aria-label="Eliminar">
+                  <i-lucide name="trash-2" class="size-4"></i-lucide>
+                </button>
                 <i-lucide name="chevron-right" class="size-4 opacity-50"></i-lucide>
               </div>
             </div>
-          </button>
+          </div>
         }
       </div>
     } @else {
-      <div class="card bg-base-100 border border-base-300 mt-4">
+      <div class="card bg-base-100 border border-base-300">
         <div class="card-body items-center text-center py-12">
-          <i-lucide name="hourglass" class="size-12 opacity-50 mb-3"></i-lucide>
+          <i-lucide name="book-open" class="size-12 opacity-50 mb-3"></i-lucide>
           <h3 class="text-lg opacity-70">No hay biblias instaladas.</h3>
-          <p class="text-sm opacity-60">Agrega archivos <code>.bblx</code> en <code>data/bibles/</code>.</p>
+          <p class="text-sm opacity-60">Carga un archivo <code>.bblx</code> con el botón de arriba.</p>
         </div>
       </div>
     }

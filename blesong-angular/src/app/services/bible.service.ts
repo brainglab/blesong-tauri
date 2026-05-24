@@ -72,4 +72,26 @@ export class BibleService {
         catchError(err => throwError(() => err)),
       );
   }
+
+  uploadBible(file: File) {
+    const url = `${environment.apiUrl}/bible_bibles/upload?filename=${encodeURIComponent(file.name)}`;
+    return this.http
+      .post(url, file, {
+        headers: new HttpHeaders({ 'Content-Type': 'application/octet-stream' }),
+      })
+      .pipe(
+        map((res: any) => res),
+        catchError(err => throwError(() => err)),
+      );
+  }
+
+  deleteBible(filename: string) {
+    return this.http
+      .post(`${environment.apiUrl}/bible_bibles/delete`,
+        { bible_bible_idx: filename }, this.httpOptions)
+      .pipe(
+        map((res: any) => res),
+        catchError(err => throwError(() => err)),
+      );
+  }
 }

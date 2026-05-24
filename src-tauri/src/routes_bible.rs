@@ -1,4 +1,4 @@
-use axum::{extract::State, http::StatusCode, Json};
+use axum::{body::Bytes, extract::{Query, State}, http::StatusCode, Json};
 use once_cell::sync::Lazy;
 use regex::Regex;
 use rusqlite::Connection;
@@ -9,24 +9,43 @@ use std::sync::Arc;
 
 // ---------------------------------------------------------------- state
 
-/// Resolves the directory containing the `.bblx` files. Falls back through
-/// a small list of well-known locations so the same code works in dev (cwd
-/// = src-tauri or repo root) and in production bundles.
+/// Returns the per-user writable directory where `.bblx` files live.
+///
+///   Windows : %APPDATA%\Blesong\data\bibles
+///   macOS   : $HOME/Library/Application Support/Blesong/data/bibles
+///   Linux   : $XDG_DATA_HOME/Blesong/data/bibles (default ~/.local/share/...)
+///
+/// Created if missing. On first run, if empty and a repo `data/bibles/` exists
+/// with `.bblx` files, those are copied in so dev keeps working out of the box.
 pub fn get_bibles_dir() -> Option<PathBuf> {
-    let cwd = std::env::current_dir().unwrap_or_default();
-    let exe_dir = std::env::current_exe()
-        .ok()
-        .and_then(|p| p.parent().map(|d| d.to_path_buf()))
-        .unwrap_or_else(|| cwd.clone());
+    let target = crate::user_app_data_dir()?.join("data/bibles");
+    if let Err(e) = std::fs::create_dir_all(&target) {
+        eprintln!("get_bibles_dir: failed to create {:?}: {}", target, e);
+        return None;
+    }
 
-    let candidates: Vec<PathBuf> = vec![
-        cwd.join("data/bibles"),                               // repo root
-        cwd.join("../data/bibles"),                            // src-tauri dev
-        exe_dir.join("resources/bibles"),                      // portable
-        exe_dir.join("../Resources/resources/bibles"),         // macOS bundle
-    ];
+    // Dev convenience: seed from repo on first launch.
+    let is_empty = std::fs::read_dir(&target)
+        .map(|mut it| it.next().is_none())
+        .unwrap_or(true);
+    if is_empty {
+        let cwd = std::env::current_dir().unwrap_or_default();
+        for seed in [cwd.join("data/bibles"), cwd.join("../data/bibles")] {
+            if seed.is_dir() {
+                for entry in std::fs::read_dir(&seed).into_iter().flatten().flatten() {
+                    let path = entry.path();
+                    if path.extension().and_then(|e| e.to_str()) == Some("bblx") {
+                        if let Some(name) = path.file_name() {
+                            let _ = std::fs::copy(&path, target.join(name));
+                        }
+                    }
+                }
+                break;
+            }
+        }
+    }
 
-    candidates.into_iter().find(|p| p.is_dir())
+    Some(target)
 }
 
 #[derive(Clone)]
@@ -338,6 +357,104 @@ pub async fn selection_verses(
         StatusCode::OK,
         Json(json!({ "code": "00", "msg": "success", "bible_verses": verses })),
     )
+}
+
+// ---------------------------------------------------------------- /upload
+
+#[derive(Debug, Deserialize)]
+pub struct UploadQuery {
+    pub filename: String,
+}
+
+/// Validates an uploaded `.bblx` file by:
+///   - extension check (`.bblx`),
+///   - rejecting any path-traversal characters,
+///   - confirming the SQLite "SQLite format 3\0" magic,
+///   - opening it and querying both `Details` and `Bible` schema tables.
+pub async fn upload(
+    State(config): State<Arc<BibleConfig>>,
+    Query(query): Query<UploadQuery>,
+    body: Bytes,
+) -> (StatusCode, Json<Value>) {
+    let filename = query.filename.trim().to_string();
+
+    if filename.is_empty()
+        || filename.contains('/')
+        || filename.contains('\\')
+        || filename.contains("..")
+    {
+        return error("Invalid filename");
+    }
+    if !filename.to_ascii_lowercase().ends_with(".bblx") {
+        return error("File must have .bblx extension");
+    }
+    if body.len() < 100 {
+        return error("File too small to be a valid bible");
+    }
+    if &body[..16] != b"SQLite format 3\0" {
+        return error("File is not a valid SQLite database");
+    }
+
+    // Stage to a temp path so a half-written upload never overwrites a good
+    // bible on disk. Rename is atomic on the same filesystem.
+    let dest = config.dir.join(&filename);
+    let tmp = config.dir.join(format!(".{}.tmp", filename));
+
+    if let Err(e) = std::fs::write(&tmp, &body) {
+        return error(&format!("Could not write temp file: {}", e));
+    }
+
+    // Schema validation — open the temp file, ensure required tables exist.
+    let valid = match Connection::open(&tmp) {
+        Ok(conn) => {
+            let details_ok = conn
+                .query_row("SELECT Description FROM Details LIMIT 1", [], |_| Ok(()))
+                .is_ok();
+            let bible_ok = conn
+                .query_row("SELECT Book FROM Bible LIMIT 1", [], |_| Ok(()))
+                .is_ok();
+            details_ok && bible_ok
+        }
+        Err(_) => false,
+    };
+
+    if !valid {
+        let _ = std::fs::remove_file(&tmp);
+        return error("File is not a valid e-Sword .bblx (missing Details/Bible tables)");
+    }
+
+    if let Err(e) = std::fs::rename(&tmp, &dest) {
+        let _ = std::fs::remove_file(&tmp);
+        return error(&format!("Could not save bible: {}", e));
+    }
+
+    (
+        StatusCode::OK,
+        Json(json!({ "code": "00", "msg": "success", "filename": filename })),
+    )
+}
+
+// ---------------------------------------------------------------- /delete
+
+#[derive(Debug, Deserialize)]
+pub struct DeleteRequest {
+    pub bible_bible_idx: String,
+}
+
+pub async fn delete(
+    State(config): State<Arc<BibleConfig>>,
+    Json(body): Json<DeleteRequest>,
+) -> (StatusCode, Json<Value>) {
+    let Some(path) = resolve_bible_path(&config, &body.bible_bible_idx) else {
+        return error("Bible not found");
+    };
+    match std::fs::remove_file(&path) {
+        Ok(_) => (
+            StatusCode::OK,
+            Json(json!({ "code": "00", "msg": "success" })),
+        ),
+        Err(e) => error(&format!("Could not delete: {}", e)),
+    }
 }
 
 // ---------------------------------------------------------------- error helper
