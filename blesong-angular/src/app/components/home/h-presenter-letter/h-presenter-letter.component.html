@@ -1,7 +1,7 @@
 <div class="fixed inset-0 flex items-center justify-center text-white p-8 overflow-hidden">
   @if (mHasContent()) {
     <div #slideText
-         class="animated-text text-center uppercase font-bold whitespace-pre-wrap leading-tight max-w-full"
+         class="animated-text text-center uppercase font-bold whitespace-pre-wrap leading-tight w-full"
          [style.font-size.px]="mFontSize()"
          [innerHTML]="mCurrentSlide() | encapsulationHtml"></div>
   }

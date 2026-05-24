@@ -5,6 +5,7 @@ import { LucideAngularModule } from 'lucide-angular';
 import { filter } from 'rxjs/operators';
 import { ServerService } from 'src/app/services/server.service';
 import { HPresenterObsNavbarComponent } from 'src/app/components/home/h-presenter-obs/h-presenter-obs-navbar/h-presenter-obs-navbar.component';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-shell',
@@ -15,6 +16,7 @@ export class AppShellComponent implements OnInit {
   mServerIp = signal<string | null>(null);
   mServerPort = signal<number | null>(null);
   mDrawerOpen = signal<boolean>(false);
+  mAppVersion = environment.app.version;
 
   constructor(private mServerService: ServerService, private mRouter: Router) {}
 
