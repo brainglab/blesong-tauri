@@ -24,8 +24,16 @@ export type SlideAnimationMode = (typeof SLIDE_ANIMATIONS)[number]['id'];
 
 /**
  * Walks `root`'s text nodes and replaces each with span-per-char (or word)
- * so GSAP can target them. Preserves whitespace via `inline-block` +
- * `white-space: pre`.
+ * so GSAP can target them.
+ *
+ * Words are kept atomic: each word becomes a `display: inline-block;
+ * white-space: nowrap` container so the browser never breaks in the middle
+ * of one. Whitespace between words is emitted as plain text nodes so the
+ * parent's `whitespace-pre-wrap` rule can break the line on a space or `\n`.
+ *
+ * In `char` mode, each character inside a word is its own inline-block span
+ * (so GSAP can target chars), but the surrounding word wrapper keeps them
+ * glued together visually.
  */
 function splitText(root: HTMLElement, mode: 'char' | 'word'): HTMLSpanElement[] {
   const items: HTMLSpanElement[] = [];
@@ -38,15 +46,35 @@ function splitText(root: HTMLElement, mode: 'char' | 'word'): HTMLSpanElement[] 
     const text = tn.textContent ?? '';
     if (!text) continue;
     const frag = document.createDocumentFragment();
-    const tokens = mode === 'char' ? [...text] : text.split(/(\s+)/);
+    const tokens = text.split(/(\s+)/);
+
     for (const tok of tokens) {
       if (!tok) continue;
-      const span = document.createElement('span');
-      span.textContent = tok;
-      span.style.display = 'inline-block';
-      span.style.whiteSpace = 'pre';
-      frag.appendChild(span);
-      if (tok.trim()) items.push(span);
+      if (/^\s+$/.test(tok)) {
+        // Whitespace stays as a real text node so the line can break here.
+        frag.appendChild(document.createTextNode(tok));
+        continue;
+      }
+
+      if (mode === 'word') {
+        const word = document.createElement('span');
+        word.textContent = tok;
+        word.style.display = 'inline-block';
+        frag.appendChild(word);
+        items.push(word);
+      } else {
+        const wordWrap = document.createElement('span');
+        wordWrap.style.display = 'inline-block';
+        wordWrap.style.whiteSpace = 'nowrap';
+        for (const ch of [...tok]) {
+          const charSpan = document.createElement('span');
+          charSpan.textContent = ch;
+          charSpan.style.display = 'inline-block';
+          wordWrap.appendChild(charSpan);
+          items.push(charSpan);
+        }
+        frag.appendChild(wordWrap);
+      }
     }
     tn.replaceWith(frag);
   }

@@ -20,7 +20,7 @@ const host = resolveServerHost();
 export const environment = {
   app: {
     name: "Blesong",
-    version: "2.1.0",
+    version: "2.1.1",
   },
   production: false,
   apiUrl: `http://${host}:8080/api`,
