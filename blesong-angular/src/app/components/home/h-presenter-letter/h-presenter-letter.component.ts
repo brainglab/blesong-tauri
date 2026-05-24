@@ -34,7 +34,8 @@ export class HPresenterLetterComponent implements OnInit, AfterViewInit, OnDestr
   }
 
   ngOnInit(): void {
-    document.body.classList.remove('bg-white');
+    // Make html + body transparent so OBS sees only the text.
+    document.documentElement.classList.add('obs-overlay');
 
     this.subscription = this.mMqttService.messageReceived$.subscribe(({ message }) => {
       this.zone.run(() => {
@@ -71,6 +72,7 @@ export class HPresenterLetterComponent implements OnInit, AfterViewInit, OnDestr
   }
 
   ngOnDestroy(): void {
+    document.documentElement.classList.remove('obs-overlay');
     this.subscription?.unsubscribe();
     if (this.slideTextRef) {
       gsap.killTweensOf(this.slideTextRef.nativeElement);

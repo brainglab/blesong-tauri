@@ -98,3 +98,15 @@ html, body {
 h1, h2, h3, h4 {
   letter-spacing: -0.01em;
 }
+
+/* OBS overlay routes (/presenter/slide, /presenter/letter): every element in the
+   stack must be transparent so OBS composites only the visible text on top of
+   the underlying scene — no daisyUI theme background should leak through. */
+html.obs-overlay,
+html.obs-overlay body,
+html.obs-overlay app-root,
+html.obs-overlay app-h-presenter,
+html.obs-overlay app-h-presenter-letter {
+  background: transparent !important;
+  background-color: transparent !important;
+}
