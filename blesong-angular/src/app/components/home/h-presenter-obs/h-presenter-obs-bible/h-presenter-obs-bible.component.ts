@@ -1,204 +1,171 @@
-import { Component, OnInit, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { SModalYesNoService } from 'src/app/components/shared/s-modal-yes-no/s-modal-yes-no.service';
-import { SToastService } from 'src/app/components/shared/s-toast/s-toast.service';
-import { SModalLoadingService } from 'src/app/components/shared/s-modal-loading/s-modal-loading.service';
-import { RealtimeModel } from 'src/app/models/realtime.model';
-import { SongModel } from 'src/app/models/song.model';
-import { SongService } from 'src/app/services/song.service';
-import { OrderModel } from 'src/app/models/order.model';
-import { MqttService } from 'src/app/services/mqtt.service';
-import { SModalOptionService } from '../../../shared/s-modal-option/s-modal-option.service';
-import { TemplateModel } from 'src/app/models/template.model';
-import { BibleBibleService } from 'src/app/services/bible_bible.service';
-import { BibleBibleModel } from 'src/app/models/bible_bible.model';
-import { BibleBookModel } from 'src/app/models/bible_book.model';
-import { BibleBooksReferenceModel } from 'src/app/models/bible_books_reference.model';
-import { BibleVerseModel } from 'src/app/models/bible_verse.model';
-import { HPresenterObsNavbarComponent } from '../h-presenter-obs-navbar/h-presenter-obs-navbar.component';
+import { Component, computed, OnInit, signal } from '@angular/core';
 import { LucideAngularModule } from 'lucide-angular';
+import {
+  BibleBookItem,
+  BibleChapterItem,
+  BibleListItem,
+  BibleService,
+  BibleVerseItem,
+} from 'src/app/services/bible.service';
+import { MqttService } from 'src/app/services/mqtt.service';
+import { RealtimeModel } from 'src/app/models/realtime.model';
+import { TemplateModel } from 'src/app/models/template.model';
+import { SModalLoadingService } from 'src/app/components/shared/s-modal-loading/s-modal-loading.service';
+import { SToastService } from 'src/app/components/shared/s-toast/s-toast.service';
+
+const STORAGE_BIBLE_KEY = 'mSelectedBibleIdx';
+const STORAGE_TEMPLATE_KEY = 'mTemplate';
 
 @Component({
-    selector: 'app-h-presenter-obs-bible',
-    templateUrl: './h-presenter-obs-bible.component.html',
-    imports: [HPresenterObsNavbarComponent, LucideAngularModule]
+  selector: 'app-h-presenter-obs-bible',
+  templateUrl: './h-presenter-obs-bible.component.html',
+  imports: [LucideAngularModule],
 })
 export class HPresenterObsBibleComponent implements OnInit {
 
-  mRealtime: RealtimeModel = new RealtimeModel();
-  mTemplate: TemplateModel = new TemplateModel();
-  mBibleBibles: BibleBibleModel[] = [];
-  mBibleBooks: BibleBookModel[] = [];
-  mBibleChapters: string[] = [];
-  mBibleVerses: BibleVerseModel[] = [];
+  mBibles = signal<BibleListItem[]>([]);
+  mSelectedBible = signal<BibleListItem | null>(null);
 
-  mSelectedBible: BibleBibleModel | null = null;
-  mSelectedBook: BibleBookModel | null = null;
-  mSelectedChapter: number | null = null;
-  mVerseIndex: number | null = null;
+  mBooks = signal<BibleBookItem[]>([]);
+  mSelectedBook = signal<BibleBookItem | null>(null);
 
-  mValidators = Validators;
+  mChapters = signal<BibleChapterItem[]>([]);
+  mSelectedChapter = signal<number | null>(null);
 
-  constructor(private mRouter: Router, private mFormBuilder: FormBuilder, private mSToastService: SToastService,
-    private mSModalLoadingService: SModalLoadingService, private mSModalYesNoService: SModalYesNoService, private mActivatedRoute: ActivatedRoute,
-    private mSongService: SongService, private mMqttService: MqttService, private mSModalOptionService: SModalOptionService,
-    private mBibleBibleService: BibleBibleService) {
+  mVerses = signal<BibleVerseItem[]>([]);
+  mVerseIndex = signal<number>(-1);
 
-    this.getStoredTemplate();
-  }
+  mTestament = signal<'AT' | 'NT' | 'ALL'>('ALL');
+
+  filteredBooks = computed(() => {
+    const t = this.mTestament();
+    const all = this.mBooks();
+    return t === 'ALL' ? all : all.filter(b => b.testament === t);
+  });
+
+  constructor(
+    private mBibleService: BibleService,
+    private mMqttService: MqttService,
+    private mSModalLoadingService: SModalLoadingService,
+    private mSToastService: SToastService,
+  ) {}
 
   ngOnInit(): void {
-    this.getBibles();
+    this.loadBibles();
   }
 
-  getStoredTemplate() {
-    // Obtener el template guardado de localStorage o crear uno nuevo si no existe
-    let mStoredTemplate = localStorage.getItem('mTemplate');
-    if (mStoredTemplate) {
-      // Si existe, parsear el JSON almacenado
-      this.mTemplate = JSON.parse(mStoredTemplate);
-    } else {
-      // Si no existe, crear un objeto vacío y guardarlo
-      this.mTemplate = new TemplateModel();
-      this.mTemplate.template_animation = 0;
-      this.mTemplate.template_body_fontsize = 80;
-      localStorage.setItem('mTemplate', JSON.stringify(this.mTemplate));
-    }
+  private storedTemplate(): TemplateModel {
+    const stored = localStorage.getItem(STORAGE_TEMPLATE_KEY);
+    if (stored) return JSON.parse(stored);
+    const t = new TemplateModel();
+    t.template_animation = 0;
+    t.template_body_fontsize = 80;
+    return t;
   }
 
-  mResetSelection() {
-    this.mSelectedBible = null;
-    this.mSelectedBook = null;
-    this.mSelectedChapter = null;
-    this.mVerseIndex = null;
-    setTimeout(() => window.dispatchEvent(new Event('resize')), 0);
-  }
+  // ------------------------------------------------------------ bibles
 
-  getBibles() {
-    let mEventClose = this.mSModalLoadingService.show();
-    this.mBibleBibleService.selection().subscribe({
-      error: (err: any) => {
-
-        switch (err.error['code']) {
-          default:
-            this.mSToastService.danger(`Error inesperado, intenta mas tarde (Code: 01)`);
-            break;
-        }
-      },
+  private loadBibles(): void {
+    const close = this.mSModalLoadingService.show();
+    this.mBibleService.selection().subscribe({
       next: (result: any) => {
-
-        this.mBibleBibles = result.bible_bibles;
-        setTimeout(() => window.dispatchEvent(new Event('resize')), 0);
-      }
-
-    }).add(() => {
-      mEventClose.next();
-    });
-  }
-
-  setBible(mBibleBible: BibleBibleModel) {
-    this.mSelectedBible = mBibleBible;
-    this.getBooks();
-  }
-
-  getBooks() {
-    let mEventClose = this.mSModalLoadingService.show();
-    this.mBibleBibleService.selectionBooks(this.mSelectedBible?.idx).subscribe({
-      error: (err: any) => {
-
-        switch (err.error['code']) {
-          default:
-            this.mSToastService.danger(`Error inesperado, intenta mas tarde (Code: 01)`);
-            break;
-        }
+        const list: BibleListItem[] = result.bible_bibles ?? [];
+        this.mBibles.set(list);
+        // Restore previously selected bible across refresh.
+        const storedIdx = localStorage.getItem(STORAGE_BIBLE_KEY);
+        const restored = storedIdx ? list.find(b => b.idx === storedIdx) : null;
+        if (restored) this.setBible(restored);
       },
-      next: (result: any) => {
-
-        this.mBibleBooks = result.bible_books;
-        setTimeout(() => window.dispatchEvent(new Event('resize')), 0);
-      }
-
-    }).add(() => {
-      mEventClose.next();
-    });
+      error: () => this.mSToastService.danger('No se pudieron cargar las biblias'),
+    }).add(() => close.next());
   }
 
-  setBook(mBibleBook: BibleBookModel) {
-    this.mSelectedBook = mBibleBook;
-    this.getChapters();
+  setBible(bible: BibleListItem): void {
+    this.mSelectedBible.set(bible);
+    localStorage.setItem(STORAGE_BIBLE_KEY, bible.idx);
+    this.mSelectedBook.set(null);
+    this.mSelectedChapter.set(null);
+    this.mVerses.set([]);
+    this.mVerseIndex.set(-1);
+    this.loadBooks(bible.idx);
   }
 
-  getChapters() {
-    let mEventClose = this.mSModalLoadingService.show();
-    this.mBibleBibleService.selectionChapters(this.mSelectedBible?.idx, this.mSelectedBook?.idx).subscribe({
-      error: (err: any) => {
-
-        switch (err.error['code']) {
-          default:
-            this.mSToastService.danger(`Error inesperado, intenta mas tarde (Code: 01)`);
-            break;
-        }
-      },
-      next: (result: any) => {
-
-        this.mBibleChapters = result.bible_chapters;
-        setTimeout(() => window.dispatchEvent(new Event('resize')), 0);
-      }
-
-    }).add(() => {
-      mEventClose.next();
-    });
+  private loadBooks(bibleIdx: string): void {
+    const close = this.mSModalLoadingService.show();
+    this.mBibleService.selectionBooks(bibleIdx).subscribe({
+      next: (result: any) => this.mBooks.set(result.bible_books ?? []),
+      error: () => this.mSToastService.danger('No se pudieron cargar los libros'),
+    }).add(() => close.next());
   }
 
-  setChapter(mChapter: number) {
-    this.mSelectedChapter = mChapter;
-    this.getVerses();
+  // ------------------------------------------------------------ navigation
+
+  setTestament(t: 'AT' | 'NT' | 'ALL'): void {
+    this.mTestament.set(t);
   }
 
-  getVerses() {
-    let mEventClose = this.mSModalLoadingService.show();
-    this.mBibleBibleService.selectionVerses(this.mSelectedBible?.idx, this.mSelectedBook?.idx, this.mSelectedChapter.toString()).subscribe({
-      error: (err: any) => {
+  setBook(book: BibleBookItem): void {
+    this.mSelectedBook.set(book);
+    this.mSelectedChapter.set(null);
+    this.mVerses.set([]);
+    this.mVerseIndex.set(-1);
+    const bibleIdx = this.mSelectedBible()?.idx;
+    if (!bibleIdx) return;
 
-        switch (err.error['code']) {
-          default:
-            this.mSToastService.danger(`Error inesperado, intenta mas tarde (Code: 01)`);
-            break;
-        }
-      },
-      next: (result: any) => {
-
-        this.mBibleVerses = result.bible_verses;
-        setTimeout(() => window.dispatchEvent(new Event('resize')), 0);
-      }
-
-    }).add(() => {
-      mEventClose.next();
-    });
+    const close = this.mSModalLoadingService.show();
+    this.mBibleService.selectionChapters(bibleIdx, book.idx).subscribe({
+      next: (result: any) => this.mChapters.set(result.bible_chapters ?? []),
+      error: () => this.mSToastService.danger('No se pudieron cargar los capítulos'),
+    }).add(() => close.next());
   }
 
-  setVerse(mText: string, mIndex: number) {
+  setChapter(chapter: number): void {
+    this.mSelectedChapter.set(chapter);
+    this.mVerseIndex.set(-1);
+    const bibleIdx = this.mSelectedBible()?.idx;
+    const bookIdx = this.mSelectedBook()?.idx;
+    if (!bibleIdx || !bookIdx) return;
 
-    this.getStoredTemplate();
-
-    this.mVerseIndex = mIndex;
-
-    this.mRealtime.song_array = [`${mText} <br> (${this.mSelectedBook?.name} ${this.mSelectedChapter}:${this.mBibleVerses[mIndex].verse} ${this.mSelectedBible?.abreviation})`];
-    this.mRealtime.song_slide_selected = 0;
-    this.mRealtime.template = this.mTemplate;
-    this.mMqttService.publish('blesong', JSON.stringify(this.mRealtime));
+    const close = this.mSModalLoadingService.show();
+    this.mBibleService.selectionVerses(bibleIdx, bookIdx, chapter).subscribe({
+      next: (result: any) => this.mVerses.set(result.bible_verses ?? []),
+      error: () => this.mSToastService.danger('No se pudieron cargar los versículos'),
+    }).add(() => close.next());
   }
 
-  sendStandBy() {
+  // ------------------------------------------------------------ publish
 
-    this.getStoredTemplate();
+  setVerse(verse: BibleVerseItem, index: number): void {
+    const book = this.mSelectedBook();
+    const bible = this.mSelectedBible();
+    const chapter = this.mSelectedChapter();
+    if (!book || !bible || chapter == null) return;
 
-    let mRealtime = new RealtimeModel();
-    mRealtime.song_array = [''];
-    mRealtime.song_slide_selected = 0;
-    this.mRealtime.template = this.mTemplate;
-    this.mMqttService.publish('blesong', JSON.stringify(mRealtime));
+    this.mVerseIndex.set(index);
 
+    const reference = `${book.name} ${chapter}:${verse.verse} (${bible.abreviation})`;
+    const realtime = new RealtimeModel();
+    realtime.song_array = [`${verse.text}\n\n${reference}`];
+    realtime.song_slide_selected = 0;
+    realtime.template = this.storedTemplate();
+    this.mMqttService.publish('blesong', JSON.stringify(realtime));
+  }
+
+  resetSelection(): void {
+    this.mSelectedBook.set(null);
+    this.mSelectedChapter.set(null);
+    this.mVerses.set([]);
+    this.mVerseIndex.set(-1);
+  }
+
+  changeBible(): void {
+    this.mSelectedBible.set(null);
+    this.mBooks.set([]);
+    this.mSelectedBook.set(null);
+    this.mChapters.set([]);
+    this.mSelectedChapter.set(null);
+    this.mVerses.set([]);
+    this.mVerseIndex.set(-1);
+    localStorage.removeItem(STORAGE_BIBLE_KEY);
   }
 }

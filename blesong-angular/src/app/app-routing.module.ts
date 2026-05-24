@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { environment } from 'src/environments/environment';
 
+import { AppShellComponent } from './layout/app-shell/app-shell.component';
+
 import { DEditAutorComponent } from './components/dashboard/d-autors/d-edit-autor/d-edit-autor.component';
 import { DListAutorComponent } from './components/dashboard/d-autors/d-list-autor/d-list-autor.component';
 import { DNewAutorComponent } from './components/dashboard/d-autors/d-new-autor/d-new-autor.component';
@@ -21,37 +23,41 @@ import { HQrMenuComponent } from './components/home/h-qr-menu/h-qr-menu.componen
 import { HQrDashboardComponent } from './components/home/h-qr-dashboard/h-qr-dashboard.component';
 import { HQrMenuPageComponent } from './components/home/h-qr-menu-page/h-qr-menu-page.component';
 
+const appTitle = environment.app.name;
+
 const ROUTES: Routes = [
 
-  // ----------------------------------------------------------------------------------------------------------------------------------
-  // public home
-  // ----------------------------------------------------------------------------------------------------------------------------------
+  // Standalone (no shell) — these are embedded in OBS browser sources or shown
+  // on external devices via QR. They must not carry the desktop chrome.
+  { path: 'presenter/slide', title: `${appTitle} | OBS Player`, component: HPresenterComponent },
+  { path: 'presenter/letter', title: `${appTitle} | Letra`, component: HPresenterLetterComponent },
+  { path: 'presenter/qr-menu', title: `${appTitle} | QR Menu`, component: HQrMenuComponent },
+  { path: 'presenter/qr-menu-page', title: `${appTitle} | QR Menu Page`, component: HQrMenuPageComponent },
 
-  { path: 'autors/edit/:idx', title: `${environment.app.name} | Editar autor`, component: DEditAutorComponent, canActivate: [] },
-  { path: 'autors', title: `${environment.app.name} | autores`, component: DListAutorComponent, canActivate: [] },
-  { path: 'autors/new', title: `${environment.app.name} | Crear autor`, component: DNewAutorComponent, canActivate: [] },
-  { path: 'autors/show/:idx', title: `${environment.app.name} | autor`, component: DShowAutorComponent, canActivate: [] },
+  // Dashboard / OBS control routes — wrapped in the app shell (sidebar + status)
+  {
+    path: '',
+    component: AppShellComponent,
+    children: [
+      { path: 'songs', title: `${appTitle} | Canciones`, component: DListSongComponent },
+      { path: 'songs/new', title: `${appTitle} | Crear canción`, component: DNewSongComponent },
+      { path: 'songs/edit/:idx', title: `${appTitle} | Editar canción`, component: DEditSongComponent },
+      { path: 'songs/show/:idx', title: `${appTitle} | Canción`, component: DShowSongComponent },
 
-  { path: 'songs/edit/:idx', title: `${environment.app.name} | Editar cancion`, component: DEditSongComponent, canActivate: [] },
-  { path: 'songs', title: `${environment.app.name} | canciones`, component: DListSongComponent, canActivate: [] },
-  { path: 'songs/new', title: `${environment.app.name} | Crear cancion`, component: DNewSongComponent, canActivate: [] },
-  { path: 'songs/show/:idx', title: `${environment.app.name} | cancion`, component: DShowSongComponent, canActivate: [] },
+      { path: 'autors', title: `${appTitle} | Autores`, component: DListAutorComponent },
+      { path: 'autors/new', title: `${appTitle} | Crear autor`, component: DNewAutorComponent },
+      { path: 'autors/edit/:idx', title: `${appTitle} | Editar autor`, component: DEditAutorComponent },
+      { path: 'autors/show/:idx', title: `${appTitle} | Autor`, component: DShowAutorComponent },
 
-  { path: 'presenter/obs-letters', title: `${environment.app.name} | OBS Menú`, component: HPresenterObsLettersComponent, canActivate: [] },
-  { path: 'presenter/obs-bible', title: `${environment.app.name} | OBS Biblia`, component: HPresenterObsBibleComponent, canActivate: [] },
+      { path: 'presenter/obs-letters', title: `${appTitle} | OBS Letras`, component: HPresenterObsLettersComponent },
+      { path: 'presenter/obs-bible', title: `${appTitle} | OBS Biblia`, component: HPresenterObsBibleComponent },
+      { path: 'presenter/qr-dashboard', title: `${appTitle} | Código QR`, component: HQrDashboardComponent },
 
-  { path: 'presenter/slide', title: `${environment.app.name} | OBS Player`, component: HPresenterComponent, canActivate: [] },
-  { path: 'presenter/letter', title: `${environment.app.name} | Letra`, component: HPresenterLetterComponent, canActivate: [] },
-  { path: 'presenter/qr-dashboard', title: `${environment.app.name} | QR`, component: HQrDashboardComponent, canActivate: [] },
-  { path: 'presenter/qr-menu', title: `${environment.app.name} | QR Menu`, component: HQrMenuComponent, canActivate: [] },
-  { path: 'presenter/qr-menu-page', title: `${environment.app.name} | QR Menu Page`, component: HQrMenuPageComponent, canActivate: [] },
+      { path: '', pathMatch: 'full', redirectTo: 'songs' },
+    ],
+  },
 
-  // ----------------------------------------------------------------------------------------------------------------------------------
-  // default
-  // ----------------------------------------------------------------------------------------------------------------------------------
-  { path: '', pathMatch: 'full', redirectTo: 'songs' },
-  { path: '*', pathMatch: 'full', redirectTo: 'songs' },
-  { path: '**', pathMatch: 'full', redirectTo: 'songs' }
+  { path: '**', redirectTo: 'songs' },
 ];
 
 @NgModule({

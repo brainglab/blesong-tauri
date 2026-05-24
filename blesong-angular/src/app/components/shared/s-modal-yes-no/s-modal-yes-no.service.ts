@@ -1,15 +1,12 @@
-import { ApplicationRef, ComponentFactoryResolver, Injectable, Injector, EventEmitter } from '@angular/core';
-import { SModalYesNoComponent } from './s-modal-yes-no.component';
+import { ApplicationRef, createComponent, Injectable, Injector } from '@angular/core';
 import { Subject } from 'rxjs';
+import { take } from 'rxjs/operators';
+import { SModalYesNoComponent } from './s-modal-yes-no.component';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class SModalYesNoService {
 
-  constructor(private injector: Injector, private applicationRef: ApplicationRef, private componentFactoryResolver: ComponentFactoryResolver) {
-
-  }
+  constructor(private injector: Injector, private applicationRef: ApplicationRef) {}
 
   success(modalText: string, modalTitle: string = 'Atención') {
     return this.show('success', modalTitle, modalText);
@@ -31,25 +28,30 @@ export class SModalYesNoService {
     return this.show('question', modalText, modalTitle);
   }
 
-  private show(mClass: string, modalText: string, modalTitle: string) {
-
+  private show(mClass: string, modalText: string, modalTitle: string): Subject<boolean> {
     const mResponseEvent = new Subject<boolean>();
 
-    const mToast = document.createElement('app-s-modal-yes-no');
-    const mFactoryToast = this.componentFactoryResolver.resolveComponentFactory(SModalYesNoComponent);
-    const mToastRef = mFactoryToast.create(this.injector, [], mToast);
-    mToastRef.instance.mTitle = modalTitle;
-    mToastRef.instance.mText = modalText;
-    mToastRef.instance.mClassType = mClass;
-    mToastRef.instance.mResponseEvent = mResponseEvent;
+    const host = document.createElement('div');
+    const ref = createComponent(SModalYesNoComponent, {
+      environmentInjector: this.applicationRef.injector,
+      elementInjector: this.injector,
+      hostElement: host,
+    });
+    ref.instance.mTitle = modalTitle;
+    ref.instance.mText = modalText;
+    ref.instance.mClassType = mClass;
+    ref.instance.mResponseEvent = mResponseEvent;
 
-    this.applicationRef.attachView(mToastRef.hostView);
-    document.body.appendChild(mToast);
+    mResponseEvent.pipe(take(1)).subscribe(() => {
+      setTimeout(() => {
+        ref.destroy();
+        host.remove();
+      }, 250);
+    });
+
+    this.applicationRef.attachView(ref.hostView);
+    document.body.appendChild(host);
 
     return mResponseEvent;
-  }
-
-  removeDynamicComponent(component) {
-    component.destroy();
   }
 }

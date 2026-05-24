@@ -1,27 +1,37 @@
-import { ApplicationRef, ComponentFactoryResolver, Injectable, Injector, EventEmitter } from '@angular/core';
-import { SModalLoadingComponent } from './s-modal-loading.component';
+import { ApplicationRef, createComponent, Injectable, Injector } from '@angular/core';
 import { Subject } from 'rxjs';
+import { take } from 'rxjs/operators';
+import { SModalLoadingComponent } from './s-modal-loading.component';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class SModalLoadingService {
 
-  constructor(private injector: Injector, private applicationRef: ApplicationRef, private componentFactoryResolver: ComponentFactoryResolver) {
+  constructor(private injector: Injector, private applicationRef: ApplicationRef) {}
 
-  }
-
-  show() {
-
+  show(): Subject<void> {
     const mEventClose = new Subject<void>();
 
-    const mToast = document.createElement('app-s-modal-yes-no');
-    const mFactoryToast = this.componentFactoryResolver.resolveComponentFactory(SModalLoadingComponent);
-    const mToastRef = mFactoryToast.create(this.injector, [], mToast);
-    mToastRef.instance.mResponseEvent = mEventClose;
+    const host = document.createElement('div');
+    const ref = createComponent(SModalLoadingComponent, {
+      environmentInjector: this.applicationRef.injector,
+      elementInjector: this.injector,
+      hostElement: host,
+    });
+    ref.instance.mResponseEvent = mEventClose;
 
-    this.applicationRef.attachView(mToastRef.hostView);
-    document.body.appendChild(mToast);
+    // Let the caller's "close" propagate to the component (which flips mShow
+    // for the CSS exit animation), then destroy. ComponentRef.destroy()
+    // detaches the view from ApplicationRef internally — no need for a
+    // separate detachView() call.
+    mEventClose.pipe(take(1)).subscribe(() => {
+      setTimeout(() => {
+        ref.destroy();
+        host.remove();
+      }, 250);
+    });
+
+    this.applicationRef.attachView(ref.hostView);
+    document.body.appendChild(host);
 
     return mEventClose;
   }

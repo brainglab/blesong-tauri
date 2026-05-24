@@ -1,58 +1,77 @@
-<dialog class="modal" [class.modal-open]="mShow">
-  <div class="modal-box max-w-lg">
-    <div class="flex items-center justify-between mb-3">
-      <h3 class="text-lg font-bold">{{ mTitle }}</h3>
-      <button type="button" class="btn btn-sm btn-circle btn-ghost" (click)="close(null)" aria-label="Cerrar">
+<dialog class="modal" [class.modal-open]="mShow()">
+  <div class="modal-box max-w-xl p-0 overflow-hidden">
+
+    <div class="flex items-center justify-between gap-3 px-5 py-3.5 border-b border-base-300">
+      <h3 class="text-[15px] font-semibold tracking-tight">{{ mTitle }}</h3>
+      <button type="button" class="btn btn-sm btn-circle btn-soft" (click)="close(null)" aria-label="Cerrar">
         <i-lucide name="x" class="size-4"></i-lucide>
       </button>
     </div>
 
-    <fieldset class="fieldset mb-3">
-      <legend class="fieldset-legend">Buscar</legend>
-      <div class="join w-full">
-        <span class="btn btn-ghost join-item pointer-events-none">
-          <i-lucide name="search" class="size-4"></i-lucide>
-        </span>
-        <input
-          #mSearchInput
-          type="text"
-          class="input input-bordered join-item flex-1"
-          [(ngModel)]="mSearchText"
-          placeholder="Buscar..."
-          (keyup)="filterOptions()" />
-      </div>
-    </fieldset>
-
-    <div class="overflow-y-auto max-h-80 border border-base-300 rounded-box">
-      <table class="table table-hover m-0">
-        <tbody>
-          @if (mFilteredOptions?.length === 0) {
-            <tr>
-              <td class="text-center py-6 opacity-60">No hay registros disponibles</td>
-            </tr>
-          }
-
-          @for (mOption of mFilteredOptions; track mOption) {
-            <tr class="cursor-pointer hover" (click)="close(mOption.idx)">
-              <td>
-                <div class="flex items-center justify-between gap-3">
-                  <div>
-                    <div class="font-medium">{{ mOption.name }}</div>
-                    @if (mOption.description) {
-                      <div class="text-xs opacity-60">{{ mOption.description }}</div>
-                    }
-                  </div>
-                  <i-lucide name="chevron-right" class="size-4 opacity-50"></i-lucide>
-                </div>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
+    <div class="relative px-5 pt-4 pb-3">
+      <i-lucide name="search" class="size-4 absolute left-8 top-1/2 -translate-y-1/2 opacity-50 pointer-events-none"></i-lucide>
+      <input
+        #mSearchInput
+        type="text"
+        class="input input-bordered w-full pl-10"
+        [ngModel]="mSearchText()"
+        (ngModelChange)="mSearchText.set($event); filterOptions()"
+        placeholder="Buscar..." />
     </div>
 
-    <div class="modal-action">
-      <button type="button" class="btn btn-ghost btn-sm" (click)="close(null)">Cancelar</button>
+    <div #optionsList class="overflow-y-auto max-h-80 px-2 pb-2 space-y-0.5">
+      @if (mFilteredOptions().length === 0) {
+        <div class="text-center py-10 opacity-60 text-sm flex flex-col items-center gap-2">
+          <i-lucide name="search" class="size-7 opacity-40"></i-lucide>
+          @if (mSearchText()) {
+            <span>Sin resultados para "<span class="font-medium">{{ mSearchText() }}</span>"</span>
+          } @else {
+            <span>No hay registros disponibles</span>
+          }
+        </div>
+      }
+
+      @for (mOption of mFilteredOptions(); track mOption.idx; let i = $index) {
+        <button
+          type="button"
+          class="relative w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg text-left transition-colors"
+          [class.bg-base-300]="i === mHighlight()"
+          (click)="close(mOption.idx)"
+          (mouseenter)="mHighlight.set(i)">
+          <span
+            class="absolute left-0 top-1.5 bottom-1.5 w-0.5 rounded-r bg-base-content transition-opacity"
+            [class.opacity-100]="i === mHighlight()"
+            [class.opacity-0]="i !== mHighlight()"></span>
+          <div class="min-w-0 flex-1">
+            <div class="truncate text-sm"
+                 [class.font-semibold]="i === mHighlight()"
+                 [class.font-medium]="i !== mHighlight()">{{ mOption.name }}</div>
+            @if (mOption.description) {
+              <div class="text-xs opacity-70 truncate">{{ mOption.description }}</div>
+            }
+          </div>
+          <i-lucide
+            name="chevron-right"
+            class="size-4 shrink-0 transition-opacity"
+            [class.opacity-100]="i === mHighlight()"
+            [class.opacity-30]="i !== mHighlight()"></i-lucide>
+        </button>
+      }
+    </div>
+
+    <div class="flex items-center justify-between gap-3 px-5 py-2.5 border-t border-base-300 text-[11px] opacity-70">
+      <div class="flex items-center gap-3">
+        <span class="hidden sm:inline-flex items-center gap-1.5">
+          <kbd class="kbd kbd-xs">↑</kbd><kbd class="kbd kbd-xs">↓</kbd> Mover
+        </span>
+        <span class="hidden sm:inline-flex items-center gap-1.5">
+          <kbd class="kbd kbd-xs">↵</kbd> Seleccionar
+        </span>
+        <span class="hidden sm:inline-flex items-center gap-1.5">
+          <kbd class="kbd kbd-xs">Esc</kbd> Cerrar
+        </span>
+      </div>
+      <button type="button" class="btn btn-soft btn-xs" (click)="close(null)">Cancelar</button>
     </div>
   </div>
   <div class="modal-backdrop" (click)="close(null)"></div>

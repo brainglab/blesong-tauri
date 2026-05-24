@@ -4,8 +4,8 @@
        mClassType === 'info' ? 'alert-info' :
        mClassType === 'warning' ? 'alert-warning' :
        mClassType === 'danger' ? 'alert-error' : 'alert')"
-     [class.opacity-0]="!mShow"
-     [class.opacity-100]="mShow"
+     [class.opacity-0]="!mShow()"
+     [class.opacity-100]="mShow()"
      (click)="close()">
   @switch (mClassType) {
     @case ('success') { <i-lucide name="circle-check" class="size-5"></i-lucide> }

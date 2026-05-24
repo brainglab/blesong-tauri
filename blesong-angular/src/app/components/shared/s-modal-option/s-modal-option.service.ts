@@ -1,35 +1,37 @@
-import { ApplicationRef, Injectable, Injector } from '@angular/core';
+import { ApplicationRef, createComponent, Injectable, Injector } from '@angular/core';
 import { Subject } from 'rxjs';
+import { take } from 'rxjs/operators';
 import { SModalOptionComponent } from './s-modal-option.component';
-import { createComponent } from '@angular/core';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class SModalOptionService {
 
-  constructor(private injector: Injector, private applicationRef: ApplicationRef) {
+  constructor(private injector: Injector, private applicationRef: ApplicationRef) {}
 
-  }
-
-  show(mTitle: string, mOptions: any[], mField: string) {
-
+  show(mTitle: string, mOptions: any[], mField: string): Subject<any> {
     const mResponseEvent = new Subject<any>();
 
-    const mToast = document.createElement('div');
-    const mToastRef = createComponent(SModalOptionComponent, {
+    const host = document.createElement('div');
+    const ref = createComponent(SModalOptionComponent, {
       environmentInjector: this.applicationRef.injector,
       elementInjector: this.injector,
-      hostElement: mToast
+      hostElement: host,
+    });
+    ref.instance.mTitle = mTitle;
+    ref.instance.mOptions = mOptions;
+    ref.instance.mField = mField;
+    ref.instance.mResponseEvent = mResponseEvent;
+
+    mResponseEvent.pipe(take(1)).subscribe(() => {
+      // wait for the modal's close animation before tearing the view down
+      setTimeout(() => {
+        ref.destroy();
+        host.remove();
+      }, 250);
     });
 
-    mToastRef.instance.mTitle = mTitle;
-    mToastRef.instance.mOptions = mOptions;
-    mToastRef.instance.mField = mField;
-    mToastRef.instance.mResponseEvent = mResponseEvent;
-
-    this.applicationRef.attachView(mToastRef.hostView);
-    document.body.appendChild(mToast);
+    this.applicationRef.attachView(ref.hostView);
+    document.body.appendChild(host);
 
     return mResponseEvent;
   }

@@ -1,35 +1,23 @@
-import { Component, Input, OnInit, ElementRef } from '@angular/core';
+import { Component, Input, OnInit, signal } from '@angular/core';
 import { Subject } from 'rxjs';
 
 @Component({
-    selector: 'app-s-modal-loading',
-    templateUrl: './s-modal-loading.component.html',
-    imports: []
+  selector: 'app-s-modal-loading',
+  templateUrl: './s-modal-loading.component.html',
+  imports: [],
 })
 export class SModalLoadingComponent implements OnInit {
 
-  @Input() mResponseEvent: Subject<void>;
+  @Input() mResponseEvent!: Subject<void>;
 
-  mClassType: string = 'default';
-  mShow: boolean = false;
-
-  constructor(private elementRef: ElementRef) { }
+  // Signal so flipping visibility is isolated from sibling CD passes —
+  // avoids NG0100 when other dynamic state mutates during the same tick.
+  mShow = signal<boolean>(false);
 
   ngOnInit(): void {
-    this.mShow = true;
-
-    this.mResponseEvent.subscribe(() => {
-      this.close();
+    this.mShow.set(true);
+    this.mResponseEvent?.subscribe(() => {
+      this.mShow.set(false);
     });
   }
-
-  close() {
-    this.mShow = false;
-
-    let mTimeTwo = setTimeout(() => {
-      this.elementRef.nativeElement.remove();
-      clearInterval(mTimeTwo);
-    }, 400);
-  }
-
 }

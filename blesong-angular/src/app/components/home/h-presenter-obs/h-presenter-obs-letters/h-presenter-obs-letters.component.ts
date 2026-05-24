@@ -1,4 +1,4 @@
-import { Component, OnInit, SimpleChanges } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SModalYesNoService } from 'src/app/components/shared/s-modal-yes-no/s-modal-yes-no.service';
@@ -11,178 +11,188 @@ import { OrderModel } from 'src/app/models/order.model';
 import { MqttService } from 'src/app/services/mqtt.service';
 import { SModalOptionService } from '../../../shared/s-modal-option/s-modal-option.service';
 import { TemplateModel } from 'src/app/models/template.model';
-import { HPresenterObsNavbarComponent } from '../h-presenter-obs-navbar/h-presenter-obs-navbar.component';
 import { LucideAngularModule } from 'lucide-angular';
 import { EncapsulationHtmlPipe } from '../../../../pipes/encapsulation-html.pipe';
 
+const STORAGE_SONG_KEY = 'mSelectedSongIdx';
+const STORAGE_TEMPLATE_KEY = 'mTemplate';
+
 @Component({
-    selector: 'app-h-presenter-obs-letters',
-    templateUrl: './h-presenter-obs-letters.component.html',
-    imports: [HPresenterObsNavbarComponent, ReactiveFormsModule, LucideAngularModule, EncapsulationHtmlPipe]
+  selector: 'app-h-presenter-obs-letters',
+  templateUrl: './h-presenter-obs-letters.component.html',
+  imports: [ReactiveFormsModule, LucideAngularModule, EncapsulationHtmlPipe],
 })
 export class HPresenterObsLettersComponent {
 
   mForm: FormGroup;
-  mOptionsSongIdx = []
-  mSong: SongModel = new SongModel();
-  mSongIndex = -1;
-  mSongArray = [];
-  mSongIdx = null;
+  mOptionsSongIdx = [];
 
-  mTypeAnimation: [{ idx: 0, type: 'Suave' }, { idx: 1, type: 'Brillante' }];
+  mSong = signal<SongModel>(new SongModel());
+  mSongArray = signal<string[]>([]);
+  mSongIndex = signal<number>(-1);
 
-  mOptionText = { "song_idx": "" };
+  mSongIdx: any = null;
+  mOptionText = { song_idx: '' };
 
   mRealtime: RealtimeModel = new RealtimeModel();
   mTemplate: TemplateModel = new TemplateModel();
 
   mValidators = Validators;
 
-  constructor(private mRouter: Router, private mFormBuilder: FormBuilder, private mSToastService: SToastService,
-    private mSModalLoadingService: SModalLoadingService, private mSModalYesNoService: SModalYesNoService, private mActivatedRoute: ActivatedRoute,
-    private mSongService: SongService, private mMqttService: MqttService, private mSModalOptionService: SModalOptionService,) {
-
+  constructor(
+    private mRouter: Router,
+    private mFormBuilder: FormBuilder,
+    private mSToastService: SToastService,
+    private mSModalLoadingService: SModalLoadingService,
+    private mSModalYesNoService: SModalYesNoService,
+    private mActivatedRoute: ActivatedRoute,
+    private mSongService: SongService,
+    private mMqttService: MqttService,
+    private mSModalOptionService: SModalOptionService,
+  ) {
     this.getStoredTemplate();
     this.buildForm();
     this.getSongs();
+
+    // Restore last-selected song across refresh.
+    const storedId = localStorage.getItem(STORAGE_SONG_KEY);
+    if (storedId) {
+      this.mSongIdx = storedId;
+      this.setSong();
+    }
   }
 
-  ngOnInit(): void {
-  }
+  // ------------------------------------------------------------ template
 
-  getStoredTemplate() {
-    // Obtener el template guardado de localStorage o crear uno nuevo si no existe
-    let mStoredTemplate = localStorage.getItem('mTemplate');
-    if (mStoredTemplate) {
-      // Si existe, parsear el JSON almacenado
-      this.mTemplate = JSON.parse(mStoredTemplate);
+  private getStoredTemplate(): void {
+    const stored = localStorage.getItem(STORAGE_TEMPLATE_KEY);
+    if (stored) {
+      this.mTemplate = JSON.parse(stored);
     } else {
-      // Si no existe, crear un objeto vacío y guardarlo
       this.mTemplate = new TemplateModel();
       this.mTemplate.template_animation = 0;
       this.mTemplate.template_body_fontsize = 80;
-      localStorage.setItem('mTemplate', JSON.stringify(this.mTemplate));
+      localStorage.setItem(STORAGE_TEMPLATE_KEY, JSON.stringify(this.mTemplate));
     }
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (this.mSong && this.mOptionsSongIdx.length > 0) {
-      const mSelectedSong = this.mOptionsSongIdx.find(opt => opt.idx.toString() === this.mSong.idx?.toString());
-      this.mOptionText['song_idx'] = mSelectedSong ? mSelectedSong.name : '';
-    }
-  }
+  // ------------------------------------------------------------ picker
 
   showModalOption(mTitle: string, mOptions: any[], mField: string, mNull: boolean = false) {
     if (mNull) {
-      this.mSong[mField] = null;
-      this.mForm.get(mField)?.setValue(null);
-      this.mOptionText[mField] = null;
-    } else {
-      let mResponseEvent = this.mSModalOptionService.show(mTitle, mOptions, mField);
-      mResponseEvent.subscribe((response) => {
-        if (response !== null) {
-          this.mSong[mField] = response;
-          this.mOptionText[mField] = mOptions.find(opt => opt.idx == response)?.name;
+      this.mSong.update(s => ({ ...s, [mField]: null }));
+      this.mForm.get(mField)?.setValue('');
+      this.mOptionText[mField] = '';
 
-          if (mField == 'song_idx') {
-            this.mSongIdx = response;
-            this.setSong();
-          }
-        }
-      });
+      if (mField === 'song_idx') {
+        this.mSongIdx = null;
+        localStorage.removeItem(STORAGE_SONG_KEY);
+        this.mSongArray.set([]);
+        this.mSongIndex.set(-1);
+      }
+      return;
     }
+
+    const mResponseEvent = this.mSModalOptionService.show(mTitle, mOptions, mField);
+    mResponseEvent.subscribe((response) => {
+      if (response === null) return;
+
+      this.mSong.update(s => ({ ...s, [mField]: response }));
+      const name = mOptions.find(opt => opt.idx == response)?.name ?? '';
+      this.mOptionText[mField] = name;
+      this.mForm.get(mField)?.setValue(name);
+
+      if (mField === 'song_idx') {
+        this.mSongIdx = response;
+        localStorage.setItem(STORAGE_SONG_KEY, String(response));
+        this.setSong();
+      }
+    });
   }
 
+  // ------------------------------------------------------------ data
+
   getSongs() {
-    // get SongIdx 
-    // ----------------------------------------------------------------------------- 
-
-    let mSong = new SongModel();
+    const mSong = new SongModel();
     mSong.song_name = this.mForm.get('song_idx').value;
-    mSong.autor_idx = null
-    mSong.song_year = null
-    mSong.song_content = null
+    mSong.autor_idx = null;
+    mSong.song_year = null;
+    mSong.song_content = null;
 
-    let mOrder = new OrderModel();
+    const mOrder = new OrderModel();
     mOrder.order_field = 'song_name';
     mOrder.order_direction = 'ASC';
     mOrder.order_count = 30;
 
-    let mEventLoadingScreenAutor = this.mSModalLoadingService.show();
+    const close = this.mSModalLoadingService.show();
     this.mSongService.selection(mSong, mOrder, 0).subscribe((result: any) => {
-      if (result['code'] != '00') {
-        this.mSToastService.danger("Error inesperado");
-      } else if (result['code'] == '00') {
+      if (result['code'] !== '00') {
+        this.mSToastService.danger('Error inesperado');
+      } else {
         this.mOptionsSongIdx = result.songs;
       }
-    }).add(() => {
-      mEventLoadingScreenAutor.next();
-    });
+    }).add(() => close.next());
   }
 
   buildForm() {
     this.mForm = this.mFormBuilder.group({
       song_idx: ['', [Validators.maxLength(255), Validators.pattern(/^[A-Za-zÁÉÍÓÚáéíóúñÑ0-9\s]+[^\'\"]*$/)]],
-      template_animation: [0, [Validators.required]]
-    })
+      template_animation: [0, [Validators.required]],
+    });
   }
 
-  get mSongIdxValid() { return this.mForm.get('song_idx').invalid && this.mForm.get('song_idx').touched }
-  get mTemplateAnimationValid() { return this.mForm.get('template_animation').invalid && this.mForm.get('template_animation').touched }
+  get mSongIdxValid() {
+    return this.mForm.get('song_idx').invalid && this.mForm.get('song_idx').touched;
+  }
 
   setSong() {
     if (this.mSongIdx == null) {
-      this.mSongIndex = -1;
-      this.mSongArray = [];
-
-    } else {
-
-      let mEventClose = this.mSModalLoadingService.show();
-      this.mSongService.get(this.mSongIdx).subscribe({
-        error: (err: any) => {
-          switch (err.error['code']) {
-            default:
-              this.mSToastService.danger(`Error inesperado, intenta mas tarde (Code: 01)`);
-              break;
-          }
-        },
-        next: (result: any) => {
-
-          // result
-          this.mSong = result.song;
-          this.mSongIndex = -1;
-          this.mSongArray = this.mSong.song_content.split('***');
-
-          // Force OBS embedded browser to recalculate scroll height
-          setTimeout(() => window.dispatchEvent(new Event('resize')), 0);
-        },
-      }).add(() => {
-        mEventClose.next();
-      });
-
+      this.mSongIndex.set(-1);
+      this.mSongArray.set([]);
+      return;
     }
+
+    const close = this.mSModalLoadingService.show();
+    this.mSongService.get(this.mSongIdx).subscribe({
+      error: (err: any) => {
+        switch (err.error['code']) {
+          default:
+            this.mSToastService.danger('Error inesperado, intenta mas tarde (Code: 01)');
+            break;
+        }
+      },
+      next: (result: any) => {
+        const song: SongModel = result.song;
+        this.mSong.set(song);
+        this.mOptionText['song_idx'] = song.song_name ?? '';
+        this.mForm.get('song_idx')?.setValue(song.song_name ?? '');
+        this.mSongIndex.set(-1);
+        this.mSongArray.set((song.song_content || '').split('***'));
+
+        // Help OBS embedded browser recalculate scroll height.
+        setTimeout(() => window.dispatchEvent(new Event('resize')), 0);
+      },
+    }).add(() => close.next());
   }
 
+  // ------------------------------------------------------------ publish
+
   setSongPart(mIndex: number) {
-
     this.getStoredTemplate();
+    this.mSongIndex.set(mIndex);
 
-    this.mSongIndex = mIndex
-
-    this.mRealtime.song_array = this.mSongArray;
-    this.mRealtime.song_slide_selected = this.mSongIndex;
+    this.mRealtime.song_array = this.mSongArray();
+    this.mRealtime.song_slide_selected = mIndex;
     this.mRealtime.template = this.mTemplate;
     this.mMqttService.publish('blesong', JSON.stringify(this.mRealtime));
   }
 
   sendStandBy() {
-
     this.getStoredTemplate();
-
-    let mRealtime = new RealtimeModel();
-    mRealtime.song_array = [''];
-    mRealtime.song_slide_selected = 0;
-    this.mRealtime.template = this.mTemplate;
-    this.mMqttService.publish('blesong', JSON.stringify(mRealtime));
+    const realtime = new RealtimeModel();
+    realtime.song_array = [''];
+    realtime.song_slide_selected = 0;
+    realtime.template = this.mTemplate;
+    this.mMqttService.publish('blesong', JSON.stringify(realtime));
   }
 }

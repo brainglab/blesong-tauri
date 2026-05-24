@@ -3,15 +3,15 @@ import { Router, ActivatedRoute, RouterLink } from "@angular/router";
 import { AutorService } from 'src/app/services/autor.service';
 import { SToastService } from '../../../shared/s-toast/s-toast.service';
 import { SModalLoadingService } from '../../../shared/s-modal-loading/s-modal-loading.service';
-import { HSidebarComponent } from '../../../home/h-sidebar/h-sidebar.component';
-import { HNavbarComponent } from '../../../home/h-navbar/h-navbar.component';
 import { BackButtonDirective } from '../../../../directives/back-button.directive';
 import { DatePipe } from '@angular/common';
+import { LucideAngularModule } from 'lucide-angular';
+import { PageHeaderComponent } from '../../../../layout/page-header/page-header.component';
 
 @Component({
     selector: 'app-d-show-autor',
     templateUrl: './d-show-autor.component.html',
-    imports: [HSidebarComponent, HNavbarComponent, BackButtonDirective, RouterLink, DatePipe]
+    imports: [PageHeaderComponent, RouterLink, BackButtonDirective, DatePipe, LucideAngularModule],
 })
 export class DShowAutorComponent implements OnInit {
 

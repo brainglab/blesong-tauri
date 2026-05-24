@@ -1,4 +1,4 @@
-<dialog class="modal" [class.modal-open]="mShow">
+<dialog class="modal" [class.modal-open]="mShow()">
   <div class="modal-box">
     <div class="flex items-center justify-between mb-2 gap-3">
       <h3 class="text-lg font-bold flex items-center gap-2">
@@ -10,7 +10,7 @@
         }
         {{ mTitle }}
       </h3>
-      <button type="button" class="btn btn-sm btn-circle btn-ghost" (click)="close(false)" aria-label="Cerrar">
+      <button type="button" class="btn btn-sm btn-circle btn-soft" (click)="close(false)" aria-label="Cerrar">
         <i-lucide name="x" class="size-4"></i-lucide>
       </button>
     </div>

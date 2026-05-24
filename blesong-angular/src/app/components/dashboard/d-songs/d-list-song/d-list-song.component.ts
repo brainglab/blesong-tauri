@@ -4,6 +4,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router, RouterLink } from "@angular/router";
 import * as XLSX from 'xlsx';
+import { PageHeaderComponent } from '../../../../layout/page-header/page-header.component';
 
 import { SongService } from 'src/app/services/song.service';
 import { SToastService } from 'src/app/components/shared/s-toast/s-toast.service';
@@ -11,8 +12,6 @@ import { SModalLoadingService } from 'src/app/components/shared/s-modal-loading/
 import { SongModel } from 'src/app/models/song.model';
 import { OrderModel } from 'src/app/models/order.model';
 import { SModalYesNoService } from 'src/app/components/shared/s-modal-yes-no/s-modal-yes-no.service';
-import { HSidebarComponent } from '../../../home/h-sidebar/h-sidebar.component';
-import { HNavbarComponent } from '../../../home/h-navbar/h-navbar.component';
 import { DSearchSongComponent } from '../d-search-song/d-search-song.component';
 import { LucideAngularModule } from 'lucide-angular';
 
@@ -20,7 +19,7 @@ import { LucideAngularModule } from 'lucide-angular';
 @Component({
     selector: 'app-d-list-song',
     templateUrl: './d-list-song.component.html',
-    imports: [HSidebarComponent, HNavbarComponent, RouterLink, DSearchSongComponent, LucideAngularModule]
+    imports: [PageHeaderComponent, RouterLink, DSearchSongComponent, LucideAngularModule],
 })
 export class DListSongComponent implements OnInit {
 

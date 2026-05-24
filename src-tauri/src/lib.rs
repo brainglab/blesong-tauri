@@ -12,6 +12,7 @@ use axum::{
 };
 use db::Database;
 use helpers::get_local_ip;
+use routes_bible::BibleConfig;
 use routes_server::ServerConfig;
 use std::net::SocketAddr;
 use std::path::PathBuf;
@@ -166,7 +167,7 @@ fn get_frontend_dist_path() -> Option<PathBuf> {
     None
 }
 
-fn start_http_server(db: Arc<Database>, server_config: Arc<ServerConfig>) {
+fn start_http_server(db: Arc<Database>, server_config: Arc<ServerConfig>, bible_config: Arc<BibleConfig>) {
     std::thread::spawn(move || {
         let rt = tokio::runtime::Runtime::new().unwrap();
         rt.block_on(async {
@@ -201,7 +202,7 @@ fn start_http_server(db: Arc<Database>, server_config: Arc<ServerConfig>) {
                 .route("/selection_books", post(routes_bible::selection_books))
                 .route("/selection_chapters", post(routes_bible::selection_chapters))
                 .route("/selection_verses", post(routes_bible::selection_verses))
-                .with_state(db.clone());
+                .with_state(bible_config.clone());
 
             // Server routes
             let server_routes = Router::new()
@@ -354,8 +355,16 @@ pub fn run() {
         ip: local_ip.clone(),
     });
 
+    let bibles_dir = routes_bible::get_bibles_dir().unwrap_or_else(|| {
+        let fallback = std::env::current_dir().unwrap_or_default().join("data/bibles");
+        eprintln!("WARNING: bibles dir not found; using fallback {:?}", fallback);
+        fallback
+    });
+    println!("Bibles dir: {:?}", bibles_dir);
+    let bible_config = Arc::new(BibleConfig { dir: bibles_dir });
+
     // Start HTTP server (Express replacement)
-    start_http_server(database.clone(), server_config);
+    start_http_server(database.clone(), server_config, bible_config);
 
     // Start MQTT broker (Aedes replacement)
     start_mqtt_broker();

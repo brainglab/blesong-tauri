@@ -1,58 +1,80 @@
-import { Component, EventEmitter, Output } from '@angular/core';
-import { TemplateModel } from 'src/app/models/template.model';
-import { RouterLink } from '@angular/router';
+import { Component, computed, HostListener, signal } from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
+import { RealtimeModel } from 'src/app/models/realtime.model';
+import { TemplateModel } from 'src/app/models/template.model';
+import { MqttService } from 'src/app/services/mqtt.service';
+import { SLIDE_ANIMATIONS } from 'src/app/lib/slide-animations';
 
 @Component({
-    selector: 'app-h-presenter-obs-navbar',
-    templateUrl: './h-presenter-obs-navbar.component.html',
-    imports: [RouterLink, LucideAngularModule]
+  selector: 'app-h-presenter-obs-navbar',
+  templateUrl: './h-presenter-obs-navbar.component.html',
+  imports: [RouterLink, RouterLinkActive, LucideAngularModule],
 })
 export class HPresenterObsNavbarComponent {
 
-  @Output() mResponse: EventEmitter<any> = new EventEmitter<any>();
-  mTemplate: TemplateModel = new TemplateModel();
+  readonly animations = SLIDE_ANIMATIONS;
 
-  constructor() {
+  mTemplate = signal<TemplateModel>(new TemplateModel());
+  mDrawerOpen = signal<boolean>(false);
+
+  /** Display name of the currently selected animation, reactive. */
+  mAnimationName = computed(() => {
+    const id = this.mTemplate().template_animation;
+    return this.animations.find(a => a.id === id)?.name ?? '—';
+  });
+
+  constructor(private mMqttService: MqttService) {
     this.getStoredTemplate();
   }
 
-  getStoredTemplate() {
-    // Obtener el template guardado de localStorage o crear uno nuevo si no existe
-    let mStoredTemplate = localStorage.getItem('mTemplate');
-    if (mStoredTemplate) {
-      // Si existe, parsear el JSON almacenado
-      this.mTemplate = JSON.parse(mStoredTemplate);
+  private getStoredTemplate(): void {
+    const stored = localStorage.getItem('mTemplate');
+    if (stored) {
+      this.mTemplate.set(JSON.parse(stored));
     } else {
-      // Si no existe, crear un objeto vacío y guardarlo
-      this.mTemplate = new TemplateModel();
-      this.mTemplate.template_animation = 0;
-      this.mTemplate.template_body_fontsize = 80;
-      localStorage.setItem('mTemplate', JSON.stringify(this.mTemplate));
+      const t = new TemplateModel();
+      t.template_animation = 0;
+      t.template_body_fontsize = 80;
+      localStorage.setItem('mTemplate', JSON.stringify(t));
+      this.mTemplate.set(t);
     }
   }
 
-  setAnimation(mIndex: number) {
-    this.mTemplate.template_animation = mIndex;
-    localStorage.setItem('mTemplate', JSON.stringify(this.mTemplate));
+  private persistTemplate(): void {
+    localStorage.setItem('mTemplate', JSON.stringify(this.mTemplate()));
   }
 
-  setFontSize(mAction: string) {
+  setAnimation(idx: number): void {
+    this.mTemplate.set({ ...this.mTemplate(), template_animation: idx });
+    this.persistTemplate();
+  }
+
+  setFontSize(action: 'add' | 'sub'): void {
     this.getStoredTemplate();
-    if (mAction === 'add') {
-      this.mTemplate.template_body_fontsize = this.mTemplate.template_body_fontsize + 5;
-    } else {
-      this.mTemplate.template_body_fontsize = this.mTemplate.template_body_fontsize - 5;
-    }
-    localStorage.setItem('mTemplate', JSON.stringify(this.mTemplate));
+    const current = this.mTemplate();
+    const next = action === 'add'
+      ? current.template_body_fontsize + 5
+      : Math.max(10, current.template_body_fontsize - 5);
+    this.mTemplate.set({ ...current, template_body_fontsize: next });
+    this.persistTemplate();
   }
 
-  sendStandBy() {
-    this.mResponse.emit();
+  sendStandBy(): void {
+    this.getStoredTemplate();
+    const realtime = new RealtimeModel();
+    realtime.song_array = [''];
+    realtime.song_slide_selected = 0;
+    realtime.template = this.mTemplate();
+    this.mMqttService.publish('blesong', JSON.stringify(realtime));
   }
 
-  reload() {
+  reload(): void {
     window.location.reload();
   }
 
+  @HostListener('document:keydown.escape')
+  closeDrawer(): void {
+    if (this.mDrawerOpen()) this.mDrawerOpen.set(false);
+  }
 }

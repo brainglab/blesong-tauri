@@ -1,66 +1,65 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { ServerService } from 'src/app/services/server.service';
 import { SToastService } from '../../shared/s-toast/s-toast.service';
-import { SModalLoadingService } from '../../shared/s-modal-loading/s-modal-loading.service';
 import { QRCodeComponent } from 'angularx-qrcode';
 import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
-    selector: 'app-h-qr',
-    templateUrl: './h-qr.component.html',
-    imports: [QRCodeComponent, LucideAngularModule]
+  selector: 'app-h-qr',
+  templateUrl: './h-qr.component.html',
+  imports: [QRCodeComponent, LucideAngularModule],
 })
 export class HQrComponent implements OnInit {
 
-  mCurrentUrl: string = '';
+  mCurrentUrl = signal<string>('');
+  mIsLoading = signal<boolean>(true);
+  mHasError = signal<boolean>(false);
+  mIsLoopback = signal<boolean>(false);
 
-  constructor(private mSToastService: SToastService, private mSModalLoadingService: SModalLoadingService, private serverService: ServerService) { }
-
+  constructor(
+    private mSToastService: SToastService,
+    private serverService: ServerService,
+  ) {}
 
   ngOnInit(): void {
-
-    let mEventClose = this.mSModalLoadingService.show();
     this.serverService.get().subscribe({
       error: () => {
-        this.mCurrentUrl = '';
-        this.mSToastService.danger('No se pudo obtener la IP local del servidor');
+        this.mIsLoading.set(false);
+        this.mHasError.set(true);
       },
       next: (result: any) => {
-        // El QR sólo es útil si la app está expuesta en una IP de LAN real.
-        // Si get_local_ip() en el backend no detectó NIC y cayó a 127.0.0.1,
-        // un teléfono no puede alcanzarla — mostramos error en vez de un QR roto.
-        if (result?.ip && result?.port && result.ip !== '127.0.0.1') {
-          this.mCurrentUrl = `http://${result.ip}:${result.port}/presenter/qr-menu`;
+        this.mIsLoading.set(false);
+        if (result?.ip && result?.port) {
+          this.mCurrentUrl.set(`http://${result.ip}:${result.port}/presenter/qr-menu`);
+          // 127.0.0.1 means the host couldn't detect a LAN interface — the
+          // QR still works for browsers on the same machine but not for
+          // phones on the same WiFi. Warn but don't hide.
+          this.mIsLoopback.set(result.ip === '127.0.0.1');
         } else {
-          this.mCurrentUrl = '';
-          this.mSToastService.danger('No se detectó red local activa. Conéctate a una red WiFi/LAN y reintenta.');
+          this.mHasError.set(true);
         }
       },
-    }).add(() => {
-      mEventClose.next();
     });
   }
 
   async mCopyToClipboard() {
+    const url = this.mCurrentUrl();
+    if (!url) return;
     try {
-      // Intentar primero con la API moderna del portapapeles
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        await navigator.clipboard.writeText(this.mCurrentUrl);
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(url);
       } else {
-        // Solución alternativa usando un elemento temporal
-        const mTempElement = document.createElement('textarea');
-        mTempElement.value = this.mCurrentUrl;
-        document.body.appendChild(mTempElement);
-        mTempElement.select();
+        const tmp = document.createElement('textarea');
+        tmp.value = url;
+        document.body.appendChild(tmp);
+        tmp.select();
         document.execCommand('copy');
-        document.body.removeChild(mTempElement);
+        document.body.removeChild(tmp);
       }
-
-      this.mSToastService.success('¡Enlace copiado al portapapeles!');
-
+      this.mSToastService.success('Enlace copiado al portapapeles');
     } catch (err) {
-      this.mSToastService.danger('Error al copiar al portapapeles');
-      console.error('Error al copiar al portapapeles:', err);
+      this.mSToastService.danger('No se pudo copiar al portapapeles');
+      console.error('clipboard error:', err);
     }
   }
 }

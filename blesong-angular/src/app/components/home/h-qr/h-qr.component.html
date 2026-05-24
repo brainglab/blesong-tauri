@@ -1,33 +1,54 @@
-<div class="card bg-base-100 border border-base-300 shadow-sm mb-3">
-  <div class="card-body items-center">
-    <img src="assets/images/logo.png" alt="Logo de la aplicación" class="max-h-20" />
-  </div>
-</div>
+<div class="flex flex-col items-center gap-6 w-full">
 
-<div class="card bg-base-100 border border-base-300 shadow-sm mb-3">
-  <div class="card-body">
-    <p class="text-sm opacity-70">Puedes copiar el enlace directamente:</p>
-    <div class="join w-full">
-      <input type="text" class="input input-bordered join-item flex-1" [value]="mCurrentUrl" readonly />
-      <button class="btn btn-primary join-item" type="button" (click)="mCopyToClipboard()">
-        <i-lucide name="copy" class="size-4"></i-lucide>
-        Copiar
-      </button>
+  @if (mIsLoading()) {
+    <div class="flex flex-col items-center gap-3 py-10">
+      <span class="loading loading-spinner loading-lg text-primary"></span>
+      <p class="text-sm opacity-60">Obteniendo IP del servidor…</p>
     </div>
-  </div>
-</div>
+  }
 
-<div class="card bg-base-100 border border-base-300 shadow-sm">
-  <div class="card-body items-center text-center">
-    <h3 class="card-title">O escanea el código QR</h3>
-    <div class="flex justify-center my-4">
+  @if (!mIsLoading() && mHasError()) {
+    <div class="alert alert-error w-full max-w-md">
+      <i-lucide name="circle-alert" class="size-5"></i-lucide>
+      <span>No se pudo obtener la IP del servidor.</span>
+    </div>
+  }
+
+  @if (!mIsLoading() && !mHasError()) {
+
+    @if (mIsLoopback()) {
+      <div class="alert alert-warning w-full max-w-md">
+        <i-lucide name="triangle-alert" class="size-5"></i-lucide>
+        <span>No se detectó red local. Otros dispositivos no podrán conectarse hasta que te unas a una WiFi/LAN.</span>
+      </div>
+    }
+
+    <!-- URL field with copy button -->
+    <div class="w-full max-w-md">
+      <p class="text-xs uppercase tracking-wider opacity-60 mb-2 font-semibold">Enlace directo</p>
+      <div class="join w-full">
+        <input type="text" class="input input-bordered join-item flex-1 font-mono text-sm"
+               [value]="mCurrentUrl()" readonly />
+        <button class="btn btn-primary join-item" type="button" (click)="mCopyToClipboard()">
+          <i-lucide name="copy" class="size-4"></i-lucide>
+          Copiar
+        </button>
+      </div>
+    </div>
+
+    <!-- QR code -->
+    <div class="flex flex-col items-center gap-3 bg-base-200/40 border border-base-300 rounded-2xl p-6 w-full max-w-md">
       <qrcode
-              [qrdata]="mCurrentUrl"
-              [allowEmptyString]="true"
-              [width]="256"
-              [errorCorrectionLevel]="'M'">
+        [qrdata]="mCurrentUrl()"
+        [allowEmptyString]="false"
+        [width]="256"
+        [errorCorrectionLevel]="'M'"
+        [margin]="2">
       </qrcode>
+      <p class="text-sm opacity-70 text-center">
+        Escanea el código QR desde tu dispositivo móvil
+        <span class="opacity-60">conectado a la misma red.</span>
+      </p>
     </div>
-    <p class="opacity-70">Escanea el código QR para ver el menú desde tu dispositivo móvil</p>
-  </div>
+  }
 </div>

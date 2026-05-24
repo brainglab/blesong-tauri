@@ -1,19 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from "@angular/router";
+import { PageHeaderComponent } from '../../../../layout/page-header/page-header.component';
+import { BackButtonDirective } from '../../../../directives/back-button.directive';
+import { LucideAngularModule } from 'lucide-angular';
 
 import { SongModel } from 'src/app/models/song.model';
 import { SongService } from 'src/app/services/song.service';
 import { SToastService } from 'src/app/components/shared/s-toast/s-toast.service';
 import { SModalLoadingService } from 'src/app/components/shared/s-modal-loading/s-modal-loading.service';
-import { HSidebarComponent } from '../../../home/h-sidebar/h-sidebar.component';
-import { HNavbarComponent } from '../../../home/h-navbar/h-navbar.component';
 import { DFormSongComponent } from '../d-form-song/d-form-song.component';
 
 
 @Component({
     selector: 'app-d-edit-song',
     templateUrl: './d-edit-song.component.html',
-    imports: [HSidebarComponent, HNavbarComponent, DFormSongComponent]
+    imports: [PageHeaderComponent, BackButtonDirective, DFormSongComponent, LucideAngularModule],
 })
 export class DEditSongComponent implements OnInit {
   mSong: SongModel = new SongModel();

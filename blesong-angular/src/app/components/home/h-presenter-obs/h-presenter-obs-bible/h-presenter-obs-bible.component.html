@@ -1,112 +1,146 @@
-<app-h-presenter-obs-navbar (mResponse)="sendStandBy()" />
-
 <div class="max-w-5xl mx-auto p-4">
-  <h2 class="text-2xl font-bold mb-3">Biblia</h2>
+  <h2 class="text-2xl font-bold mb-3 flex items-baseline flex-wrap gap-x-3 gap-y-1">
+    <span>Biblia</span>
+    @if (mSelectedBible()) {
+      <span class="text-xl font-normal opacity-50">/</span>
+      <span class="text-xl font-medium opacity-90">{{ mSelectedBible()?.abreviation }}</span>
+    }
+  </h2>
   <div class="divider my-2"></div>
 
+  <!-- Breadcrumb -->
   <div class="breadcrumbs text-sm">
     <ul>
       <li>
-        @if (!mSelectedBible) {
-          <span class="opacity-60">Seleccionar Biblia</span>
-        }
-        @if (mSelectedBible) {
-          <span class="font-medium">{{ mSelectedBible.name }}</span>
+        @if (mSelectedBible()) {
+          <button type="button" class="link link-hover" (click)="changeBible()">{{ mSelectedBible()?.name }}</button>
+        } @else {
+          <span class="opacity-60">Seleccionar biblia</span>
         }
       </li>
-      @if (mSelectedBible) {
+      @if (mSelectedBible()) {
         <li>
-          @if (!mSelectedBook) {
-            <span class="opacity-60">Seleccionar Libro</span>
-          }
-          @if (mSelectedBook) {
-            <span class="font-medium">{{ mSelectedBook.name }}</span>
+          @if (mSelectedBook()) {
+            <button type="button" class="link link-hover" (click)="resetSelection()">{{ mSelectedBook()?.name }}</button>
+          } @else {
+            <span class="opacity-60">Seleccionar libro</span>
           }
         </li>
       }
-      @if (mSelectedBook) {
+      @if (mSelectedBook()) {
         <li>
-          @if (!mSelectedChapter) {
-            <span class="opacity-60">Seleccionar Capítulo</span>
-          }
-          @if (mSelectedChapter) {
-            <span class="opacity-80">Capítulo {{ mSelectedChapter }}</span>
+          @if (mSelectedChapter() !== null) {
+            <span>Capítulo {{ mSelectedChapter() }}</span>
+          } @else {
+            <span class="opacity-60">Seleccionar capítulo</span>
           }
         </li>
       }
     </ul>
   </div>
 
-  <div class="text-center my-4">
-    <button class="btn btn-sm btn-outline" type="button" (click)="mResetSelection()">
-      <i-lucide name="refresh-cw" class="size-4"></i-lucide>
-      Nueva búsqueda
-    </button>
-  </div>
-
-  @if (!mSelectedBible) {
-    <div class="space-y-2">
-      @for (mBibleBible of mBibleBibles; track mBibleBible) {
-        <div class="card bg-base-100 border border-base-300 cursor-pointer hover:border-primary"
-             (click)="setBible(mBibleBible)">
-          <div class="card-body items-center text-center py-4">
-            <span class="font-medium">{{ mBibleBible.name }}</span>
-          </div>
+  <!-- ============================================ Step 1 — pick a bible -->
+  @if (!mSelectedBible()) {
+    @if (mBibles().length > 0) {
+      <div class="space-y-2 mt-4">
+        @for (b of mBibles(); track b.idx) {
+          <button type="button"
+                  class="w-full text-left card bg-base-100 border border-base-300 hover:border-primary cursor-pointer transition-colors"
+                  (click)="setBible(b)">
+            <div class="card-body py-4">
+              <div class="flex items-center justify-between gap-3">
+                <div>
+                  <div class="font-semibold">{{ b.name }}</div>
+                  <div class="text-xs opacity-60 font-mono">{{ b.abreviation }}</div>
+                </div>
+                <i-lucide name="chevron-right" class="size-4 opacity-50"></i-lucide>
+              </div>
+            </div>
+          </button>
+        }
+      </div>
+    } @else {
+      <div class="card bg-base-100 border border-base-300 mt-4">
+        <div class="card-body items-center text-center py-12">
+          <i-lucide name="hourglass" class="size-12 opacity-50 mb-3"></i-lucide>
+          <h3 class="text-lg opacity-70">No hay biblias instaladas.</h3>
+          <p class="text-sm opacity-60">Agrega archivos <code>.bblx</code> en <code>data/bibles/</code>.</p>
         </div>
+      </div>
+    }
+  }
+
+  <!-- ============================================ Step 2 — pick a book -->
+  @if (mSelectedBible() && !mSelectedBook()) {
+    <div class="flex items-center gap-2 mt-4 mb-3">
+      <div class="join">
+        <button type="button"
+                class="btn btn-sm join-item"
+                [class.btn-primary]="mTestament() === 'ALL'"
+                [class.btn-soft]="mTestament() !== 'ALL'"
+                (click)="setTestament('ALL')">Todos</button>
+        <button type="button"
+                class="btn btn-sm join-item"
+                [class.btn-primary]="mTestament() === 'AT'"
+                [class.btn-soft]="mTestament() !== 'AT'"
+                (click)="setTestament('AT')">Antiguo Testamento</button>
+        <button type="button"
+                class="btn btn-sm join-item"
+                [class.btn-primary]="mTestament() === 'NT'"
+                [class.btn-soft]="mTestament() !== 'NT'"
+                (click)="setTestament('NT')">Nuevo Testamento</button>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+      @for (book of filteredBooks(); track book.idx) {
+        <button type="button"
+                class="btn btn-soft btn-sm justify-start font-medium"
+                (click)="setBook(book)">
+          {{ book.name }}
+        </button>
       }
     </div>
   }
 
-  @if (mSelectedBible && !mSelectedBook) {
-    <div class="space-y-2">
-      @for (mBibleBook of mBibleBooks; track mBibleBook) {
-        <div class="card bg-base-100 border border-base-300 cursor-pointer hover:border-primary"
-             (click)="setBook(mBibleBook)">
-          <div class="card-body items-center text-center py-4">
-            <span class="font-medium">{{ mBibleBook.name }}</span>
-          </div>
-        </div>
+  <!-- ============================================ Step 3 — pick a chapter -->
+  @if (mSelectedBook() && mSelectedChapter() === null) {
+    <div class="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-2 mt-4">
+      @for (c of mChapters(); track c.chapter) {
+        <button type="button"
+                class="btn btn-soft btn-sm font-mono"
+                (click)="setChapter(c.chapter)">
+          {{ c.chapter }}
+        </button>
       }
     </div>
   }
 
-  @if (mSelectedBible && mSelectedBook && !mSelectedChapter) {
-    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
-      @for (mBibleChapter of mBibleChapters; track mBibleChapter) {
-        <div class="card bg-base-100 border border-base-300 cursor-pointer hover:border-primary"
-             (click)="setChapter(mBibleChapter.chapter)">
-          <div class="card-body items-center text-center py-4">
-            <span class="font-medium">{{ mBibleChapter.chapter }}</span>
-          </div>
-        </div>
-      }
-    </div>
-  }
-
-  @if (mSelectedBible && mSelectedBook && mSelectedChapter) {
-    <div class="space-y-2">
-      @for (mBibleVerse of mBibleVerses; track mBibleVerse; let i = $index) {
-        <div class="card bg-base-100 border cursor-pointer transition-all"
-             [class.border-primary]="mVerseIndex == i"
-             [class.border-2]="mVerseIndex == i"
-             [class.border-base-300]="mVerseIndex != i"
-             (click)="setVerse(mBibleVerse.text, i)">
+  <!-- ============================================ Step 4 — pick a verse -->
+  @if (mSelectedChapter() !== null && mVerses().length > 0) {
+    <div class="space-y-2 mt-4">
+      @for (v of mVerses(); track v.verse; let i = $index) {
+        <button type="button"
+                class="w-full text-left card bg-base-100 border cursor-pointer transition-all"
+                [class.border-primary]="mVerseIndex() === i"
+                [class.border-2]="mVerseIndex() === i"
+                [class.border-base-300]="mVerseIndex() !== i"
+                (click)="setVerse(v, i)">
           <div class="card-body py-3">
-            <div>{{ mBibleVerse.text }}</div>
-            <div class="text-xs opacity-60 mt-1">
-              {{ mSelectedBook.name }} {{ mSelectedChapter }}:{{ mBibleVerse.verse }} {{ mSelectedBible.abreviation }}
+            <div class="flex items-start gap-3">
+              <span class="font-mono font-semibold text-sm opacity-60 shrink-0 mt-0.5">{{ v.verse }}</span>
+              <div class="whitespace-pre-wrap text-sm">{{ v.text }}</div>
             </div>
           </div>
-        </div>
+        </button>
       }
     </div>
   }
 
-  @if (mBibleBibles.length <= 0) {
+  @if (mSelectedChapter() !== null && mVerses().length === 0) {
     <div class="card bg-base-100 border border-base-300 mt-4">
-      <div class="card-body items-center text-center py-12">
-        <i-lucide name="hourglass" class="size-12 opacity-50 mb-3"></i-lucide>
-        <h3 class="text-lg opacity-70">No haz seleccionado una canción.</h3>
+      <div class="card-body items-center text-center py-8">
+        <i-lucide name="hourglass" class="size-10 opacity-50 mb-2"></i-lucide>
+        <h3 class="text-base opacity-70">Sin versículos para este capítulo.</h3>
       </div>
     </div>
   }

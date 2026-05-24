@@ -1,39 +1,8 @@
-<nav class="navbar fixed top-0 left-0 right-0 z-30 bg-base-100 border-b border-base-300 px-4">
-  <div class="flex-1">
-    <a routerLink="/presenter/qr-menu" class="btn btn-ghost btn-sm normal-case">
-      <img src="assets/images/logo.png" alt="Logo principal" class="h-7" />
-    </a>
-  </div>
-</nav>
-
-@if (!mRealtime.song_array?.length) {
-  <div class="max-w-2xl mx-auto pt-32 px-4">
-    <div class="card bg-base-100 border border-base-300 shadow-sm">
-      <div class="card-body items-center text-center py-12">
-        <i-lucide name="hourglass" class="size-12 opacity-50 mb-3"></i-lucide>
-        <h2 class="text-xl opacity-70">En espera de iniciar una canción</h2>
-      </div>
-    </div>
-  </div>
-}
-
-<div class="max-w-3xl mx-auto pt-24 px-4 pb-8 space-y-3">
-  @for (mSong of mRealtime.song_array; track mSong; let mIndex = $index) {
-    <div class="card bg-base-100 shadow-sm border transition-all"
-         [class.border-primary]="mIndex === mRealtime.song_slide_selected"
-         [class.border-2]="mIndex === mRealtime.song_slide_selected"
-         [class.border-base-300]="mIndex !== mRealtime.song_slide_selected">
-      <div class="card-body items-center text-center">
-        <div class="text-xl"
-             [class.font-medium]="mIndex === mRealtime.song_slide_selected"
-             [class.opacity-60]="mIndex !== mRealtime.song_slide_selected"
-             [innerHTML]="mSong | encapsulationHtml"></div>
-      </div>
-    </div>
+<div class="fixed inset-0 flex items-center justify-center text-white p-8 overflow-hidden">
+  @if (mHasContent()) {
+    <div #slideText
+         class="animated-text text-center uppercase font-bold whitespace-pre-wrap leading-tight max-w-full"
+         [style.font-size.px]="mFontSize()"
+         [innerHTML]="mCurrentSlide() | encapsulationHtml"></div>
   }
 </div>
-
-<footer class="text-center text-sm opacity-60 py-6">
-  © <span class="font-bold opacity-90">Blesong</span> — Todos los derechos reservados a
-  <a href="https://brainglab.com" target="_blank" class="link link-hover">Brainglab</a>.
-</footer>

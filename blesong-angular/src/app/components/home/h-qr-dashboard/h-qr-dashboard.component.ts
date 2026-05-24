@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
-import { HSidebarComponent } from '../h-sidebar/h-sidebar.component';
-import { HNavbarComponent } from '../h-navbar/h-navbar.component';
 import { HQrComponent } from '../h-qr/h-qr.component';
+import { PageHeaderComponent } from '../../../layout/page-header/page-header.component';
 
 @Component({
     selector: 'app-h-qr-dashboard',
     templateUrl: './h-qr-dashboard.component.html',
-    imports: [HSidebarComponent, HNavbarComponent, HQrComponent]
+    imports: [PageHeaderComponent, HQrComponent],
 })
 export class HQrDashboardComponent {
 

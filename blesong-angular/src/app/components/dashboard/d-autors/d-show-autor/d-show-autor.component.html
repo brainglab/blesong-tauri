@@ -1,45 +1,22 @@
-<div class="flex min-h-screen bg-base-100">
-  <app-d-sidebar mController="autors" />
+<app-page-header
+  eyebrow="Autor"
+  [title]="mAutor.autor_name || 'Autor'">
+  <button class="btn btn-sm btn-soft" type="button" backButton>
+    <i-lucide name="chevron-left" class="size-4"></i-lucide>
+    Volver
+  </button>
+  <a class="btn btn-sm btn-primary" [routerLink]="['/autors/edit', mAutor.idx]">
+    <i-lucide name="pencil" class="size-4"></i-lucide>
+    Editar
+  </a>
+</app-page-header>
 
-  <div class="flex-1 flex flex-col">
-    <app-d-navbar />
+<div class="px-4 sm:px-6 lg:px-8 py-6 max-w-2xl">
+  <dl class="grid grid-cols-[140px_1fr] gap-y-4 gap-x-6 text-sm">
+    <dt class="opacity-60">Creación</dt>
+    <dd class="text-xs opacity-80 font-mono">{{ mAutor.createdAt | date:'dd/MM/yyyy HH:mm' }}</dd>
 
-    <main class="p-6 max-w-5xl w-full mx-auto">
-      <div class="flex items-center justify-between border-b border-base-300 pb-3 mb-6">
-        <h1 class="text-2xl font-bold">Autor</h1>
-      </div>
-
-      <div class="card bg-base-100 border border-base-300 shadow-sm">
-        <div class="card-body p-0">
-          <div class="px-6 pt-6">
-            <h2 class="card-title text-lg">Datos generales</h2>
-          </div>
-
-          <div class="overflow-x-auto">
-            <table class="table">
-              <tbody>
-                <tr>
-                  <th class="w-40">Nombre</th>
-                  <td>{{ mAutor.autor_name }}</td>
-                </tr>
-                <tr>
-                  <th>Creación</th>
-                  <td>{{ mAutor.createdAt | date:'dd/MM/yyyy HH:mm:ss':'+0000' }}</td>
-                </tr>
-                <tr>
-                  <th>Actualización</th>
-                  <td>{{ mAutor.updatedAt | date:'dd/MM/yyyy HH:mm:ss':'+0000' }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="flex justify-end gap-2 px-6 py-4 border-t border-base-300">
-            <button class="btn btn-neutral" backButton>Volver</button>
-            <a class="btn btn-primary" [routerLink]="['/autors/edit', mAutor.idx]">Editar</a>
-          </div>
-        </div>
-      </div>
-    </main>
-  </div>
+    <dt class="opacity-60">Actualización</dt>
+    <dd class="text-xs opacity-80 font-mono">{{ mAutor.updatedAt | date:'dd/MM/yyyy HH:mm' }}</dd>
+  </dl>
 </div>

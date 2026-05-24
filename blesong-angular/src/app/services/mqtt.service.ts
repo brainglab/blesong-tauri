@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable, NgZone, OnDestroy } from '@angular/core';
 import mqtt from 'mqtt';
 import { Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -19,7 +19,10 @@ export class MqttService implements OnDestroy {
   private mMessageReceived = new Subject<{ topic: string, message: string }>();
   public messageReceived$ = this.mMessageReceived.asObservable();
 
-  constructor() {
+  // mqtt.js dispatches events outside the Angular Zone (its WebSocket
+  // listener isn't reliably patched by Zone.js), so subscribers don't
+  // trigger change detection. We re-enter the zone before emitting.
+  constructor(private zone: NgZone) {
     this.connect();
   }
 
@@ -46,9 +49,11 @@ export class MqttService implements OnDestroy {
     });
 
     this.client.on('message', (topic, message) => {
-      this.mMessageReceived.next({
-        topic: topic,
-        message: message.toString()
+      this.zone.run(() => {
+        this.mMessageReceived.next({
+          topic: topic,
+          message: message.toString()
+        });
       });
     });
   }

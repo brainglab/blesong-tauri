@@ -1,92 +1,102 @@
-<nav class="navbar sticky top-0 z-30 bg-base-100 border-b border-base-300 px-4">
-  <div class="flex-1">
-    <a routerLink="/presenter/qr-menu" class="btn btn-ghost btn-sm normal-case">
-      <img src="assets/images/logo.png" alt="Logo" class="h-7" />
-    </a>
+<div class="flex items-center gap-2">
+
+  <div class="flex flex-col items-end leading-tight text-[11px] mr-1">
+    <span class="font-mono font-semibold opacity-90">{{ mTemplate().template_body_fontsize }}px</span>
+    <span class="opacity-60 truncate max-w-[110px]">{{ mAnimationName() }}</span>
   </div>
 
-  <div class="flex gap-2">
-    <button class="btn btn-sm btn-neutral" (click)="sendStandBy()">
-      <i-lucide name="coffee" class="size-4"></i-lucide>
-      Descanso
-    </button>
+  <button class="btn btn-sm btn-neutral" (click)="sendStandBy()">
+    <i-lucide name="coffee" class="size-4"></i-lucide>
+    Descanso
+  </button>
 
-    <div class="dropdown dropdown-end">
-      <div tabindex="0" role="button" class="btn btn-square btn-sm btn-primary" aria-label="Opciones OBS">
-        <i-lucide name="menu" class="size-4"></i-lucide>
-      </div>
+  <button type="button" class="btn btn-square btn-sm btn-primary"
+          (click)="mDrawerOpen.set(true)" aria-label="Abrir opciones OBS">
+    <i-lucide name="menu" class="size-4"></i-lucide>
+  </button>
+</div>
 
-      <div tabindex="0" class="dropdown-content card card-compact bg-base-100 shadow-xl w-80 z-50 mt-2">
-        <div class="card-body gap-4">
+<!-- ===================================== Offcanvas (slides from right) -->
+<div class="fixed inset-0 z-50 transition-opacity duration-300"
+     [class.opacity-100]="mDrawerOpen()"
+     [class.opacity-0]="!mDrawerOpen()"
+     [class.pointer-events-none]="!mDrawerOpen()">
+  <div class="absolute inset-0 bg-black/50" (click)="mDrawerOpen.set(false)"></div>
 
-          <div>
-            <h3 class="text-sm font-semibold opacity-70 mb-2">Navegación</h3>
-            <div class="grid grid-cols-2 gap-2">
-              <a routerLink="/presenter/obs-letters" class="btn btn-outline btn-sm justify-start">
-                <i-lucide name="music" class="size-4"></i-lucide>
-                Letras
-              </a>
-              <a routerLink="/presenter/obs-bible" class="btn btn-outline btn-sm justify-start">
-                <i-lucide name="file-text" class="size-4"></i-lucide>
-                Biblia
-              </a>
-            </div>
-          </div>
+  <aside class="absolute right-0 top-0 h-full w-80 max-w-[90vw] flex flex-col bg-base-200 border-l border-base-300 shadow-2xl transition-transform duration-300"
+         [class.translate-x-0]="mDrawerOpen()"
+         [class.translate-x-full]="!mDrawerOpen()">
 
-          <div>
-            <h3 class="text-sm font-semibold opacity-70 mb-2">OBS</h3>
-            <button class="btn btn-outline btn-sm w-full justify-start" (click)="reload()">
-              <i-lucide name="refresh-cw" class="size-4"></i-lucide>
-              Recargar
-            </button>
-          </div>
+    <div class="flex items-center justify-between h-14 px-5 border-b border-base-300 shrink-0">
+      <h2 class="font-semibold tracking-tight text-[15px]">Opciones OBS</h2>
+      <button type="button" class="btn btn-square btn-soft btn-sm" (click)="mDrawerOpen.set(false)" aria-label="Cerrar">
+        <i-lucide name="x" class="size-5"></i-lucide>
+      </button>
+    </div>
 
-          <div>
-            <h3 class="text-sm font-semibold opacity-70 mb-2">
-              Tamaño de letra <span class="badge badge-sm">{{ mTemplate.template_body_fontsize }}</span>
-            </h3>
-            <div class="join w-full">
-              <button class="btn btn-outline btn-sm join-item flex-1" (click)="setFontSize('sub')">
-                <i-lucide name="minus" class="size-4"></i-lucide>
-              </button>
-              <button class="btn btn-outline btn-sm join-item flex-1" (click)="setFontSize('add')">
-                <i-lucide name="plus" class="size-4"></i-lucide>
-              </button>
-            </div>
-          </div>
+    <div class="flex-1 overflow-y-auto p-5 space-y-6">
 
-          <div>
-            <h3 class="text-sm font-semibold opacity-70 mb-2">Animación</h3>
-            <ul class="menu menu-sm bg-base-200 rounded-box w-full">
-              <li>
-                <a (click)="setAnimation(0)" [class.menu-active]="mTemplate.template_animation === 0">
-                  <i-lucide name="sparkles" class="size-4"></i-lucide>
-                  Suave
-                </a>
-              </li>
-              <li>
-                <a (click)="setAnimation(1)" [class.menu-active]="mTemplate.template_animation === 1">
-                  <i-lucide name="sparkles" class="size-4"></i-lucide>
-                  Brillante
-                </a>
-              </li>
-              <li>
-                <a (click)="setAnimation(2)" [class.menu-active]="mTemplate.template_animation === 2">
-                  <i-lucide name="sparkles" class="size-4"></i-lucide>
-                  Desvanecimiento
-                </a>
-              </li>
-              <li>
-                <a (click)="setAnimation(3)" [class.menu-active]="mTemplate.template_animation === 3">
-                  <i-lucide name="sparkles" class="size-4"></i-lucide>
-                  Desvanecimiento con brillo
-                </a>
-              </li>
-            </ul>
-          </div>
-
+      <div>
+        <h3 class="text-[10px] font-semibold uppercase tracking-[0.08em] opacity-50 mb-2 px-1">Navegación</h3>
+        <div class="grid grid-cols-2 gap-2">
+          <a routerLink="/presenter/obs-letters"
+             routerLinkActive #lettersLink="routerLinkActive"
+             (click)="mDrawerOpen.set(false)"
+             class="btn btn-sm justify-start"
+             [class.btn-primary]="lettersLink.isActive"
+             [class.btn-neutral]="!lettersLink.isActive">
+            <i-lucide name="music" class="size-4"></i-lucide>
+            Letras
+          </a>
+          <a routerLink="/presenter/obs-bible"
+             routerLinkActive #bibleLink="routerLinkActive"
+             (click)="mDrawerOpen.set(false)"
+             class="btn btn-sm justify-start"
+             [class.btn-primary]="bibleLink.isActive"
+             [class.btn-neutral]="!bibleLink.isActive">
+            <i-lucide name="file-text" class="size-4"></i-lucide>
+            Biblia
+          </a>
         </div>
       </div>
+
+      <div>
+        <h3 class="text-[10px] font-semibold uppercase tracking-[0.08em] opacity-50 mb-2 px-1">OBS</h3>
+        <button class="btn btn-neutral btn-sm w-full justify-start" type="button" (click)="reload()">
+          <i-lucide name="refresh-cw" class="size-4"></i-lucide>
+          Recargar
+        </button>
+      </div>
+
+      <div>
+        <h3 class="text-[10px] font-semibold uppercase tracking-[0.08em] opacity-50 mb-2 px-1 flex items-center justify-between">
+          <span>Tamaño de letra</span>
+          <span class="badge badge-sm font-mono normal-case tracking-normal">{{ mTemplate().template_body_fontsize }}</span>
+        </h3>
+        <div class="join w-full">
+          <button class="btn btn-neutral btn-sm join-item flex-1" type="button" (click)="setFontSize('sub')" aria-label="Disminuir">
+            <i-lucide name="minus" class="size-4"></i-lucide>
+          </button>
+          <button class="btn btn-neutral btn-sm join-item flex-1" type="button" (click)="setFontSize('add')" aria-label="Aumentar">
+            <i-lucide name="plus" class="size-4"></i-lucide>
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <h3 class="text-[10px] font-semibold uppercase tracking-[0.08em] opacity-50 mb-2 px-1">Animación</h3>
+        <ul class="menu menu-sm bg-base-100 border border-base-300 rounded-box w-full p-1">
+          @for (anim of animations; track anim.id) {
+            <li>
+              <a (click)="setAnimation(anim.id)" [class.menu-active]="mTemplate().template_animation === anim.id">
+                <i-lucide name="sparkles" class="size-4"></i-lucide>
+                {{ anim.name }}
+              </a>
+            </li>
+          }
+        </ul>
+      </div>
+
     </div>
-  </div>
-</nav>
+  </aside>
+</div>

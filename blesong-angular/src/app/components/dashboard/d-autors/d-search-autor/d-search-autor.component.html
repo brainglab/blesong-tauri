@@ -30,7 +30,7 @@
         <input class="input input-bordered join-item flex-1" type="text"
                formControlName="order_field" [(ngModel)]="mOptionOrderText['order_field']"
                placeholder="Ordenar por..." readonly />
-        <button class="btn btn-ghost join-item" type="button" aria-label="Limpiar"
+        <button class="btn btn-soft join-item" type="button" aria-label="Limpiar"
                 (click)="showModalOptionOrder('Seleccione campo', mOptionOrderField, 'order_field', true)">
           <i-lucide name="x" class="size-4"></i-lucide>
         </button>
@@ -47,7 +47,7 @@
         <input class="input input-bordered join-item flex-1" type="text"
                formControlName="order_direction" [(ngModel)]="mOptionOrderText['order_direction']"
                placeholder="Dirección..." readonly />
-        <button class="btn btn-ghost join-item" type="button" aria-label="Limpiar"
+        <button class="btn btn-soft join-item" type="button" aria-label="Limpiar"
                 (click)="showModalOptionOrder('Seleccione dirección', mOptionOrderDirection, 'order_direction', true)">
           <i-lucide name="x" class="size-4"></i-lucide>
         </button>
@@ -64,7 +64,7 @@
         <input class="input input-bordered join-item flex-1" type="text"
                formControlName="order_count" [(ngModel)]="mOptionOrderText['order_count']"
                placeholder="Registros..." readonly />
-        <button class="btn btn-ghost join-item" type="button" aria-label="Limpiar"
+        <button class="btn btn-soft join-item" type="button" aria-label="Limpiar"
                 (click)="showModalOptionOrder('Seleccione registros', mOptionOrderCount, 'order_count', true)">
           <i-lucide name="x" class="size-4"></i-lucide>
         </button>
@@ -77,7 +77,7 @@
   </div>
 
   <div class="flex justify-end gap-2">
-    <button class="btn btn-sm btn-ghost" type="button" (click)="clear()">Limpiar</button>
+    <button class="btn btn-sm btn-soft" type="button" (click)="clear()">Limpiar</button>
     <button class="btn btn-sm btn-primary" type="submit">
       <i-lucide name="search" class="size-4"></i-lucide>
       Buscar
