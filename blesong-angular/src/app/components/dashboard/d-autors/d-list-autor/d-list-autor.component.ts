@@ -3,6 +3,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router, RouterLink } from "@angular/router";
+import { take } from 'rxjs/operators';
 import * as XLSX from 'xlsx';
 import { PageHeaderComponent } from '../../../../layout/page-header/page-header.component';
 
@@ -40,17 +41,15 @@ export class DListAutorComponent implements OnInit {
     private mSModalLoadingService: SModalLoadingService, private mSModalYesNoService: SModalYesNoService,
     private mActivatedRoute: ActivatedRoute) {
 
-    this.mActivatedRoute.queryParams.subscribe(params => {
-      if (Object.keys(params).length <= 0) {
-        this.getAll();
-
-      } else {
-        this.mAutor = JSON.parse(decodeURIComponent(params['model']));
-        this.mOrder = JSON.parse(decodeURIComponent(params['order']));
-        this.mPage = Number(params['page']);
-
-        this.setUrlQuery();
-      }
+    // Read URL query state once on entry, then fetch. Subscribing once with
+    // take(1) avoids a loop where setUrlQuery() re-triggers this callback.
+    this.mActivatedRoute.queryParams.pipe(take(1)).subscribe(params => {
+      try {
+        if (params['model']) this.mAutor = JSON.parse(decodeURIComponent(params['model']));
+        if (params['order']) this.mOrder = JSON.parse(decodeURIComponent(params['order']));
+        if (params['page'] != null) this.mPage = Number(params['page']) || 0;
+      } catch { /* ignore malformed URL params; fall back to defaults */ }
+      this.getAll();
     });
   }
 

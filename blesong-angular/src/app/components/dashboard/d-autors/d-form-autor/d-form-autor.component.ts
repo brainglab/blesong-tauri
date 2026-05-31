@@ -43,8 +43,10 @@ export class DFormAutorComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['mAutor'] && changes['mAutor'].currentValue) {
-
+    if (changes['mAutor'] && this.mForm) {
+      this.mForm.patchValue({
+        autor_name: this.mAutor?.autor_name ?? '',
+      }, { emitEvent: false });
     }
   }
 
@@ -83,6 +85,7 @@ export class DFormAutorComponent implements OnInit, OnChanges {
       })
     }
 
+    this.mAutor.autor_name = this.mForm.value.autor_name;
     this.mAutorResponse.emit(this.mAutor);
   }
 

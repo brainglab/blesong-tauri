@@ -49,17 +49,14 @@ export class DSearchAutorComponent implements OnInit, OnChanges {
 
     this.mAutorResponse = new EventEmitter();
     this.buildForm();
-    this.clear();
+    this.resetOrderLabels();
+  }
 
-
-
-    this.mActivatedRoute.queryParams.subscribe(params => {
-      if (Object.keys(params).length > 0) {
-        this.mAutor = JSON.parse(decodeURIComponent(params['model']));
-        this.mOrder = JSON.parse(decodeURIComponent(params['order']));
-      }
-    });
-
+  /** Sync visible order-by labels with the current mOrder values. */
+  private resetOrderLabels(): void {
+    this.mOptionOrderText['order_field'] = this.mOrder.order_field == null ? '' : this.mOptionOrderField.find(opt => opt.idx.toString() == this.mOrder.order_field)?.name || '';
+    this.mOptionOrderText['order_direction'] = this.mOrder.order_direction == null ? '' : this.mOptionOrderDirection.find(opt => opt.idx.toString() == this.mOrder.order_direction)?.name || '';
+    this.mOptionOrderText['order_count'] = this.mOrder.order_count == null ? '' : this.mOptionOrderCount.find(opt => opt.idx == this.mOrder.order_count)?.name || '';
   }
 
   ngOnInit(): void {
@@ -128,14 +125,12 @@ export class DSearchAutorComponent implements OnInit, OnChanges {
   clear() {
     this.mAutor.autor_name = null
 
-
     this.mOrder.order_field = 'createdAt';
     this.mOrder.order_direction = 'DESC';
     this.mOrder.order_count = 30;
+    this.resetOrderLabels();
 
-    this.mOptionOrderText['order_field'] = this.mOrder.order_field == null ? '' : this.mOptionOrderField.find(opt => opt.idx.toString() == this.mOrder.order_field)?.name || '';
-    this.mOptionOrderText['order_direction'] = this.mOrder.order_direction == null ? '' : this.mOptionOrderDirection.find(opt => opt.idx.toString() == this.mOrder.order_direction)?.name || '';
-    this.mOptionOrderText['order_count'] = this.mOrder.order_count == null ? '' : this.mOptionOrderCount.find(opt => opt.idx == this.mOrder.order_count)?.name || '';
+    this.mForm.reset({ autor_name: '', order_field: '', order_direction: '', order_count: '' });
 
     this.mAutorResponse.emit({ mAutor: this.mAutor, mOrder: this.mOrder });
   }

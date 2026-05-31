@@ -56,23 +56,36 @@ export class DFormSongComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    if (changes['mSong'] && this.mForm) {
+      this.mForm.patchValue({
+        song_name: this.mSong?.song_name ?? '',
+        song_year: this.mSong?.song_year ?? '',
+        song_content: this.mSong?.song_content ?? '',
+      }, { emitEvent: false });
+    }
+    // Once both mSong and the autors list are loaded, project the autor
+    // UUID stored on mSong into the visible autor name in the form.
     if (this.mSong && this.mOptionsAutorIdx.length > 0) {
-      const mSelectedAutor = this.mOptionsAutorIdx.find(opt => opt.idx.toString() === this.mSong.autor_idx?.toString());
-      this.mOptionText['autor_idx'] = mSelectedAutor ? mSelectedAutor.name : '';
+      const mSelectedAutor = this.mOptionsAutorIdx.find(opt => opt.idx?.toString() === this.mSong.autor_idx?.toString());
+      const name = mSelectedAutor ? mSelectedAutor.name : '';
+      this.mOptionText['autor_idx'] = name;
+      this.mForm?.get('autor_idx')?.setValue(name, { emitEvent: false });
     }
   }
 
   showModalOption(mTitle: string, mOptions: any[], mField: string, mNull: boolean = false) {
     if (mNull) {
       this.mSong[mField] = null;
-      this.mForm.get(mField)?.setValue(null);
-      this.mOptionText[mField] = null;
+      this.mForm.get(mField)?.setValue('');
+      this.mOptionText[mField] = '';
     } else {
       let mResponseEvent = this.mSModalOptionService.show(mTitle, mOptions, mField);
       mResponseEvent.subscribe((response) => {
         if (response !== null) {
           this.mSong[mField] = response;
-          this.mOptionText[mField] = mOptions.find(opt => opt.idx == response)?.name;
+          const name = mOptions.find(opt => opt.idx == response)?.name ?? '';
+          this.mOptionText[mField] = name;
+          this.mForm.get(mField)?.setValue(name);
         }
       });
     }
@@ -102,6 +115,13 @@ export class DFormSongComponent implements OnInit, OnChanges {
         control.markAsTouched()
       })
     }
+
+    // Sync form values back into mSong; autor_idx already holds the UUID set
+    // by showModalOption — the form just carries the visible name.
+    const v = this.mForm.value;
+    this.mSong.song_name = v.song_name;
+    this.mSong.song_year = v.song_year;
+    this.mSong.song_content = v.song_content;
 
     this.mSongResponse.emit(this.mSong);
   }

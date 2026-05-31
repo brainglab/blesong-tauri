@@ -39,7 +39,7 @@
             </tr>
           </thead>
           <tbody>
-            @for (mSong of mSongs; track mSong) {
+            @for (mSong of mSongs; track mSong.idx) {
               <tr class="hover">
                 <td>
                   <div class="font-medium">{{ mSong.song_name }}</div>

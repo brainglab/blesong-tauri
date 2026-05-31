@@ -1,4 +1,4 @@
-import { importProvidersFrom } from '@angular/core';
+import { importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
 import { LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
@@ -12,6 +12,12 @@ import { APP_ICONS } from './app/icons';
 
 bootstrapApplication(AppComponent, {
   providers: [
+    // Angular 21 arranca en modo zoneless por defecto si no se provee esto.
+    // Sin él, los cambios en callbacks async (HTTP, MQTT, timers) no disparan
+    // detección de cambios y las vistas no se actualizan (p. ej. /songs no
+    // mostraba las canciones aunque la API respondía 200). Se perdió al migrar
+    // a bootstrapApplication; el upgrade a v21 lo había añadido explícitamente.
+    provideZoneChangeDetection(),
     // QRCodeComponent is standalone — it's imported directly by h-qr.component,
     // not via importProvidersFrom (which only accepts NgModules).
     importProvidersFrom(

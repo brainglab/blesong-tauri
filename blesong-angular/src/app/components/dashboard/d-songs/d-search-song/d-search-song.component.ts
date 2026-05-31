@@ -52,30 +52,22 @@ export class DSearchSongComponent implements OnInit, OnChanges {
 
     this.mSongResponse = new EventEmitter();
     this.buildForm();
-    this.clear();
+    this.resetOrderLabels();
 
-    // get AutorIdx 
-    // ----------------------------------------------------------------------------- 
+    // Load autor options for the picker; no toast on empty list.
     let mEventLoadingAutor = this.mSModalLoadingService.show();
     this.mAutorService.selection().subscribe((result: any) => {
-      if (result['code'] != '00') {
-        this.mSToastService.danger("Error inesperado");
-      } else if (result['code'] == '00') {
-        this.mOptionsAutorIdx = result.autors;
-      }
+      if (result['code'] == '00') this.mOptionsAutorIdx = result.autors;
     }).add(() => {
       mEventLoadingAutor.next();
     });
+  }
 
-
-
-    this.mActivatedRoute.queryParams.subscribe(params => {
-      if (Object.keys(params).length > 0) {
-        this.mSong = JSON.parse(decodeURIComponent(params['model']));
-        this.mOrder = JSON.parse(decodeURIComponent(params['order']));
-      }
-    });
-
+  /** Sync visible order-by labels with the current mOrder values. */
+  private resetOrderLabels(): void {
+    this.mOptionOrderText['order_field'] = this.mOrder.order_field == null ? '' : this.mOptionOrderField.find(opt => opt.idx.toString() == this.mOrder.order_field)?.name || '';
+    this.mOptionOrderText['order_direction'] = this.mOrder.order_direction == null ? '' : this.mOptionOrderDirection.find(opt => opt.idx.toString() == this.mOrder.order_direction)?.name || '';
+    this.mOptionOrderText['order_count'] = this.mOrder.order_count == null ? '' : this.mOptionOrderCount.find(opt => opt.idx == this.mOrder.order_count)?.name || '';
   }
 
   ngOnInit(): void {
@@ -153,15 +145,15 @@ export class DSearchSongComponent implements OnInit, OnChanges {
     this.mSong.autor_idx = null
     this.mSong.song_year = null
     this.mSong.song_content = null
-
+    this.mOptionText['autor_idx'] = '';
 
     this.mOrder.order_field = 'createdAt';
     this.mOrder.order_direction = 'DESC';
     this.mOrder.order_count = 30;
+    this.resetOrderLabels();
 
-    this.mOptionOrderText['order_field'] = this.mOrder.order_field == null ? '' : this.mOptionOrderField.find(opt => opt.idx.toString() == this.mOrder.order_field)?.name || '';
-    this.mOptionOrderText['order_direction'] = this.mOrder.order_direction == null ? '' : this.mOptionOrderDirection.find(opt => opt.idx.toString() == this.mOrder.order_direction)?.name || '';
-    this.mOptionOrderText['order_count'] = this.mOrder.order_count == null ? '' : this.mOptionOrderCount.find(opt => opt.idx == this.mOrder.order_count)?.name || '';
+    // Reset the reactive form too so the visible inputs match the new state.
+    this.mForm.reset({ song_name: '', autor_idx: '', song_year: '', song_content: '', order_field: '', order_direction: '', order_count: '' });
 
     this.mSongResponse.emit({ mSong: this.mSong, mOrder: this.mOrder });
   }

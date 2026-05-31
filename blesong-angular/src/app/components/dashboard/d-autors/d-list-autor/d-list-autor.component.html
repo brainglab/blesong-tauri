@@ -38,7 +38,7 @@
             </tr>
           </thead>
           <tbody>
-            @for (mAutor of mAutors; track mAutor) {
+            @for (mAutor of mAutors; track mAutor.idx) {
               <tr class="hover">
                 <td class="font-medium">{{ mAutor.autor_name }}</td>
                 <td>

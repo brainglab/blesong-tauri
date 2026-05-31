@@ -13,7 +13,7 @@
       class="input input-bordered w-full"
       [class.input-error]="mSongNameValid"
       autocomplete="off" id="song_name" type="text" #song_name
-      formControlName="song_name" [(ngModel)]="mSong.song_name"
+      formControlName="song_name"
       placeholder="Nombre de la canción" />
     @if (mSongNameValid) {
       @if (mForm.get('song_name').errors.required) { <p class="fieldset-label text-error">No puede estar vacío</p> }
@@ -35,7 +35,7 @@
         class="input input-bordered join-item flex-1"
         [class.input-error]="mAutorIdxValid"
         autocomplete="off" id="autor_idx" type="text" #autor_idx
-        formControlName="autor_idx" [(ngModel)]="mOptionText['autor_idx']"
+        formControlName="autor_idx"
         placeholder="Autor..." readonly />
       <button class="btn btn-soft join-item" type="button" aria-label="Limpiar"
               (click)="showModalOption('Seleccione Autor', mOptionsAutorIdx, 'autor_idx', true)">
@@ -62,7 +62,7 @@
       class="input input-bordered w-full"
       [class.input-error]="mSongYearValid"
       autocomplete="off" id="song_year" type="text" #song_year
-      formControlName="song_year" [(ngModel)]="mSong.song_year"
+      formControlName="song_year"
       placeholder="Año..." />
     @if (mSongYearValid) {
       @if (mForm.get('song_year').errors.required) { <p class="fieldset-label text-error">No puede estar vacío</p> }
@@ -82,14 +82,14 @@
       class="textarea textarea-bordered w-full font-mono"
       [class.textarea-error]="mSongContentValid"
       autocomplete="off" id="song_content" #song_content
-      formControlName="song_content" [(ngModel)]="mSong.song_content"
+      formControlName="song_content"
       placeholder="Contenido (estrofas, coros...)" rows="15"
       style="min-height: 300px;"></textarea>
     @if (mSongContentValid) {
       @if (mForm.get('song_content').errors.required) { <p class="fieldset-label text-error">No puede estar vacío</p> }
       @if (mForm.get('song_content').errors.maxlength) { <p class="fieldset-label text-error">Máximo 5000 caracteres</p> }
     }
-    <p class="fieldset-label text-right opacity-60">{{ mSong.song_content?.length || 0 }}/5000 caracteres</p>
+    <p class="fieldset-label text-right opacity-60">{{ (mForm.get('song_content')?.value?.length || 0) }}/5000 caracteres</p>
   </fieldset>
 
   <div class="flex justify-end gap-2 pt-2">

@@ -17,7 +17,6 @@
       type="text"
       #autor_name
       formControlName="autor_name"
-      [(ngModel)]="mAutor.autor_name"
       placeholder="Nombre del autor" />
     @if (mAutorNameValid) {
       @if (mForm.get('autor_name').errors.required) {
